@@ -63,10 +63,10 @@
 | T34 | Alertas stock minimo | Supabase Edge Functions | 3h | Media |
 | T35 | Reporte mensual automatico | Python, Resend | 3h | Baja |
 
-## TECH STACK COMPLETO
+## TECH STACK
 | Capa | Tecnologia |
 |------|-----------|
-| App movil + web | React Native + Expo (mismo repo) |
+| App movil + web | React Native + Expo |
 | UI | NativeWind (Tailwind) |
 | Offline | WatermelonDB |
 | Backend/DB | Supabase (PostgreSQL, Auth, Storage, Realtime) |
