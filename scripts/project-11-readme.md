@@ -128,22 +128,28 @@ El workflow [daily-progress.yml](https://github.com/Abraha33/erp-satelite/blob/m
 
 **Secret recomendado:** `PROJECTS_TOKEN` (PAT con scope `project`) para escribir en GitHub Projects. Si no existe, usa `github.token` (puede limitar permisos en forks).
 
+### 3.2 Ramas Git y 3.3 roles
+
+**Ramas:** `main` (estable), **`develop`** (integracion diaria), ramas de trabajo `feature/...` desde `develop`. Un **fork** en GitHub es copia del repo en otra cuenta; no sustituye a `develop`. Detalle: [README §3.2–3.3](https://github.com/Abraha33/erp-satelite/blob/main/README.md#32-fork-vs-ramas-git-y-flujo-main--develop). Labels `role/*`: `python scripts/ensure_role_labels.py`.
+
 ---
 
 ## 4. Sistema de Labels
 
 **Colores** (Status / Priority): [paleta](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#paleta-de-color-project-11).
 
-**Vista Equipo:** labels `area/*` y `tipo/*` — [tabla recomendada](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#etiquetas-en-issues-chips-en-team-view). Filtros: [guía](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#filtros-por-assignees-sin-asignar-y-por-persona).
+**Vista Equipo:** labels `role/*`, `area/*` y `tipo/*` — [tabla completa](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#etiquetas-en-issues-chips-en-team-view). Filtros por rol: [vistas sugeridas](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#vistas-por-rol-en-el-project).
 
 | Label | Uso |
 |-------|-----|
+| `role/frontend` … `role/docs-adr` | **Un** rol por issue (enfoque / filtro del dia). Ver README §3.3 y §4. |
 | `alta`, `media`, `baja` | Prioridad (no duplicar con campo Priority). |
-| `backend`, `frontend`, `database`, `docs` | Area tecnica. |
+| `backend`, `frontend`, `database`, `docs` | Legacy; preferir `role/*`. |
 | `MVP` | Bloqueante para MVP. |
 | `Sprint-N` | Asociado al sprint N. |
 | `fase-0` … `fase-5` | Fase del roadmap. |
-| `area/app`, `area/api`, `area/db`, `area/docs` | Ambito (chips en vista Equipo). |
+| `area/app`, `area/api`, `area/db`, `area/docs` | Ambito tecnico. |
+| `area/web`, `area/mobile` | Opcional bajo `role/frontend`. |
 | `tipo/bug`, `tipo/feature`, `tipo/chore` | Tipo de trabajo. |
 
 ---
@@ -165,15 +171,15 @@ Siguen el [ROADMAP.md](https://github.com/Abraha33/erp-satelite/blob/main/ROADMA
 
 - **Titulo:** prefijo semantico + frase clara. Ejemplos: `[Setup] Inicializar Expo en blanco`, `[DB] Tabla productos y RLS`, `[Scraper] Login en SAE con Playwright`. Evita titulos solo tipo `T3.1.1: Provider factory` como titulo principal; el ID numerico puede ir en el cuerpo.
 - **Cuerpo:** descripcion, criterios de aceptacion, enlace a milestone o fase.
-- **Labels:** prioridad, area (setup, database, scraper, frontend).
+- **Labels:** un `role/*` para triage; `area/*`, `tipo/*`, `fase-*` segun convenga.
 - **Milestone:** sprint o fase.
 
 ---
 
 ## 7. Flujo de trabajo semanal
 
-1. **Inicio de sprint:** Elegir 5-7 items del Backlog y pasarlos a **Ready**.
-2. **Cada dia:** Como mucho **1** item en **In progress**; avanzar hasta **In review** antes de coger otro.
+1. **Inicio de sprint:** Elegir 5-7 items del Backlog y pasarlos a **Ready** (con `role/*`).
+2. **Cada dia:** Rol del dia → filtro `label:role/...` → **1** item **In progress**; rama desde **`develop`** (README §3.2).
 3. **Fin de semana:** Revisar **Done**, actualizar [CURSOR_CONTEXT.md](https://github.com/Abraha33/erp-satelite/blob/main/CURSOR_CONTEXT.md) con sprint activo y ultimo issue cerrado.
 
 ---
@@ -181,6 +187,7 @@ Siguen el [ROADMAP.md](https://github.com/Abraha33/erp-satelite/blob/main/ROADMA
 ## 8. Reglas del proyecto
 
 - **WIP = 1** en **In progress** (solo dev).
+- Trabajo en **`feature/*`** desde **`develop`**; merge a `develop`; `main` por release; evitar commit directo a `main` salvo hotfix.
 - PRs pequenos; un issue = un PR cuando sea posible.
 - Documentar decisiones en ADR/ cuando afecten arquitectura.
 - No commitear secrets; usar .env y variables de entorno.

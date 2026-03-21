@@ -10,6 +10,8 @@ Stack: por definir. Ver [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
 1. [Que es este proyecto](#1-que-es-este-proyecto)
 2. [Como leer el tablero Projects](#2-como-leer-el-tablero-projects)
 3. [Como operar el tablero dia a dia](#3-como-operar-el-tablero-dia-a-dia)
+   - [3.2 Fork vs ramas Git y flujo main / develop](#32-fork-vs-ramas-git-y-flujo-main--develop)
+   - [3.3 Roles de desarrollo](#33-roles-de-desarrollo)
 4. [Sistema de Labels](#4-sistema-de-labels)
 5. [Sistema de Milestones](#5-sistema-de-milestones)
 6. [Como leer un Issue](#6-como-leer-un-issue)
@@ -127,6 +129,41 @@ El workflow [.github/workflows/daily-progress.yml](./.github/workflows/daily-pro
 
 **Secret recomendado:** `PROJECTS_TOKEN` (PAT con scope `project`) para escribir en GitHub Projects. Si no existe, usa `github.token` (puede limitar permisos en forks).
 
+### 3.2 Fork vs ramas Git y flujo main / develop
+
+En GitHub, **fork** es una **copia del repo** bajo otra cuenta u organizacion (para contribuir con PRs desde afuera). **No** es una rama. Este proyecto se desarrolla en el repo canonico **`Abraha33/erp-satelite`**; como solo dev **no necesitas un fork** salvo que quieras experimentar aislado.
+
+**Ramas oficiales y para que sirven:**
+
+| Rama / tipo | Quien la usa | Proposito |
+|-------------|--------------|-----------|
+| **`main`** | Release | Codigo **estable** alineado a lo que puedes considerar produccion o demo seria. Solo entra con merge desde `develop` (o hotfix excepcional). |
+| **`develop`** | Dia a dia | **Integracion**: aqui van los PRs del sprint. Es la base que actualizas al empezar una tarea nueva. Debe compilar y pasar CI razonablemente. |
+| **`dev`** (legacy) | Opcional | Si aun existe en remotos viejos, tratala como alias obsoleto de `develop`; nuevos flujos usan **`develop`**. |
+| **Ramas de trabajo** | Por ticket | Creadas **desde `develop`**, nombre recomendado `feature/<rol>-<tema>` o `feature/issue-NNN-desc` (ej. `feature/database-issue-202-rls`). **Vida corta**; un PR → **`develop`**. |
+
+**Flujo resumido:** `feature/...` → PR → **`develop`** → (cuando cierre hito) PR **`develop`** → **`main`**.
+
+**Rutina diaria (git):**
+
+1. `git checkout develop && git pull origin develop`
+2. `git checkout -b feature/<rol>-<tema>`
+3. Commits; abre PR hacia **`develop`**.
+4. Tras merge, borra la rama de trabajo; al cerrar sprint/hito, integra **`develop`** → **`main`**.
+
+### 3.3 Roles de desarrollo
+
+Eres **un solo dev**; los **roles** (`role/frontend`, `role/database`, …) son *sombreros* para enfocar el dia. No confundir con **roles de producto** en [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) (administrador / encargado / empleado): esos son RBAC en la app.
+
+**Rutina diaria (tablero):**
+
+1. En el Project, filtra por **un** label `role/*` (o una vista guardada; ver [docs/GITHUB_PROJECTS.md](./docs/GITHUB_PROJECTS.md#vistas-por-rol-en-el-project)).
+2. Entre tickets **Ready** con ese rol, elige uno (puede ser al azar **si** no hay P0 bloqueante ni dependencias sin resolver).
+3. Mueve **una** tarjeta a **In progress** (WIP = 1).
+4. Abre la rama de trabajo desde **`develop`** (ver §3.2).
+
+**Etiquetar issues:** cada ticket deberia tener **un** `role/*` principal. Mantener `area/*` y `tipo/*` como hasta ahora; ver tabla en [§4](#4-sistema-de-labels). Crear labels en el repo: `python scripts/ensure_role_labels.py`.
+
 ---
 
 ## 4. Sistema de Labels
@@ -137,13 +174,27 @@ El workflow [.github/workflows/daily-progress.yml](./.github/workflows/daily-pro
 
 | Label | Uso |
 |-------|-----|
+| **Roles de trabajo (`role/*`)** | **Uno por issue** — sombrero del dia / filtro del tablero (ver [§3.3](#33-roles-de-desarrollo)). |
+| `role/frontend` | Expo / RN / UI de producto. |
+| `role/backend` | API, reglas de negocio, servicios. |
+| `role/database` | Schema, migrations, RLS, SQL, Supabase. |
+| `role/platform` | Repo, CI/CD, scripts, `.env`, hygiene GitHub Project. |
+| `role/integration` | Excel SAE, scraper, import/export, datos legacy. |
+| `role/qa-release` | Pruebas en dispositivo, checklist release, verificacion antes de Done. |
+| `role/crm` | WhatsApp, conversaciones, pipeline (fases CRM). |
+| `role/offline-sync` | Base local, sync, conflictos (fase offline-first). |
+| `role/security` | Auth, secretos, hardening, revision authz. |
+| `role/docs-adr` | README, ADR, CURSOR_CONTEXT, guias. |
 | `alta`, `media`, `baja` | Prioridad (no duplicar con campo Priority). |
-| `backend`, `frontend`, `database`, `docs` | Area tecnica. |
+| `backend`, `frontend`, `database`, `docs` | Etiquetas genericas legacy; preferir `role/*` + `area/*`. |
 | `MVP` | Bloqueante para MVP. |
 | `Sprint-N` | Asociado al sprint N. |
 | `fase-0` … `fase-5` | Fase del roadmap. |
-| `area/app`, `area/api`, `area/db`, `area/docs` | Ambito (chips en vista Equipo). |
+| `area/app`, `area/api`, `area/db`, `area/docs` | Ambito tecnico (chips en vista Equipo). |
+| `area/web`, `area/mobile` | Opcional: refinan `role/frontend` (web vs nativo). |
 | `tipo/bug`, `tipo/feature`, `tipo/chore` | Tipo de trabajo. |
+
+**Equivalencia rapida:** `role/frontend` ≈ `area/app`; `role/backend` ≈ `area/api`; `role/database` ≈ `area/db`; `role/docs-adr` ≈ `area/docs`. Si un issue toca dos capas, elige el rol donde cae **la mayor parte del esfuerzo** y menciona la otra en el cuerpo.
 
 ---
 
@@ -166,15 +217,15 @@ Los milestones siguen el [ROADMAP.md](./ROADMAP.md):
 - **Prefijo tematico (otros issues):** `[Setup]`, `[DB]`, `[Scraper]`, etc. Evita titulos solo tipo `T3.1.1: Provider factory` como titulo principal; el ID puede ir en el cuerpo.
 - **Orden en el Project:** **View** → **Sort** → **Title** → **Ascending** para recorrer T01→T99 y E01-S01-01→… en orden.
 - **Cuerpo:** descripcion, criterios de aceptacion, enlace a milestone o fase.
-- **Labels:** prioridad, area (setup, database, scraper, frontend).
+- **Labels:** un `role/*` obligatorio para triage; `area/*`, `tipo/*`, `fase-*` segun convenga.
 - **Milestone:** sprint o fase.
 
 ---
 
 ## 7. Flujo de trabajo semanal
 
-1. **Inicio de sprint:** Elegir 5-7 items del Backlog y pasarlos a **Ready**.
-2. **Cada dia:** Como mucho **1** item en **In progress**; avanzar hasta **In review** antes de coger otro.
+1. **Inicio de sprint:** Elegir 5-7 items del Backlog y pasarlos a **Ready** (cada uno con `role/*` asignado).
+2. **Cada dia:** Elige **rol** del dia → filtra el Project por `label:role/...` → **1** item en **In progress**; rama desde **`develop`** (ver [§3.2](#32-fork-vs-ramas-git-y-flujo-main--develop)); hasta **In review** antes de coger otro.
 3. **Fin de semana:** Revisar **Done**, actualizar [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) con sprint activo y ultimo issue cerrado.
 
 ---
@@ -182,6 +233,7 @@ Los milestones siguen el [ROADMAP.md](./ROADMAP.md):
 ## 8. Reglas del proyecto
 
 - **WIP = 1** en **In progress** (solo dev).
+- **Ramas:** trabajo en **`feature/*`** desde **`develop`**; merge a **`develop`**; **`main`** solo por release o hotfix; no commitear directo a `main` salvo hotfix acordado.
 - PRs pequenos; un issue = un PR cuando sea posible.
 - Documentar decisiones en ADR/ cuando afecten arquitectura.
 - No commitear secrets; usar .env y variables de entorno.
@@ -221,9 +273,9 @@ Ver [ADR/](./ADR/) y [DECISIONS.md](./DECISIONS.md) (si existe).
 ## 13. Estructura de carpetas
 
 ```
-ERP1/                     # Raiz del monorepo
+ERP1/                     # Raiz del monorepo (ver README.md aqui)
 ├── setup-erp-project.sh   # Setup Project 11 (repo, Status, Status update, vincula issues)
-└── erp-satelite/
+└── erp-satelite/          # Repo Git: ramas main + develop; trabajo en feature/* desde develop
     ├── ADR/               # Architecture Decision Records
     ├── docs/               # GITHUB_PROJECTS.md, GITHUB_PROJECT_WORKFLOWS.md, Esqueleto, EXCEL_ANALYSIS
     ├── scripts/            # Python, PowerShell, JSON, GraphQL (tablero, vistas, migraciones)
@@ -294,6 +346,8 @@ PowerShell: `.\scripts\apply-priority-board-expert.ps1 -Run`
 | `set_all_project_items_backlog.py` | Todos los items → Backlog (limpiar "No Status"). |
 | `migrate_status_to_priority_board.py` | Aplica schema Status (Icebox…Done) tras cambiar GraphQL. |
 | `migrate_priority_palette.py` | Restaura P0–P3 tras cambiar colores Priority. |
+| `ensure_role_labels.py` | Crea labels `role/*` y `area/web|mobile` en el repo (idempotente). |
+| `merge_empty_priority_to_no_priority.py` | Unifica filas *No priority*: asigna opcion **No Priority** a items con Priority vacio (Project 11). |
 | `apply-team-view-fields.ps1` | PATCH columnas vista Equipo (views/3). |
 | `create-project-views.ps1` | Recrea vistas si las borras (view-*.json). |
 

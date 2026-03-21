@@ -2,6 +2,8 @@
 
 El código vive en **`erp-satelite`**; el [Project 11](https://github.com/users/Abraha33/projects/11) es el tablero del producto. El diseño admite **equipo**, pero en la práctica **todo lo asignas a ti mismo**: usuario GitHub **[@Abraha33](https://github.com/Abraha33)**. En cada issue/proyecto, **Assignees** = tu cuenta; la vista **Mis ítems** usa el filtro `assignee:@me`, que es **el mismo usuario** (no hay otro dev en el tablero hoy).
 
+**Git (ramas, no forks):** el flujo canonico es **`main`** (estable) + **`develop`** (integracion) + ramas **`feature/...`** desde `develop`. Un *fork* de GitHub es otra copia del repo (contribuciones externas); no es la rama `develop`. Tabla y rutina en el [README §3.2](https://github.com/Abraha33/erp-satelite/blob/main/README.md#32-fork-vs-ramas-git-y-flujo-main--develop).
+
 **Workflows (7 automatizaciones):** no hay API para encenderlos; guía en [docs/GITHUB_PROJECT_WORKFLOWS.md](./GITHUB_PROJECT_WORKFLOWS.md) (sección *Activar workflows nº 2 a 7*). Estado actual: `python scripts/project_workflows_status.py --from-num 2 --to-num 7` → [Workflows en el navegador](https://github.com/users/Abraha33/projects/11/workflows).
 
 **IDs en títulos y orden:** convención `[T##]` (ROADMAP) y `[E##-S##-##]` (SCRUM) en [docs/TICKET_ID_CONVENTION.md](./TICKET_ID_CONVENTION.md). Para ver tickets **de primero a último** en una vista: **View** → **Sort** → **Title** → **Ascending** (y guarda la vista). Normalizar issues antiguos: `python scripts/normalize_issue_title_prefixes.py` (vista previa) y `python scripts/normalize_issue_title_prefixes.py --apply`.
@@ -109,11 +111,40 @@ Recomendación: **no** duplicar en etiquetas lo que ya pone un campo del proyect
 | `area/api` | API / backend |
 | `area/db` | Supabase / SQL |
 | `area/docs` | Solo documentación |
+| `area/web` | UI web (Expo web / SPA) — opcional |
+| `area/mobile` | Comportamiento / build móvil nativo — opcional |
+| `role/frontend` | Mismo ámbito que `area/app`; etiqueta de **enfoque diario** |
+| `role/backend` | API y lógica de negocio (`area/api`) |
+| `role/database` | Schema, RLS, SQL (`area/db`) |
+| `role/platform` | Repo, CI, scripts, env, hygiene del Project |
+| `role/integration` | Excel SAE, scraper, import/export |
+| `role/qa-release` | Pruebas dispositivo, verificación pre-release |
+| `role/crm` | WhatsApp, inbox, pipeline (fase CRM) |
+| `role/offline-sync` | DB local, sync, conflictos |
+| `role/security` | Auth, secretos, hardening |
+| `role/docs-adr` | README, ADR, guías (`area/docs`) |
 | `tipo/bug` | Corrección |
 | `tipo/feature` | Funcionalidad |
 | `tipo/chore` | Mantenimiento |
 | `MVP` | Bloquea primer release |
 | `fase-0` … `fase-5` | Alineado al roadmap (ya en README) |
+
+**Crear labels `role/*` en el repo:** desde `erp-satelite/` ejecuta `python scripts/ensure_role_labels.py` (idempotente).
+
+### Vistas por rol en el Project
+
+En **Project 11** → **+ New view** (tabla o board) → en la barra de filtro usa por ejemplo:
+
+| Vista sugerida | Filtro (ejemplo) |
+|----------------|------------------|
+| Rol · Frontend | `label:role/frontend` |
+| Rol · Backend | `label:role/backend` |
+| Rol · Database | `label:role/database` |
+| Rol · Platform | `label:role/platform` |
+| Rol · Integración | `label:role/integration` |
+| Rol · QA / release | `label:role/qa-release` |
+
+Combina con tu cola: `label:role/frontend assignee:@me` o con estado: `label:role/backend status:Ready`. GitHub no permite crear vistas vía este repo de forma portable; créalas una vez a mano y renómbralas (ej. **Rol · DB**).
 
 Crea los que falten en el repo **`erp-satelite`** y asígnalos al crear o editar el issue; activa la columna **Labels** en **Fields** si quieres verlos en esta vista. **No** uses labels solo para sustituir **Priority** (P0–P3): el Priority board ordena filas por el **campo** Priority.
 
@@ -331,6 +362,8 @@ La referencia [Project 5 — Factura SaaS](https://github.com/users/Abraha33/pro
 4. Usa los **filtros por Priority** ([tabla abajo](#filtros-priority-con-y-sin-valor)) para ver solo lo priorizado o solo lo que falta por triage.
 
 **Auditar qué falta:** `python scripts/list_items_missing_priority.py` (lista issues del proyecto sin Priority).
+
+**Dos filas “No priority” en el board:** GitHub agrupa aparte los ítems con **Priority vacío** y los que tienen la opción explícita **No Priority**. Para dejar **una sola fila** (la de la opción explícita), sin borrar tarjetas: `python scripts/merge_empty_priority_to_no_priority.py` (ver `--dry-run`).
 
 **Triage masivo (Priority + assignee en issues):** si casi todo cae en la fila **No priority** y las tarjetas no muestran avatar, suele ser que el **campo Priority** está vacío y los **issues** no tienen asignatarios. Relleno por defecto **P3** + `gh issue edit --add-assignee` (el CLI no expone assignees en `item-edit`):
 

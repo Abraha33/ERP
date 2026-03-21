@@ -4,7 +4,7 @@
 | Ticket | Tarea | Tech | Horas | Prioridad |
 |--------|-------|------|-------|-----------|
 | T01 | Stack definido en README y ADR | Markdown, ADR | 2h | Alta |
-| T02 | Repo y entorno local listos | Git, Node, Python | 2h | Alta |
+| T02 | Repo y entorno local listos (ramas **main** + **develop**, features desde develop) | Git, Node, Python | 2h | Alta |
 | T03 | Supabase + tablas base + RLS | PostgreSQL, Supabase | 3h | Alta |
 | T04 | Scraper Python/Playwright vs SAE | Python 3.12, Playwright | 3h | Alta |
 | T05 | Expo app en blanco (movil + web) | React Native, NativeWind | 2h | Alta |

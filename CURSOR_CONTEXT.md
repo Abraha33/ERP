@@ -27,3 +27,6 @@ docs/         → Documentacion tecnica
 - Supabase client en lib/supabase.ts
 - Variables de entorno solo desde app.config.ts
 - Commits: feat|fix|docs|chore(scope): descripcion
+
+## Roles de desarrollo (GitHub)
+Labels `role/*` por ticket: frontend, backend, database, platform, integration, qa-release, crm, offline-sync, security, docs-adr. Ramas: `main` (estable), `develop` (integracion), `feature/...` desde `develop`. Ver [README §3.2–§4](./README.md#32-fork-vs-ramas-git-y-flujo-main--develop).
