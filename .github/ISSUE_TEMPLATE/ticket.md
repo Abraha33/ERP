@@ -1,7 +1,7 @@
 ---
 name: Ticket Roadmap
 about: Ticket granular del roadmap ERP Satelite
-title: 'Txx: '
+title: '[T01] '
 labels: ''
 ---
 ## Objetivo

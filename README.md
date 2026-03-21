@@ -162,7 +162,9 @@ Los milestones siguen el [ROADMAP.md](./ROADMAP.md):
 
 ## 6. Como leer un Issue
 
-- **Titulo (para Cursor y para ti):** prefijo semantico + frase clara. Ejemplos: `[Setup] Inicializar Expo en blanco`, `[DB] Tabla productos y RLS`, `[Scraper] Login en SAE con Playwright`. Evita titulos solo tipo `T3.1.1: Provider factory` como titulo principal; el ID numerico puede ir en el cuerpo.
+- **ID de ticket (obligatorio en roadmap/SCRUM):** formato estandar en [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md): **`[T##]`** alineado con [ROADMAP.md](./ROADMAP.md) (ej. `[T01] Definicion del stack`) o **`[E##-S##-##]`** para tickets del CSV SCRUM (ej. `[E05-S10-07] Document deployment`). No mezclar `T01:` sin corchetes con `[E5-S10-07]` sin ceros.
+- **Prefijo tematico (otros issues):** `[Setup]`, `[DB]`, `[Scraper]`, etc. Evita titulos solo tipo `T3.1.1: Provider factory` como titulo principal; el ID puede ir en el cuerpo.
+- **Orden en el Project:** **View** → **Sort** → **Title** → **Ascending** para recorrer T01→T99 y E01-S01-01→… en orden.
 - **Cuerpo:** descripcion, criterios de aceptacion, enlace a milestone o fase.
 - **Labels:** prioridad, area (setup, database, scraper, frontend).
 - **Milestone:** sprint o fase.
@@ -308,3 +310,4 @@ PowerShell: `.\scripts\apply-priority-board-expert.ps1 -Run`
 - [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
 - [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) — Contexto para el asistente IA
 - [.github/workflows/daily-progress.yml](./.github/workflows/daily-progress.yml) — Automatizacion push/PR/schedule
+- [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md) — Formato `[T##]` y `[E##-S##-##]` en titulos; orden en el Project
