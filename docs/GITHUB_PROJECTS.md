@@ -131,20 +131,31 @@ Recomendación: **no** duplicar en etiquetas lo que ya pone un campo del proyect
 
 **Crear labels `role/*` en el repo:** desde `erp-satelite/` ejecuta `python scripts/ensure_role_labels.py` (idempotente).
 
-### Vistas por rol en el Project
+**Alinear issues con la política (sin duplicar legacy):** `python scripts/harmonize_legacy_role_labels.py` (quita `frontend`/`backend`/`database`/`docs` cuando ya existe el `role/*` equivalente). Con `--dry-run` primero.
 
-En **Project 11** → **+ New view** (tabla o board) → en la barra de filtro usa por ejemplo:
+### Filtrar por rol **sin** vistas nuevas
 
-| Vista sugerida | Filtro (ejemplo) |
-|----------------|------------------|
-| Rol · Frontend | `label:role/frontend` |
-| Rol · Backend | `label:role/backend` |
-| Rol · Database | `label:role/database` |
-| Rol · Platform | `label:role/platform` |
-| Rol · Integración | `label:role/integration` |
-| Rol · QA / release | `label:role/qa-release` |
+**Política:** no crees vistas adicionales solo para separar frontend / backend / database. Usa las **vistas que ya tienes** y el **cuadro de filtro** (barra de búsqueda del Project) añadiendo `label:role/...` cuando quieras acotar por capa.
 
-Combina con tu cola: `label:role/frontend assignee:@me` o con estado: `label:role/backend status:Ready`. GitHub no permite crear vistas vía este repo de forma portable; créalas una vez a mano y renómbralas (ej. **Rol · DB**).
+**Vistas existentes (Project 11):** [Priority board · views/2](https://github.com/users/Abraha33/projects/11/views/2), [Equipo · inventario · views/3](https://github.com/users/Abraha33/projects/11/views/3), [Mis ítems · foco · views/5](https://github.com/users/Abraha33/projects/11/views/5), [Foco semana · views/10](https://github.com/users/Abraha33/projects/11/views/10), [Roadmap · views/8](https://github.com/users/Abraha33/projects/11/views/8).
+
+**Ejemplos de filtro (los escribes encima de la vista; combinan con lo que ya filtre cada una):**
+
+| Situación | Qué añadir en el filtro |
+|-----------|-------------------------|
+| Solo tickets **database** en tu cola | `label:role/database` (en **Mis ítems** ya suele ir implícito `assignee:@me`; si no, añádelo) |
+| Solo **frontend** en foco sprint | En **Foco semana**: `label:role/frontend` |
+| Priority board solo **backend** | En **Priority board**: `label:role/backend` |
+| Inventario equipo solo **integración** | En **Equipo**: `label:role/integration` |
+| Timeline solo **CRM** | En **Roadmap**: `label:role/crm` (y conserva `-status:Done` si lo usas) |
+
+**Importante — no “ensucies” la vista guardada:** si en el menú de la vista **guardas** un filtro fijo por rol, esa pestaña dejará de mostrar el tablero completo. Lo recomendable en **solo dev** es usar el filtro de rol **solo mientras trabajas** y luego **quitar** la parte `label:role/...` (o volver al filtro por defecto de esa vista), para que Priority / Mis ítems sigan sirviendo como inventario global.
+
+**Clasificación en issues (recomendación):**
+
+1. **Un** label `role/*` por issue (frontend, backend, database, platform, integration, qa-release, crm, offline-sync, security, docs-adr) — es la capa donde cae la mayor parte del esfuerzo.
+2. Evita duplicar con los labels planos `frontend`, `backend`, `database`, `docs` si ya existe el `role/*` equivalente; en issues viejos puedes quitar el legacy poco a poco.
+3. **`area/*`** y **`tipo/*`** siguen siendo opcionales para matizar; **Priority** y **Status** son **campos del Project**, no sustitutos en labels.
 
 Crea los que falten en el repo **`erp-satelite`** y asígnalos al crear o editar el issue; activa la columna **Labels** en **Fields** si quieres verlos en esta vista. **No** uses labels solo para sustituir **Priority** (P0–P3): el Priority board ordena filas por el **campo** Priority.
 

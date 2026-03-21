@@ -157,7 +157,7 @@ Eres **un solo dev**; los **roles** (`role/frontend`, `role/database`, …) son 
 
 **Rutina diaria (tablero):**
 
-1. En el Project, filtra por **un** label `role/*` (o una vista guardada; ver [docs/GITHUB_PROJECTS.md](./docs/GITHUB_PROJECTS.md#vistas-por-rol-en-el-project)).
+1. En el Project, en **las vistas que ya tienes** (Priority, Equipo, Mis ítems, Foco semana, Roadmap), escribe en el **filtro** `label:role/...` cuando quieras ver solo una capa; **no** crees vistas nuevas solo para rol, y **no guardes** ese filtro en la vista si quieres seguir viendo el tablero completo después (ver [docs/GITHUB_PROJECTS.md](./docs/GITHUB_PROJECTS.md#filtrar-por-rol-sin-vistas-nuevas)).
 2. Entre tickets **Ready** con ese rol, elige uno (puede ser al azar **si** no hay P0 bloqueante ni dependencias sin resolver).
 3. Mueve **una** tarjeta a **In progress** (WIP = 1).
 4. Abre la rama de trabajo desde **`develop`** (ver §3.2).
@@ -186,7 +186,7 @@ Eres **un solo dev**; los **roles** (`role/frontend`, `role/database`, …) son 
 | `role/security` | Auth, secretos, hardening, revision authz. |
 | `role/docs-adr` | README, ADR, CURSOR_CONTEXT, guias. |
 | `alta`, `media`, `baja` | Prioridad (no duplicar con campo Priority). |
-| `backend`, `frontend`, `database`, `docs` | Etiquetas genericas legacy; preferir `role/*` + `area/*`. |
+| `backend`, `frontend`, `database`, `docs` | **Legacy:** evita en tickets nuevos si ya pones `role/backend`, `role/frontend`, etc.; quita el duplicado en issues viejos cuando puedas. |
 | `MVP` | Bloqueante para MVP. |
 | `Sprint-N` | Asociado al sprint N. |
 | `fase-0` … `fase-5` | Fase del roadmap. |
@@ -248,13 +248,13 @@ Monolito modular o servicios separados (API ERP, CRM, workers). Ver [docs/Esquel
 
 ## 10. Tech Stack confirmado
 
-Por definir. Ver [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
+Por definir en [ADR-001](./ADR/ADR-001-stack-tecnologico.md). Mientras tanto, la **línea base propuesta** y el desglose **por fase** (Satélite + scraper, ERP básico, ERP completo, CRM, offline) están en **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**.
 
 ---
 
 ## 11. Decisiones tecnicas pendientes
 
-Ver [ADR/](./ADR/) y [DECISIONS.md](./DECISIONS.md) (si existe).
+Ver [ADR/](./ADR/) y [DECISIONS.md](./DECISIONS.md) (si existe). Las ampliaciones por etapa (BI, fiscal, colas CRM, etc.) se listan como *A definir* en [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md) hasta cerrar el ADR o un ADR hijo.
 
 ---
 
@@ -277,7 +277,7 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 ├── setup-erp-project.sh   # Setup Project 11 (repo, Status, Status update, vincula issues)
 └── erp-satelite/          # Repo Git: ramas main + develop; trabajo en feature/* desde develop
     ├── ADR/               # Architecture Decision Records
-    ├── docs/               # GITHUB_PROJECTS.md, GITHUB_PROJECT_WORKFLOWS.md, Esqueleto, EXCEL_ANALYSIS
+    ├── docs/               # STACK_POR_FASE, GITHUB_PROJECTS, WORKFLOWS, Esqueleto, EXCEL_ANALYSIS
     ├── scripts/            # Python, PowerShell, JSON, GraphQL (tablero, vistas, migraciones)
     ├── .github/workflows/  # daily-progress.yml (push/PR/schedule)
     ├── README.md
@@ -347,6 +347,8 @@ PowerShell: `.\scripts\apply-priority-board-expert.ps1 -Run`
 | `migrate_status_to_priority_board.py` | Aplica schema Status (Icebox…Done) tras cambiar GraphQL. |
 | `migrate_priority_palette.py` | Restaura P0–P3 tras cambiar colores Priority. |
 | `ensure_role_labels.py` | Crea labels `role/*` y `area/web|mobile` en el repo (idempotente). |
+| `harmonize_legacy_role_labels.py` | Quita `frontend`/`backend`/`database`/`docs` si ya hay `role/*`; migra legacy → `role/*` si faltaba. |
+| `apply_role_labels_to_issues.py` | Asigna `role/*` a issues sin rol (heuristicas por titulo). |
 | `merge_empty_priority_to_no_priority.py` | Unifica filas *No priority*: asigna opcion **No Priority** a items con Priority vacio (Project 11). |
 | `apply-team-view-fields.ps1` | PATCH columnas vista Equipo (views/3). |
 | `create-project-views.ps1` | Recrea vistas si las borras (view-*.json). |
@@ -355,10 +357,28 @@ PowerShell: `.\scripts\apply-priority-board-expert.ps1 -Run`
 
 ---
 
+## 17. Stack por fase (tecnologías por etapa)
+
+Cada fase del roadmap usa un **subconjunto** del stack total; así evitas adelantar offline, CRM o BI antes de tiempo.
+
+| Fase | Qué define |
+|------|-----------|
+| **0** Fundación | Git, `gh`, ADR, análisis Excel — sin app en producción. |
+| **1** App Satélite | Expo + Supabase + import Excel + **Python/Playwright (scraper)**. |
+| **2** ERP básico | Lo anterior + módulos web/MVP (catálogos, compras, ventas, stock); reportes ligeros; fiscal TBD. |
+| **3** ERP completo | Contabilidad, RRHH, reportes avanzados (BI opcional), auditoría fuerte. |
+| **4** CRM | WhatsApp Cloud API, workers, transcripción; inbox en la misma app. |
+| **5** Offline-first | **WatermelonDB**, sync, conflictos; cloud sigue siendo Supabase. |
+
+Detalle tabla por tabla: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**. Cierra opciones globales en [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
+
+---
+
 ## Documentacion
 
 - [ROADMAP.md](./ROADMAP.md) — Plan completo de fases y tickets
 - [docs/Esqueleto.md](./docs/Esqueleto.md) — Alcance funcional ERP + CRM
+- [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md) — Stack tecnológico por fase (Satélite, ERP, CRM, offline)
 - [docs/GITHUB_PROJECTS.md](./docs/GITHUB_PROJECTS.md) — Tablero ultra-lean (solo dev), vistas, pack experto, scripts
 - [docs/GITHUB_PROJECT_WORKFLOWS.md](./docs/GITHUB_PROJECT_WORKFLOWS.md) — Workflows del Project (activar 2–7)
 - [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
