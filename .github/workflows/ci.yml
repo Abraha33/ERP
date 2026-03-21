@@ -1,7 +1,7 @@
 name: CI Pipeline
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
     branches: [ main ]
 jobs:
@@ -12,5 +12,9 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: '20'
-    - run: echo "Lint OK"
-    - run: echo "Tests OK"
+    - name: Install dependencies
+      run: echo "npm ci aqui cuando haya package.json"
+    - name: Lint
+      run: echo "Lint OK"
+    - name: Tests
+      run: echo "Tests OK"

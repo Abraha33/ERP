@@ -1,33 +1,29 @@
-# Contexto para el Asistente de IA
-# Completar DESPUES de cerrar ADR-001 (Issue T0.1.3)
-# Pegar al inicio de CADA sesion de trabajo
+# CURSOR CONTEXT - ERP SATELITE
 
-Stack tecnologico (pendiente)
-- Frontend movil + web: por definir
-- Backend cloud: por definir
-- Base de datos local Fase 5: por definir
-- CI/CD: por definir
+## Proyecto
+ERP+CRM construido por un solo founder (25h/semana) en 14 meses.
+Un solo codebase React Native + Expo para App movil (campo) y Web (oficina).
 
-Reglas de codigo (pendiente)
-- Lenguaje principal: por definir
-- Manejo de errores: por definir
-- Estructura de carpetas: por definir
-- Convenciones de nombres: por definir
+## Stack
+- Frontend: React Native + Expo SDK, NativeWind, Expo Router
+- Offline: WatermelonDB
+- Backend: Supabase (PostgreSQL 16, Auth, Storage, Realtime, Edge Functions)
+- Scraper: Python 3.12 + Playwright
+- DevOps: GitHub Actions
+- IA: Cursor AI
 
-Arquitectura del sistema
-FASE 1 - App Satelite    movil, Excel del SAE, operaciones de campo
-FASE 2 - ERP Basico      catalogos, compras, ventas, inventario
-FASE 3 - ERP Completo    contabilidad, RRHH, reportes
-FASE 4 - CRM             comercial sobre el ERP
-FASE 5 - Offline-First   resiliencia sin internet
+## Estructura
+app/          → React Native + Expo
+scraper/      → Python/Playwright
+database/
+  migrations/ → SQL migraciones
+  policies/   → RLS policies
+ADR/          → Architecture Decision Records
+docs/         → Documentacion tecnica
 
-Roles
-- administrador: control total
-- encargado: arqueo de caja, aprobacion de traslados
-- empleado: recepcion, traslados, misiones de conteo
-
-Estado actual (actualizar antes de cada sesion)
-- Fase activa:
-- Sprint activo:
-- Ultimo issue completado:
-- Trabajando en:
+## Reglas Cursor
+- Siempre TypeScript estricto
+- NativeWind para todos los estilos
+- Supabase client en lib/supabase.ts
+- Variables de entorno solo desde app.config.ts
+- Commits: feat|fix|docs|chore(scope): descripcion

@@ -1,13 +1,18 @@
 ---
 name: Ticket Roadmap
 about: Ticket granular del roadmap ERP Satelite
+title: 'Txx: '
+labels: ''
 ---
-## Sprint
-## Descripcion
-## Tecnologias
-## Estimacion de horas
+## Objetivo
+## Dependencias
+## Tech
+## Horas estimadas
+## Checklist
+- [ ] Paso 1
 ## Definition of Done
 - [ ] Funciona en Android fisico
-- [ ] Funciona en web
-- [ ] RLS correcto
-- [ ] Commit con prefijo (feat/fix/docs/chore)
+- [ ] Funciona en web (expo start --web)
+- [ ] RLS verificado
+- [ ] Sin errores en consola
+- [ ] Commit: feat|fix|docs|chore(scope): descripcion
