@@ -54,7 +54,9 @@ Con los formatos anteriores, los **T##** quedan agrupados y ordenados; los **E##
 
 ## Import CSV
 
-El script [scripts/import-backlog-to-github.py](../scripts/import-backlog-to-github.py) formatea títulos como `[ID] título`. Los IDs del CSV se normalizan a `[E##-S##-##]` al crear issues.
+El script [scripts/import-backlog-to-github.py](../scripts/import-backlog-to-github.py) formatea títulos como `[ID] título`. Los IDs del CSV se normalizan a `[E##-S##-##]` al crear issues. Asigna **milestone por sprint** dentro de cada fase 1–5 cuando aplica (ver `scripts/roadmap_milestones.py`). Antes: `python scripts/ensure_roadmap_milestones.py`.
+
+Para alinear milestones en issues ya existentes: `python scripts/sync_issue_milestones.py --dry-run` → `--apply`. Tickets **`T{phase}.{sprint}.*`** usan `Fase {phase} · S{sprint} — …` (Fase **1** = ERP Satélite, S1–S5; F2–F4 y F5 según ROADMAP). También existen rollups `Fase N — …` por fase. CSV: sprints **1–6** → F1; **7–10** → F2; meses 4–7 / 8–10 también mapean a sprints F2/F3.
 
 ---
 

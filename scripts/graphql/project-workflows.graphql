@@ -1,0 +1,16 @@
+query ProjectWorkflows($n: Int!) {
+  viewer {
+    projectV2(number: $n) {
+      id
+      title
+      workflows(first: 30) {
+        nodes {
+          id
+          number
+          name
+          enabled
+        }
+      }
+    }
+  }
+}

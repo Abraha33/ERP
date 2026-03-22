@@ -1,0 +1,22 @@
+# Obsoleto para ERP Project 11: el tablero alineado con Factura SaaS usa
+# replace-status-priority-board.graphql + migrate_status_to_priority_board.py
+
+mutation ReplaceStatusLean($fieldId: ID!) {
+  updateProjectV2Field(input: {
+    fieldId: $fieldId
+    singleSelectOptions: [
+      { name: "Backlog", color: GRAY, description: "Ideas y trabajo en los proximos 14 meses" },
+      { name: "To Do", color: BLUE, description: "Sprint actual: maximo 5-7 tickets" },
+      { name: "In Progress", color: YELLOW, description: "Solo 1 tarea. Foco absoluto." },
+      { name: "Testing / QA", color: PURPLE, description: "Probando en celular fisico o navegador" },
+      { name: "Done", color: GREEN, description: "Tarea terminada" }
+    ]
+  }) {
+    projectV2Field {
+      ... on ProjectV2SingleSelectField {
+        id
+        options { id name }
+      }
+    }
+  }
+}

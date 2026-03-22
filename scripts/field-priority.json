@@ -1,0 +1,10 @@
+{
+  "name": "Priority",
+  "data_type": "single_select",
+  "single_select_options": [
+    { "name": "P0", "color": "RED", "description": "Urgente / bloqueante" },
+    { "name": "P1", "color": "ORANGE", "description": "Alta — sprint actual" },
+    { "name": "P2", "color": "BLUE", "description": "Media — siguiente o backlog cercano" },
+    { "name": "P3", "color": "GRAY", "description": "Baja — cuando sobre tiempo" }
+  ]
+}

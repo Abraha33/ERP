@@ -1,0 +1,15 @@
+query ProjectItemsNext($id: ID!, $after: String!) {
+  node(id: $id) {
+    ... on ProjectV2 {
+      items(first: 100, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          id
+        }
+      }
+    }
+  }
+}

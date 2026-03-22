@@ -1,7 +1,9 @@
 # ADR-001 - Decision de Stack Tecnologico
 
-Estado: PENDIENTE - Resolver en Issue T0.1.3
+Estado: PENDIENTE - Resolver en Issue T0.1.3  
 Decidido por: Abraha33 - acaceres163@unab.edu.co
+
+**Stack desglosado por fase del producto** (Satélite, ERP básico, ERP completo, CRM, offline): ver [docs/STACK_POR_FASE.md](../docs/STACK_POR_FASE.md). Este ADR fija la **decisión global**; ese documento indica **qué entra en cada etapa** y qué tecnologías se **añaden** al avanzar de fase.
 
 Contexto
 - Compila para movil Y web desde un solo codebase
@@ -34,5 +36,5 @@ Consecuencias
 
 Tras cerrar este ADR
 1. Actualizar CURSOR_CONTEXT.md
-2. Actualizar README.md
+2. Actualizar README.md y [docs/STACK_POR_FASE.md](../docs/STACK_POR_FASE.md) (celdas "A definir" / opciones elegidas)
 3. Marcar T0.1.3 como Done

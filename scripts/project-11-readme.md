@@ -92,7 +92,7 @@ Orden: **Icebox** → **Backlog** → **Ready** → **In progress** → **In rev
 | **Foco semana** | Board | [views/10](https://github.com/users/Abraha33/projects/11/views/10) | Solo **Ready + In progress + In review**. Pack experto. |
 | **Roadmap · 14 meses** | Roadmap | [views/8](https://github.com/users/Abraha33/projects/11/views/8) | Timeline con **Roadmap · inicio/fin**, hitos, filtro `-status:Done`. |
 
-**Priority board:** campo **Priority (P0–P3)**; filtros `no:Priority` / `has:Priority` — [guía](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#filtros-priority-con-y-sin-valor). Paridad visual Factura SaaS: [GITHUB_PROJECTS.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#paridad-visual-con-tu-captura-factura-saas-priority-board). `python scripts/list_items_missing_priority.py` lista ítems sin prioridad. Opcional: **Foco de hoy** con **+ New view**.
+**Priority board:** campo **Priority (P0–P3)**; filtros `no:Priority` / `has:Priority` — [guía](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#filtros-priority-con-y-sin-valor). Paridad visual Factura SaaS: [GITHUB_PROJECTS.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#paridad-visual-con-tu-captura-factura-saas-priority-board). `python scripts/list_items_missing_priority.py` lista ítems sin prioridad. Para acotar por capa usa `label:role/...` en el filtro de **esta u otra vista existente** (no hace falta vista nueva solo para rol).
 
 ### Campos personalizados (Project 11)
 
@@ -130,27 +130,20 @@ El workflow [daily-progress.yml](https://github.com/Abraha33/erp-satelite/blob/m
 
 ### 3.2 Ramas Git y 3.3 roles
 
-**Ramas:** `main` (estable), **`develop`** (integracion diaria), ramas de trabajo `feature/...` desde `develop`. Un **fork** en GitHub es copia del repo en otra cuenta; no sustituye a `develop`. Detalle: [README §3.2–3.3](https://github.com/Abraha33/erp-satelite/blob/main/README.md#32-fork-vs-ramas-git-y-flujo-main--develop). Labels `role/*`: `python scripts/ensure_role_labels.py`.
+**Ramas:** solo **`main`** (estable) y **`develop`** (integracion) como permanentes en el remoto; ramas temporales opcionales para PR a `develop`. Un **fork** en GitHub es copia del repo en otra cuenta; no sustituye a `develop`. Detalle: [README §3.2–3.3](https://github.com/Abraha33/erp-satelite/blob/main/README.md#32-ramas-git-solo-main-y-develop). Etiquetas mínimas: `python scripts/ensure_role_labels.py`.
 
 ---
 
-## 4. Sistema de Labels
+## 4. Sistema de Labels (mínimo)
 
-**Colores** (Status / Priority): [paleta](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#paleta-de-color-project-11).
+**Colores** (Status / Priority en el Project): [paleta](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#paleta-de-color-project-11).
 
-**Vista Equipo:** labels `role/*`, `area/*` y `tipo/*` — [tabla completa](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#etiquetas-en-issues-chips-en-team-view). Filtros por rol: [vistas sugeridas](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#vistas-por-rol-en-el-project).
+**Etapas** (Backlog, In progress, Done, …): **campo Status** del Project — no etiquetas. **Vista Equipo:** `role/*` + `priority/P*` — [política](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#etiquetas-en-issues-mínimo-rol--prioridad). Filtro por rol: `label:role/...` — [guía](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md#filtrar-por-rol-sin-vistas-nuevas).
 
 | Label | Uso |
 |-------|-----|
-| `role/frontend` … `role/docs-adr` | **Un** rol por issue (enfoque / filtro del dia). Ver README §3.3 y §4. |
-| `alta`, `media`, `baja` | Prioridad (no duplicar con campo Priority). |
-| `backend`, `frontend`, `database`, `docs` | Legacy; preferir `role/*`. |
-| `MVP` | Bloqueante para MVP. |
-| `Sprint-N` | Asociado al sprint N. |
-| `fase-0` … `fase-5` | Fase del roadmap. |
-| `area/app`, `area/api`, `area/db`, `area/docs` | Ambito tecnico. |
-| `area/web`, `area/mobile` | Opcional bajo `role/frontend`. |
-| `tipo/bug`, `tipo/feature`, `tipo/chore` | Tipo de trabajo. |
+| `role/frontend` … `role/docs-adr` | **Un** rol por issue — [README §4](https://github.com/Abraha33/erp-satelite/blob/main/README.md#4-sistema-de-labels-mínimo). |
+| `priority/P0` … `priority/P3` | **Como máximo uno**; alinear con campo **Priority** del tablero. |
 
 ---
 
@@ -159,7 +152,7 @@ El workflow [daily-progress.yml](https://github.com/Abraha33/erp-satelite/blob/m
 Siguen el [ROADMAP.md](https://github.com/Abraha33/erp-satelite/blob/main/ROADMAP.md):
 
 - **Fase 0** — Fundacion (repo, stack, Excel)
-- **Fase 1** — App Satelite MVP (Mes 1–3)
+- **Fase 1** — ERP Satélite / MVP (Mes 1–3); sprints S1–S5 en milestones `Fase 1 · S# — …`; rollup `Fase 1 — ERP Satélite (MVP)`; **Fase 0 — Fundación** para T0.*
 - **Fase 2** — ERP Basico (Mes 4–7)
 - **Fase 3** — ERP Completo (Mes 8–10)
 - **Fase 4** — CRM (Mes 11–12)
@@ -171,7 +164,7 @@ Siguen el [ROADMAP.md](https://github.com/Abraha33/erp-satelite/blob/main/ROADMA
 
 - **Titulo:** prefijo semantico + frase clara. Ejemplos: `[Setup] Inicializar Expo en blanco`, `[DB] Tabla productos y RLS`, `[Scraper] Login en SAE con Playwright`. Evita titulos solo tipo `T3.1.1: Provider factory` como titulo principal; el ID numerico puede ir en el cuerpo.
 - **Cuerpo:** descripcion, criterios de aceptacion, enlace a milestone o fase.
-- **Labels:** un `role/*` para triage; `area/*`, `tipo/*`, `fase-*` segun convenga.
+- **Labels:** `role/*` + opcional `priority/P*`; etapas = **Status** del Project.
 - **Milestone:** sprint o fase.
 
 ---
@@ -187,7 +180,7 @@ Siguen el [ROADMAP.md](https://github.com/Abraha33/erp-satelite/blob/main/ROADMA
 ## 8. Reglas del proyecto
 
 - **WIP = 1** en **In progress** (solo dev).
-- Trabajo en **`feature/*`** desde **`develop`**; merge a `develop`; `main` por release; evitar commit directo a `main` salvo hotfix.
+- Integrar en **`develop`**; **`main`** solo por release/hotfix; solo esas dos ramas permanentes en remoto (ver README §3.2).
 - PRs pequenos; un issue = un PR cuando sea posible.
 - Documentar decisiones en ADR/ cuando afecten arquitectura.
 - No commitear secrets; usar .env y variables de entorno.

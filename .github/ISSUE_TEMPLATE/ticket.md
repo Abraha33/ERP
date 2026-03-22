@@ -4,6 +4,10 @@ about: Ticket granular del roadmap ERP Satelite
 title: '[T01] '
 labels: ''
 ---
+<!--
+  Etiquetas mínimas: un role/* y opcional priority/P0–P3 (python scripts/ensure_role_labels.py).
+  Backlog / In progress / Done = campo Status del GitHub Project, no labels.
+-->
 ## Objetivo
 ## Dependencias
 ## Tech

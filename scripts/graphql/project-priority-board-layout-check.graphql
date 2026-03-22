@@ -1,0 +1,41 @@
+query PriorityBoardLayoutCheck($projectNumber: Int!) {
+  viewer {
+    projectV2(number: $projectNumber) {
+      title
+      views(first: 25) {
+        nodes {
+          number
+          name
+          groupByFields(first: 5) {
+            nodes {
+              __typename
+              ... on ProjectV2SingleSelectField {
+                name
+              }
+              ... on ProjectV2Field {
+                name
+              }
+              ... on ProjectV2IterationField {
+                name
+              }
+            }
+          }
+          verticalGroupByFields(first: 5) {
+            nodes {
+              __typename
+              ... on ProjectV2SingleSelectField {
+                name
+              }
+              ... on ProjectV2Field {
+                name
+              }
+              ... on ProjectV2IterationField {
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

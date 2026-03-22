@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """
 Import SCRUM_5MONTH_TICKETS.csv to GitHub Issues and add to Project 11 (ERP).
+
+Milestone por fila: Fase 0–5; si Month es 4–7 asigna sprint Fase 2 (S1–S4), si 8–10 sprint Fase 3 (S1–S3).
+Antes: python scripts/ensure_roadmap_milestones.py
+
 Run from erp-satelite/ with: python scripts/import-backlog-to-github.py
 """
 import csv
@@ -10,6 +14,10 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+_SCRIPTS = Path(__file__).resolve().parent
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+from roadmap_milestones import milestone_title_for_csv_row  # noqa: E402
 # CSV lives in workspace root docs/ (or erp-satelite/docs/ if copied)
 CSV_PATH = (REPO_ROOT.parent / "docs" / "SCRUM_5MONTH_TICKETS.csv").resolve()
 if not CSV_PATH.exists():
@@ -60,6 +68,9 @@ def create_issue(row: dict) -> str | None:
     body = "\n\n".join(body_parts)
 
     args = ["issue", "create", "--title", display_title, "--body", body]
+    ms = milestone_title_for_csv_row(row)
+    if ms:
+        args.extend(["--milestone", ms])
     code, out = run_gh(args)
     if code != 0:
         print(f"  ERROR creating {ticket_id}: {out}", file=sys.stderr)

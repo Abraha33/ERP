@@ -1,0 +1,5 @@
+{
+  "name": "Foco semana",
+  "layout": "board",
+  "filter": "status:Ready OR status:\"In progress\" OR status:\"In review\""
+}

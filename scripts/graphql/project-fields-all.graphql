@@ -1,0 +1,15 @@
+query ProjectFieldsAll($id: ID!) {
+  node(id: $id) {
+    ... on ProjectV2 {
+      fields(first: 30) {
+        nodes {
+          __typename
+          ... on ProjectV2FieldCommon {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 El código vive en **`erp-satelite`**; el [Project 11](https://github.com/users/Abraha33/projects/11) es el tablero del producto. El diseño admite **equipo**, pero en la práctica **todo lo asignas a ti mismo**: usuario GitHub **[@Abraha33](https://github.com/Abraha33)**. En cada issue/proyecto, **Assignees** = tu cuenta; la vista **Mis ítems** usa el filtro `assignee:@me`, que es **el mismo usuario** (no hay otro dev en el tablero hoy).
 
-**Git (ramas, no forks):** el flujo canonico es **`main`** (estable) + **`develop`** (integracion) + ramas **`feature/...`** desde `develop`. Un *fork* de GitHub es otra copia del repo (contribuciones externas); no es la rama `develop`. Tabla y rutina en el [README §3.2](https://github.com/Abraha33/erp-satelite/blob/main/README.md#32-fork-vs-ramas-git-y-flujo-main--develop).
+**Git (ramas, no forks):** en el remoto solo **`main`** (estable) y **`develop`** (integracion); ramas temporales opcionales para PR a `develop`. Un *fork* de GitHub es otra copia del repo (contribuciones externas); no es la rama `develop`. Tabla y rutina en el [README §3.2](https://github.com/Abraha33/erp-satelite/blob/main/README.md#32-ramas-git-solo-main-y-develop).
 
 **Workflows (7 automatizaciones):** no hay API para encenderlos; guía en [docs/GITHUB_PROJECT_WORKFLOWS.md](./GITHUB_PROJECT_WORKFLOWS.md) (sección *Activar workflows nº 2 a 7*). Estado actual: `python scripts/project_workflows_status.py --from-num 2 --to-num 7` → [Workflows en el navegador](https://github.com/users/Abraha33/projects/11/workflows).
 
@@ -62,7 +62,7 @@ Debe salir **OK** con `layout: TABLE_LAYOUT`, `groupByFields` con **Status** y `
 
 ### Columnas extra (opcional, ERP)
 
-Cuando quieras más contexto sin perder el aspecto Factura, añade en **Fields**, por ejemplo: **Repository**, **Assignees**, **Labels**, **Priority**, **Milestone**, **Status update**. Los chips de **Labels** siguen la [tabla de etiquetas](#etiquetas-en-issues-chips-en-team-view) más abajo.
+Cuando quieras más contexto sin perder el aspecto Factura, añade en **Fields**, por ejemplo: **Repository**, **Assignees**, **Labels** (solo `role/*` y `priority/P*`), **Priority**, **Milestone**, **Status update**. Política de etiquetas: [Etiquetas en issues (mínimo)](#etiquetas-en-issues-mínimo-rol--prioridad).
 
 ### Orden sugerido en la UI (~2 min)
 
@@ -101,37 +101,20 @@ En `scripts/` están `patch-view-team-visible-fields.json` (IDs REST de las **ci
 
 `view-team-table.json` documenta el mismo `layout: table` y columnas para **recrear** la vista si la borras.
 
-### Etiquetas en issues (chips en Team view)
+### Etiquetas en issues (mínimo: rol + prioridad)
 
-Recomendación: **no** duplicar en etiquetas lo que ya pone un campo del proyecto (**Status**, **Priority**). Usa labels para **ámbito** y **tipo** (como los cuadraditos de color del board de referencia):
+**Política:** en el repo solo **`role/*`** y **`priority/P0`…`priority/P3`**. No hace falta `area/*`, `tipo/*`, `fase-*`, `MVP`, `Sprint-N`, etc.: el **ámbito** y el **tipo** van en el cuerpo del issue; la **fase** en **Milestone**; las **etapas** (backlog, en curso, hecho) en el **campo Status** del Project — no como etiquetas.
 
-| Label (ejemplo) | Uso |
-|-----------------|-----|
-| `area/app` | App móvil / Expo |
-| `area/api` | API / backend |
-| `area/db` | Supabase / SQL |
-| `area/docs` | Solo documentación |
-| `area/web` | UI web (Expo web / SPA) — opcional |
-| `area/mobile` | Comportamiento / build móvil nativo — opcional |
-| `role/frontend` | Mismo ámbito que `area/app`; etiqueta de **enfoque diario** |
-| `role/backend` | API y lógica de negocio (`area/api`) |
-| `role/database` | Schema, RLS, SQL (`area/db`) |
-| `role/platform` | Repo, CI, scripts, env, hygiene del Project |
-| `role/integration` | Excel SAE, scraper, import/export |
-| `role/qa-release` | Pruebas dispositivo, verificación pre-release |
-| `role/crm` | WhatsApp, inbox, pipeline (fase CRM) |
-| `role/offline-sync` | DB local, sync, conflictos |
-| `role/security` | Auth, secretos, hardening |
-| `role/docs-adr` | README, ADR, guías (`area/docs`) |
-| `tipo/bug` | Corrección |
-| `tipo/feature` | Funcionalidad |
-| `tipo/chore` | Mantenimiento |
-| `MVP` | Bloquea primer release |
-| `fase-0` … `fase-5` | Alineado al roadmap (ya en README) |
+| Label | Uso |
+|-------|-----|
+| `role/*` | Uno por issue — capa de trabajo (tabla completa en [README §4](https://github.com/Abraha33/erp-satelite/blob/main/README.md#4-sistema-de-labels-mínimo)). |
+| `priority/P0` … `priority/P3` | Opcional en chips; alinea con el campo **Priority** del tablero (mismo P0–P3). |
 
-**Crear labels `role/*` en el repo:** desde `erp-satelite/` ejecuta `python scripts/ensure_role_labels.py` (idempotente).
+**Crear labels en el repo:** `python scripts/ensure_role_labels.py` (idempotente: `role/*` + `priority/*`).
 
 **Alinear issues con la política (sin duplicar legacy):** `python scripts/harmonize_legacy_role_labels.py` (quita `frontend`/`backend`/`database`/`docs` cuando ya existe el `role/*` equivalente). Con `--dry-run` primero.
+
+**Visor local (issues en GitHub por `role/*`, sin API):** en el monorepo `ERP1`, abre [docs/TICKETS_POR_ROL.md](../../docs/TICKETS_POR_ROL.md) o [docs/visor-tickets-por-rol.html](../../docs/visor-tickets-por-rol.html) en el navegador.
 
 ### Filtrar por rol **sin** vistas nuevas
 
@@ -151,13 +134,13 @@ Recomendación: **no** duplicar en etiquetas lo que ya pone un campo del proyect
 
 **Importante — no “ensucies” la vista guardada:** si en el menú de la vista **guardas** un filtro fijo por rol, esa pestaña dejará de mostrar el tablero completo. Lo recomendable en **solo dev** es usar el filtro de rol **solo mientras trabajas** y luego **quitar** la parte `label:role/...` (o volver al filtro por defecto de esa vista), para que Priority / Mis ítems sigan sirviendo como inventario global.
 
-**Clasificación en issues (recomendación):**
+**Clasificación en issues:**
 
-1. **Un** label `role/*` por issue (frontend, backend, database, platform, integration, qa-release, crm, offline-sync, security, docs-adr) — es la capa donde cae la mayor parte del esfuerzo.
-2. Evita duplicar con los labels planos `frontend`, `backend`, `database`, `docs` si ya existe el `role/*` equivalente; en issues viejos puedes quitar el legacy poco a poco.
-3. **`area/*`** y **`tipo/*`** siguen siendo opcionales para matizar; **Priority** y **Status** son **campos del Project**, no sustitutos en labels.
+1. **Un** `role/*` por issue.
+2. **Como máximo un** `priority/P*`; el **Priority board** ordena por el **campo** Priority del Project — mantén campo y label coherentes.
+3. **Status** del Project = etapa (Backlog, In progress, …); no uses etiquetas para eso.
 
-Crea los que falten en el repo **`erp-satelite`** y asígnalos al crear o editar el issue; activa la columna **Labels** en **Fields** si quieres verlos en esta vista. **No** uses labels solo para sustituir **Priority** (P0–P3): el Priority board ordena filas por el **campo** Priority.
+Activa la columna **Labels** en **Fields** si quieres ver rol + prioridad en la tabla; **Status** y **Priority** como campos del proyecto.
 
 ### Si todo está asignado a ti
 
@@ -354,16 +337,9 @@ La referencia [Project 5 — Factura SaaS](https://github.com/users/Abraha33/pro
 
 **Diferencias de color respecto a la captura:** en Factura **Backlog** suele verse verde y **Done** naranja; en ERP la [paleta actual](#paleta-de-color-project-11) usa **Backlog gris** y **Done verde** a propósito (nevera rosa, etc.). Si en el futuro quieres **clonar exactamente** los colores Factura, habría que cambiar opciones en `replace-status-priority-board.graphql` y volver a correr `migrate_status_to_priority_board.py`.
 
-### ¿Cómo ver la prioridad: campo del proyecto o labels?
+### Prioridad: campo del Project y etiqueta `priority/P*`
 
-**Recomendación: el campo Priority (P0–P3), no labels duplicados.**
-
-| Enfoque | Ventaja | Inconveniente |
-|---------|---------|----------------|
-| **Campo Priority** en el proyecto | Es lo que usa **Group by** en el Priority board; cada nivel tiene **color** (rojo → gris). Una sola fuente de verdad. | Hay que rellenarlo en cada tarjeta (hoy muchas pueden estar vacías → fila **No priority**). |
-| **Labels** tipo `P1`, `priority-high` | Se ven en listas de issues del repo. | Se **desincroniza** del board si el campo Priority dice otra cosa; no mueve la fila del swimlane. |
-
-**Uso de labels:** déjalos para **área** y **tipo** (`area/app`, `tipo/feature`, `MVP`, `fase-1`…), como en [Etiquetas en issues (chips en Team view)](#etiquetas-en-issues-chips-en-team-view). Así en el **Priority board** la urgencia la marca solo **Priority**; en la **tabla Equipo** los labels aportan contexto sin duplicar P0–P3.
+El **Priority board** agrupa por el **campo** **Priority** (P0–P3). Las etiquetas **`priority/P0`…`priority/P3`** son el único otro lugar donde marcas prioridad en el issue: úsalas **en el mismo nivel** que el campo, para filtros en la lista de issues del repo (`label:priority/P1`) y chips en la vista Equipo. Evita mezclas con `alta`/`media`/`baja` u otras etiquetas viejas.
 
 ### Resumen de diseño (Priority board)
 

@@ -1,0 +1,15 @@
+query {
+  viewer {
+    projectV2(number: 11) {
+      id
+      title
+      views(first: 10) {
+        nodes {
+          id
+          number
+          name
+        }
+      }
+    }
+  }
+}

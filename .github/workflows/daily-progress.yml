@@ -1,0 +1,376 @@
+name: Daily Progress
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    types: [opened, closed]
+  schedule:
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  repository-projects: write
+
+jobs:
+  progress-tracker:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PROJECTS_TOKEN || github.token }}
+      OWNER: Abraha33
+      REPO: erp-satelite
+      REPO_FULL: Abraha33/erp-satelite
+      PROJECT_ID: PVT_kwHOCgQ2Ec4BSVkL
+      STATUS_FIELD_ID: PVTSSF_lAHOCgQ2Ec4BSVkLzg_5tbo
+      STATUS_BACKLOG_ID: 7e4bdf49
+      STATUS_IN_PROGRESS_ID: 9cc31dba
+      STATUS_IN_REVIEW_ID: 2f8c497c
+      STATUS_DONE_ID: 3b5ccf7e
+
+    steps:
+      - name: Route event and update project
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if ! command -v jq >/dev/null 2>&1; then
+            echo "jq is required."
+            exit 1
+          fi
+
+          PROJECT_ITEMS_QUERY='
+          query($project: ID!, $after: String) {
+            node(id: $project) {
+              ... on ProjectV2 {
+                items(first: 100, after: $after) {
+                  pageInfo {
+                    hasNextPage
+                    endCursor
+                  }
+                  nodes {
+                    id
+                    content {
+                      ... on Issue {
+                        number
+                        repository {
+                          nameWithOwner
+                        }
+                      }
+                    }
+                    fieldValueByName(name: "Status") {
+                      ... on ProjectV2ItemFieldSingleSelectValue {
+                        name
+                        optionId
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }'
+
+          PR_LINKED_ISSUES_QUERY='
+          query($owner: String!, $repo: String!, $number: Int!) {
+            repository(owner: $owner, name: $repo) {
+              pullRequest(number: $number) {
+                closingIssuesReferences(first: 50) {
+                  nodes {
+                    number
+                  }
+                }
+              }
+            }
+          }'
+
+          UPDATED_ISSUES_QUERY='
+          query($searchQuery: String!) {
+            search(type: ISSUE, query: $searchQuery, first: 100) {
+              nodes {
+                ... on Issue {
+                  number
+                  title
+                  updatedAt
+                  url
+                }
+              }
+            }
+          }'
+
+          UPDATE_STATUS_MUTATION='
+          mutation($project: ID!, $item: ID!, $field: ID!, $option: String!) {
+            updateProjectV2ItemFieldValue(
+              input: {
+                projectId: $project
+                itemId: $item
+                fieldId: $field
+                value: {singleSelectOptionId: $option}
+              }
+            ) {
+              projectV2Item {
+                id
+              }
+            }
+          }'
+
+          get_project_item_json() {
+            local issue_number="$1"
+            local after=""
+            local has_next="true"
+
+            while [[ "$has_next" == "true" ]]; do
+              local response
+              response="$(gh api graphql \
+                -f query="$PROJECT_ITEMS_QUERY" \
+                -f project="$PROJECT_ID" \
+                -f after="$after")"
+
+              local match
+              match="$(echo "$response" | jq -c \
+                --arg repo "$REPO_FULL" \
+                --argjson num "$issue_number" \
+                '.data.node.items.nodes[]
+                 | select(.content != null)
+                 | select(.content.number == $num)
+                 | select(.content.repository.nameWithOwner == $repo)
+                 | {
+                     itemId: .id,
+                     statusName: (.fieldValueByName.name // ""),
+                     statusOptionId: (.fieldValueByName.optionId // "")
+                   }' | head -n1)"
+
+              if [[ -n "${match}" ]]; then
+                echo "$match"
+                return 0
+              fi
+
+              has_next="$(echo "$response" | jq -r '.data.node.items.pageInfo.hasNextPage')"
+              after="$(echo "$response" | jq -r '.data.node.items.pageInfo.endCursor')"
+              if [[ "$after" == "null" ]]; then
+                after=""
+              fi
+            done
+
+            return 1
+          }
+
+          set_issue_project_status() {
+            local issue_number="$1"
+            local target_option_id="$2"
+            local target_label="$3"
+            local from_option_id="${4:-}"
+
+            local item_json
+            if ! item_json="$(get_project_item_json "$issue_number")"; then
+              echo "Issue #$issue_number is not in Project #11. Skipping."
+              return 0
+            fi
+
+            local item_id current_status_opt current_status_name
+            item_id="$(echo "$item_json" | jq -r '.itemId')"
+            current_status_opt="$(echo "$item_json" | jq -r '.statusOptionId')"
+            current_status_name="$(echo "$item_json" | jq -r '.statusName')"
+
+            if [[ -n "$from_option_id" && "$current_status_opt" != "$from_option_id" ]]; then
+              echo "Issue #$issue_number status is '$current_status_name'; not changing (requires from option $from_option_id)."
+              return 0
+            fi
+
+            if [[ "$current_status_opt" == "$target_option_id" ]]; then
+              echo "Issue #$issue_number already in '$target_label'."
+              return 0
+            fi
+
+            gh api graphql \
+              -f query="$UPDATE_STATUS_MUTATION" \
+              -f project="$PROJECT_ID" \
+              -f item="$item_id" \
+              -f field="$STATUS_FIELD_ID" \
+              -f option="$target_option_id" >/dev/null
+
+            echo "Issue #$issue_number -> $target_label"
+          }
+
+          linked_issues_from_pr() {
+            local pr_number="$1"
+            gh api graphql \
+              -f query="$PR_LINKED_ISSUES_QUERY" \
+              -f owner="$OWNER" \
+              -f repo="$REPO" \
+              -F number="$pr_number" \
+              --jq '.data.repository.pullRequest.closingIssuesReferences.nodes[].number' || true
+          }
+
+          process_push() {
+            local branch
+            branch="$(jq -r '.ref // ""' "$GITHUB_EVENT_PATH" | sed 's#refs/heads/##')"
+
+            local commit_lines
+            commit_lines="$(jq -r '
+              .commits[]
+              | "- `" + (.id[0:7]) + "` "
+                + ((.message | split("\n")[0]) // "")
+                + " — @"
+                + ((.author.username // .author.name // "unknown") | tostring)
+            ' "$GITHUB_EVENT_PATH")"
+
+            if [[ -z "$commit_lines" ]]; then
+              echo "No commits in push payload."
+              return 0
+            fi
+
+            local issues
+            issues="$(jq -r '.commits[].message' "$GITHUB_EVENT_PATH" \
+              | grep -Eo '#[0-9]+' \
+              | tr -d '#' \
+              | sort -u || true)"
+
+            if [[ -z "$issues" ]]; then
+              echo "Push has no issue references (#123)."
+              return 0
+            fi
+
+            for issue in $issues; do
+              local body
+              body=$(
+                cat <<EOF
+### Progreso diario (push en \`$branch\`)
+
+$commit_lines
+EOF
+              )
+
+              gh issue comment "$issue" --repo "$REPO_FULL" --body "$body"
+              set_issue_project_status "$issue" "$STATUS_IN_PROGRESS_ID" "In progress" "$STATUS_BACKLOG_ID"
+            done
+          }
+
+          process_pr_opened() {
+            local pr_number
+            pr_number="$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")"
+            local issues
+            issues="$(linked_issues_from_pr "$pr_number")"
+            if [[ -z "$issues" ]]; then
+              echo "PR #$pr_number has no closingIssuesReferences."
+              return 0
+            fi
+            while read -r issue; do
+              [[ -z "$issue" ]] && continue
+              set_issue_project_status "$issue" "$STATUS_IN_REVIEW_ID" "In review"
+            done <<< "$issues"
+          }
+
+          process_pr_closed() {
+            local pr_number merged issues target_id target_name
+            pr_number="$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")"
+            merged="$(jq -r '.pull_request.merged' "$GITHUB_EVENT_PATH")"
+            issues="$(linked_issues_from_pr "$pr_number")"
+            if [[ -z "$issues" ]]; then
+              echo "PR #$pr_number has no closingIssuesReferences."
+              return 0
+            fi
+
+            if [[ "$merged" == "true" ]]; then
+              target_id="$STATUS_DONE_ID"
+              target_name="Done"
+            else
+              target_id="$STATUS_BACKLOG_ID"
+              target_name="Backlog"
+            fi
+
+            while read -r issue; do
+              [[ -z "$issue" ]] && continue
+              set_issue_project_status "$issue" "$target_id" "$target_name"
+            done <<< "$issues"
+          }
+
+          process_daily_summary() {
+            local since_iso q issues commits_json
+            since_iso="$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)"
+            q="repo:$REPO_FULL is:issue is:open updated:>=$since_iso"
+
+            issues="$(gh api graphql \
+              -f query="$UPDATED_ISSUES_QUERY" \
+              -f searchQuery="$q" \
+              --jq '.data.search.nodes[] | @base64')"
+
+            if [[ -z "$issues" ]]; then
+              echo "No open issues with activity in last 24h."
+              return 0
+            fi
+
+            commits_json="$(gh api "repos/$REPO_FULL/commits?since=$since_iso&per_page=100")"
+
+            while read -r issue_b64; do
+              [[ -z "$issue_b64" ]] && continue
+              local issue_json issue_number issue_title status_name commit_refs authors changed_block body
+              issue_json="$(echo "$issue_b64" | base64 -d)"
+              issue_number="$(echo "$issue_json" | jq -r '.number')"
+              issue_title="$(echo "$issue_json" | jq -r '.title')"
+
+              status_name="$(get_project_item_json "$issue_number" | jq -r '.statusName' || true)"
+              if [[ -z "$status_name" ]]; then
+                status_name="(sin item en project)"
+              fi
+
+              commit_refs="$(echo "$commits_json" | jq -r --arg pat "#$issue_number" '
+                .[]
+                | select((.commit.message // "") | test($pat))
+                | "- `" + (.sha[0:7]) + "` "
+                  + ((.commit.message | split("\n")[0]) // "")
+                  + " — @"
+                  + ((.author.login // .commit.author.name // "unknown") | tostring)
+              ')"
+
+              authors="$(echo "$commits_json" | jq -r --arg pat "#$issue_number" '
+                .[]
+                | select((.commit.message // "") | test($pat))
+                | (.author.login // .commit.author.name // "unknown")
+              ' | sort -u | paste -sd ", " -)"
+
+              if [[ -n "$commit_refs" ]]; then
+                changed_block="$commit_refs"
+              else
+                changed_block="- Actividad en issue (sin commit referenciado con #$issue_number en las ultimas 24h)."
+              fi
+
+              if [[ -z "$authors" ]]; then
+                authors="(sin commits referenciados)"
+              fi
+
+              body=$(
+                cat <<EOF
+### Resumen diario (ultimas 24h)
+
+**Issue:** #$issue_number — $issue_title  
+**Estado actual en Project:** $status_name  
+**Quienes committearon:** $authors
+
+**Que cambio:**
+$changed_block
+EOF
+              )
+
+              gh issue comment "$issue_number" --repo "$REPO_FULL" --body "$body"
+            done <<< "$issues"
+          }
+
+          EVENT_NAME="${{ github.event_name }}"
+          EVENT_ACTION="${{ github.event.action || '' }}"
+
+          echo "Event: $EVENT_NAME / Action: $EVENT_ACTION"
+
+          if [[ "$EVENT_NAME" == "push" ]]; then
+            process_push
+          elif [[ "$EVENT_NAME" == "pull_request" && "$EVENT_ACTION" == "opened" ]]; then
+            process_pr_opened
+          elif [[ "$EVENT_NAME" == "pull_request" && "$EVENT_ACTION" == "closed" ]]; then
+            process_pr_closed
+          elif [[ "$EVENT_NAME" == "schedule" || "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            process_daily_summary
+          else
+            echo "No-op for this event."
+          fi

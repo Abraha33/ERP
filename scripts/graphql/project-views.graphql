@@ -1,0 +1,14 @@
+query ProjectViews($id: ID!) {
+  node(id: $id) {
+    ... on ProjectV2 {
+      views(first: 20) {
+        nodes {
+          id
+          name
+          number
+          layout
+        }
+      }
+    }
+  }
+}

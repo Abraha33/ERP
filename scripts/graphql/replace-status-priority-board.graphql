@@ -1,0 +1,44 @@
+mutation ReplaceStatusPriorityBoard($fieldId: ID!) {
+  updateProjectV2Field(input: {
+    fieldId: $fieldId
+    singleSelectOptions: [
+      {
+        name: "Icebox"
+        color: PINK
+        description: "Someday / algún día — ideas captured without polluting Backlog. Not in the active plan."
+      }
+      {
+        name: "Backlog"
+        color: GRAY
+        description: "In scope for the roadmap — planned work not yet in the sprint."
+      }
+      {
+        name: "Ready"
+        color: BLUE
+        description: "This is ready to be picked up"
+      }
+      {
+        name: "In progress"
+        color: YELLOW
+        description: "This is actively being worked on"
+      }
+      {
+        name: "In review"
+        color: PURPLE
+        description: "This item is in review"
+      }
+      {
+        name: "Done"
+        color: GREEN
+        description: "This has been completed"
+      }
+    ]
+  }) {
+    projectV2Field {
+      ... on ProjectV2SingleSelectField {
+        id
+        options { id name }
+      }
+    }
+  }
+}

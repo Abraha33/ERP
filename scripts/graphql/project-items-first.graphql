@@ -1,0 +1,15 @@
+query ProjectItemsFirst($id: ID!) {
+  node(id: $id) {
+    ... on ProjectV2 {
+      items(first: 100) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          id
+        }
+      }
+    }
+  }
+}
