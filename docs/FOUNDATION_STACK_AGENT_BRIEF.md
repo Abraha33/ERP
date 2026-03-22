@@ -68,14 +68,14 @@ Pedir explícitamente una salida con esta estructura:
 
 Alineación con `ERP1/ROADMAP.md` (granular):
 
-| Ticket | Nombre | Relación con el stack |
-|--------|--------|------------------------|
-| T0.1.1 | Repo + `main` / `develop` | Independiente del stack. |
-| T0.1.2 | Proyecto backend cloud | Depende de decisión capa B/C. |
-| T0.1.3 | ADR stack | **Salida principal** del otro agente. |
-| T0.1.4 | Variables de entorno | Lista del entregable (6). |
-| T0.1.5–T0.1.6 | Excel SAE | Parcialmente independiente; importación depende de B/E. |
-| T0.1.7 | CURSOR_CONTEXT | Actualizar tras cerrar ADR. |
+| Ticket | Nombre | Relación con el stack | Estado |
+|--------|--------|------------------------|--------|
+| T0.1.1 | Repo + `main` / `develop` | Independiente del stack. | Hecho |
+| T0.1.2 | Proyecto backend cloud | Supabase (capa B/C). | **En progreso** |
+| T0.1.3 | ADR stack | Decisión formal. | Hecho (ADR aceptada) |
+| T0.1.4 | Variables de entorno | `.env.example` + `.env` local. | **En progreso** |
+| T0.1.5–T0.1.6 | Excel SAE | [EXCEL_ANALYSIS.md](./EXCEL_ANALYSIS.md). | **En progreso** |
+| T0.1.7 | CURSOR_CONTEXT | Alineado con ADR. | Hecho (revisar al cerrar Supabase/Excel) |
 
 ---
 
@@ -100,4 +100,4 @@ Alineación con `ERP1/ROADMAP.md` (granular):
 
 ---
 
-*Última actualización del brief: 2026-03-22. Ajusta fechas o tickets si el roadmap cambia.*
+*Última actualización del brief: 2026-03-21 (estado fundación: Supabase / `.env` / Excel en progreso).*

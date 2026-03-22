@@ -104,5 +104,5 @@ La **lista canónica de nombres** (sin valores secretos) vive en **[`.env.exampl
 2. [x] [CURSOR_CONTEXT.md](../CURSOR_CONTEXT.md) alineado.
 3. [x] [README.md](../README.md) §10–11 y línea de stack inicial.
 4. [x] [STACK_POR_FASE.md](../docs/STACK_POR_FASE.md) — línea base y Fase 1 sin ambigüedad FastAPI.
-5. [x] Issues **T0.1.x** cerrados en GitHub con comentario (#1, #2, #3, #199–#201); #195 (T0.1.2 / Supabase) queda abierto hasta crear proyecto y `.env` local.
+5. [ ] **En progreso:** proyecto **Supabase** (T0.1.2 / p. ej. #195), **`.env` local** y entornos (T0.1.4), **Excel SAE** en [EXCEL_ANALYSIS.md](../docs/EXCEL_ANALYSIS.md) (T0.1.5–6). Issues de documentación #1, #2, #3, #199–#201 cerrados; cerrar issue Supabase cuando el proyecto exista y `.env` esté rellenado (sin subir secretos).
 6. [ ] **Commit y push** en `develop` con estos archivos (operación tuya si no está hecho).

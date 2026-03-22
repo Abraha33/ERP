@@ -37,6 +37,8 @@ Cambios de stack global → actualizar ADR-001 y este archivo en el mismo commit
 | Decisiones | Markdown, **ADR-001** | Stack global **aceptado**; variables en `.env.example`. |
 | Datos fuente | Excel exportado del SAE, documentación en `EXCEL_ANALYSIS` | Sin runtime de app aún. |
 
+**Estado fundación (2026-03):** proyecto **Supabase**, **`.env` / entornos locales** (Expo, worker) y contenido de **[EXCEL_ANALYSIS.md](./EXCEL_ANALYSIS.md)** — **en progreso**; ADR y plantilla de variables ya fijadas en repo.
+
 **Nuevo respecto a “nada”:** solo tooling y documentación.
 
 ---

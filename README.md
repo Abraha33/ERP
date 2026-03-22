@@ -3,6 +3,8 @@
 Sistema empresarial completo (ERP + CRM) construido por un solo founder en 14 meses.
 Stack: **Expo + Supabase + FastAPI (worker) + Playwright**; offline **WatermelonDB** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
 
+**Fundación (operativo):** proyecto **Supabase**, **`.env` / entornos locales** y **[docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md)** — **en progreso** (tabla en [§16](#16-setup-inicial-y-scripts)).
+
 ---
 
 ## INDICE
@@ -261,7 +263,7 @@ Monolito modular o servicios separados (API ERP, CRM, workers). Ver [docs/Esquel
 
 ## 10. Tech Stack confirmado
 
-Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (2026-03-22): **React Native + Expo (SDK 51+)**, **TypeScript strict**, **Supabase** (Auth, Postgres, RLS, Storage, Realtime, Edge Functions), **FastAPI** (Python 3.12) para worker/jobs pesados, **Playwright** para integración SAE, **GitHub Actions** + **Expo EAS**, **WatermelonDB** reservado para **Fase 5**. Variables: [`.env.example`](./.env.example). Desglose por fase: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**.
+Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (2026-03-22): **React Native + Expo (SDK 51+)**, **TypeScript strict**, **Supabase** (Auth, Postgres, RLS, Storage, Realtime, Edge Functions), **FastAPI** (Python 3.12) para worker/jobs pesados, **Playwright** para integración SAE, **GitHub Actions** + **Expo EAS**, **WatermelonDB** reservado para **Fase 5**. Variables: [`.env.example`](./.env.example). Desglose por fase: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**. **Conexión real** (proyecto Supabase + `.env` relleno) y **Excel SAE** documentado: **en progreso** — §16.
 
 ---
 
@@ -327,14 +329,14 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 
 ### Fase 0 — Fundación (checklist)
 
-| Paso | Ticket | Acción |
-|------|--------|--------|
-| 1 | T0.1.1 | Repo + ramas `main` / `develop` ([§3.2](#32-ramas-git-solo-main-y-develop)). |
-| 2 | T0.1.2 | Crear proyecto en [Supabase](https://supabase.com); copiar URL y keys. |
-| 3 | T0.1.3 | Revisar [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (stack aceptado). |
-| 4 | T0.1.4 | `cp .env.example .env` (o equivalente en Windows) y rellenar **sin** subir `.env`. |
-| 5 | T0.1.5–T0.1.6 | [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) al tener export del SAE. |
-| 6 | T0.1.7 | [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) alineado con ADR (ya referenciado). |
+| Paso | Ticket | Acción | Estado |
+|------|--------|--------|--------|
+| 1 | T0.1.1 | Repo + ramas `main` / `develop` ([§3.2](#32-ramas-git-solo-main-y-develop)). | Hecho |
+| 2 | T0.1.2 | Crear proyecto en [Supabase](https://supabase.com); copiar URL y keys. | **En progreso** |
+| 3 | T0.1.3 | Revisar [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (stack aceptado). | Hecho |
+| 4 | T0.1.4 | `cp .env.example .env` (o equivalente en Windows) y rellenar **sin** subir `.env`. | **En progreso** |
+| 5 | T0.1.5–T0.1.6 | [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) al tener export del SAE. | **En progreso** |
+| 6 | T0.1.7 | [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) alineado con ADR (ya referenciado). | Hecho |
 
 ### Setup del proyecto (desde raiz ERP1)
 

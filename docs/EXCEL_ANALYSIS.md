@@ -1,7 +1,7 @@
 # Análisis del Excel exportado del SAE
 
 **Tickets:** T0.1.5 (análisis) · T0.1.6 (columnas).  
-**Estado:** plantilla y checklist **listos** en repo; filas marcadas **_(pendiente — te paso el resto)_** las completará el founder cuando tenga export real.
+**Estado global:** **En progreso** — plantilla en repo; completar celdas cuando haya export real o datos parciales.
 
 **Stack de importación:** ver [ADR-001](../ADR/ADR-001-stack-tecnologico.md) (FastAPI worker / validación) y [STACK_POR_FASE.md](./STACK_POR_FASE.md) Fase 1.
 
@@ -11,10 +11,10 @@
 
 | Pregunta | Estado |
 |----------|--------|
-| Ruta o menú en el SAE | _(pendiente — te paso el resto)_ |
-| Formato (.xlsx / .xls / .csv / otro) | _(pendiente)_ |
-| Frecuencia de actualización | _(pendiente)_ |
-| Archivo de muestra (solo local, no en git) | _(pendiente)_ |
+| Ruta o menú en el SAE | En progreso |
+| Formato (.xlsx / .xls / .csv / otro) | En progreso |
+| Frecuencia de actualización | En progreso |
+| Archivo de muestra (solo local, no en git) | En progreso |
 
 ---
 
@@ -22,21 +22,21 @@
 
 | Pregunta | Estado |
 |----------|--------|
-| Nombre de la hoja principal (productos) | _(pendiente)_ |
-| Fila donde empiezan los datos (1-based) | _(pendiente)_ |
-| Encabezados múltiples / filas basura | _(pendiente)_ |
+| Nombre de la hoja principal (productos) | En progreso |
+| Fila donde empiezan los datos (1-based) | En progreso |
+| Encabezados múltiples / filas basura | En progreso |
 
 ### Mapeo columnas → dominio
 
 | Campo ERP | Columna Excel (letra / nombre cabecera) | Notas |
 |-----------|----------------------------------------|--------|
-| código SKU | _(pendiente)_ | |
-| nombre | _(pendiente)_ | |
-| precio | _(pendiente)_ | |
-| stock | _(pendiente)_ | |
-| categoría | _(pendiente)_ | |
-| unidad | _(pendiente)_ | |
-| código de barras | _(pendiente)_ | |
+| código SKU | En progreso | |
+| nombre | En progreso | |
+| precio | En progreso | |
+| stock | En progreso | |
+| categoría | En progreso | |
+| unidad | En progreso | |
+| código de barras | En progreso | |
 
 ---
 
@@ -44,19 +44,19 @@
 
 | Tema | Observación |
 |------|-------------|
-| Filas vacías / duplicados | _(pendiente)_ |
-| Decimal punto vs coma | _(pendiente)_ | |
-| Encoding | _(pendiente)_ | |
-| Inconsistencias | _(pendiente)_ | |
+| Filas vacías / duplicados | En progreso |
+| Decimal punto vs coma | En progreso |
+| Encoding | En progreso |
+| Inconsistencias | En progreso |
 
 ---
 
 ## 4. Riesgos
 
-_(pendiente al revisar el primer export real)_
+En progreso (pendiente de primer export o revisión con datos reales).
 
 ---
 
 ## 5. Siguiente paso
 
-Cuando rellenes §1–§3 con datos reales, el ticket de implementación **T1.1.5** puede fijar reglas de validación y tipos.
+Cuando §1–§3 pasen a **Hecho** con datos reales, el ticket de implementación **T1.1.5** puede fijar reglas de validación y tipos.

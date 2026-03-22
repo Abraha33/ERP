@@ -17,6 +17,8 @@ Un solo codebase React Native + Expo para App móvil (campo) y Web (oficina).
 
 **Variables de entorno:** nombres canónicos en [`.env.example`](./.env.example); nunca commitear `.env`.
 
+**Fundación Fase 0 (estado):** proyecto **Supabase** (URL/keys), **`.env` local** y alineación **Expo/FastAPI** con esos valores — **en progreso**. Análisis **Excel SAE** — [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) — **en progreso**. ADR y plantilla `.env.example` ya cerrados a nivel documentación.
+
 Desglose **por etapa** (ERP básico, completo, CRM, offline): siempre [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
 
 ## Estructura
