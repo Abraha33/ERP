@@ -427,6 +427,7 @@ Detalle tabla por tabla: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**.
 - [docs/GITHUB_PROJECT_WORKFLOWS.md](./docs/GITHUB_PROJECT_WORKFLOWS.md) — Workflows del Project (activar 2–7)
 - [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
 - [docs/SAE_DATA_MAPPING.md](./docs/SAE_DATA_MAPPING.md) — Mapeo SAE/export → tablas ERP (compras, traslados, productos, terceros)
+- [docs/SUPABASE_CLI_VERSIONING.md](./docs/SUPABASE_CLI_VERSIONING.md) — Flujo versionado para migraciones SQL, RLS/policies y Edge Functions
 - [docs/SECURITY_POLICIES.md](./docs/SECURITY_POLICIES.md) — Políticas declarativas admin/encargado/empleado; borrador RLS en `supabase/migrations/`
 - [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) — Contexto para el asistente IA
 - [.github/workflows/daily-progress.yml](./.github/workflows/daily-progress.yml) — Automatizacion push/PR/schedule
