@@ -3,7 +3,7 @@
 Sistema empresarial completo (ERP + CRM) construido por un solo founder en 14 meses.
 Stack: **Expo + Supabase + FastAPI (worker) + Playwright**; offline **WatermelonDB** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
 
-**Plan maestro del producto** (fases 0–5: fundación, App Satélite, ERP básico, ERP completo, CRM, offline): [docs/ROADMAP_PRODUCTO_14_MESES.md](./docs/ROADMAP_PRODUCTO_14_MESES.md). **Vista por sprints** (T01–T35, arranque): [ROADMAP.md](./ROADMAP.md).
+**Plan maestro del producto** (fases 0–5: fundación, App Satélite, ERP básico, ERP completo, CRM, offline): **[ROADMAP.md](./ROADMAP.md)**. **Vista por sprints** (T01–T35, arranque): [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md).
 
 **Fundación (operativo):** proyecto **Supabase**, **`.env` / entornos locales** y **[docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md)** — **en progreso** (tabla en [§16](#16-setup-inicial-y-scripts)).
 
@@ -209,7 +209,7 @@ En **GitHub Projects** usa el campo **Status**: **Icebox** → **Backlog** → *
 
 ## 5. Sistema de Milestones
 
-Hitos alineados al plan maestro [docs/ROADMAP_PRODUCTO_14_MESES.md](./docs/ROADMAP_PRODUCTO_14_MESES.md) y a la vista sprint [ROADMAP.md](./ROADMAP.md): **un milestone por fase** (rollup) y **un milestone por sprint** dentro de cada fase **1–5** (issues `T{phase}.{sprint}.*`). La **Fase 1** es **App Satélite** (MVP de operaciones de campo).
+Hitos alineados al plan maestro [ROADMAP.md](./ROADMAP.md) y a la vista sprint [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md): **un milestone por fase** (rollup) y **un milestone por sprint** dentro de cada fase **1–5** (issues `T{phase}.{sprint}.*`). La **Fase 1** es **App Satélite** (MVP de operaciones de campo).
 
 | Fase | Milestone rollup (opcional en filtros) | Sprints (`Tb.c.*` → **Sb**) |
 |------|----------------------------------------|-----------------------------|
@@ -230,7 +230,7 @@ Los nombres exactos en GitHub los define `scripts/roadmap_milestones.py` (`ensur
 
 ## 6. Como leer un Issue
 
-- **ID de ticket (obligatorio en roadmap/SCRUM):** formato estandar en [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md): **`[T##]`** alineado con [ROADMAP.md](./ROADMAP.md) (ej. `[T01] Definicion del stack`) o **`[E##-S##-##]`** para tickets del CSV SCRUM (ej. `[E05-S10-07] Document deployment`). No mezclar `T01:` sin corchetes con `[E5-S10-07]` sin ceros.
+- **ID de ticket (obligatorio en roadmap/SCRUM):** formato estandar en [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md): **`[T##]`** alineado con [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md) (ej. `[T01] Definicion del stack`); tickets **`T0.1.*` / `T1.*.*`** con el plan maestro en [ROADMAP.md](./ROADMAP.md). También **`[E##-S##-##]`** para CSV SCRUM (ej. `[E05-S10-07] Document deployment`). No mezclar `T01:` sin corchetes con `[E5-S10-07]` sin ceros.
 - **Prefijo tematico (otros issues):** `[Setup]`, `[DB]`, `[Scraper]`, etc. Evita titulos solo tipo `T3.1.1: Provider factory` como titulo principal; el ID puede ir en el cuerpo.
 - **Orden en el Project:** **View** → **Sort** → **Title** → **Ascending** para recorrer T01→T99 y E01-S01-01→… en orden.
 - **Cuerpo:** descripcion, criterios de aceptacion, enlace a milestone o fase.
@@ -294,7 +294,7 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 ├── setup-erp-project.sh   # Setup Project 11 (repo, Status, Status update, vincula issues)
 └── erp-satelite/          # Repo Git: solo ramas permanentes main + develop (ver README §3.2)
     ├── ADR/               # Architecture Decision Records
-    ├── docs/               # STACK_POR_FASE, ROADMAP_PRODUCTO_14_MESES, GITHUB_PROJECTS, EXCEL_ANALYSIS…
+    ├── docs/               # STACK_POR_FASE, ROADMAP_SPRINTS (T01–T35), GITHUB_PROJECTS, EXCEL_ANALYSIS…
     ├── apps/mobile/        # Expo (React Native + Router + NativeWind); ver apps/mobile/.env.example
     ├── worker/             # FastAPI (jobs pesados); uvicorn app.main:app desde worker/
     ├── scraper/            # Playwright + Python; pip install -r scraper/requirements.txt && playwright install
@@ -408,8 +408,8 @@ Detalle tabla por tabla: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**.
 
 ## Documentacion
 
-- [docs/ROADMAP_PRODUCTO_14_MESES.md](./docs/ROADMAP_PRODUCTO_14_MESES.md) — Plan maestro por fases (0–5) y tickets T0.x–T5.x
-- [ROADMAP.md](./ROADMAP.md) — Vista por sprints T01–T35 (arranque)
+- [ROADMAP.md](./ROADMAP.md) — Plan maestro por fases (0–5) y tickets T0.x–T5.x
+- [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md) — Vista por sprints T01–T35 (arranque)
 - [docs/Esqueleto.md](./docs/Esqueleto.md) — Alcance funcional ERP + CRM
 - [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md) — Stack tecnológico por fase (Satélite, ERP, CRM, offline)
 - [docs/GITHUB_PROJECTS.md](./docs/GITHUB_PROJECTS.md) — Tablero ultra-lean (solo dev), vistas, pack experto, scripts

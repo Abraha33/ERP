@@ -114,7 +114,7 @@ Objetivo: la app de campo **funciona sin internet** y sincroniza con el cloud si
 | Capa | Tecnologías | Notas |
 |------|-------------|--------|
 | BD local | **WatermelonDB** (SQLite) en el cliente | Modelos espejo de tablas críticas (productos, stock local, misiones, etc.). |
-| Sync | Pull/push incremental, marca `pending_sync`, **conflictos por `updated_at`** (u otra estrategia documentada) | Alineado a tickets T5.x de [ROADMAP_PRODUCTO_14_MESES.md](./ROADMAP_PRODUCTO_14_MESES.md). |
+| Sync | Pull/push incremental, marca `pending_sync`, **conflictos por `updated_at`** (u otra estrategia documentada) | Alineado a tickets T5.x de [ROADMAP.md](../ROADMAP.md). |
 | Red | Detección de conectividad (Expo Network / NetInfo), cola de escrituras | UX: indicadores de estado de sync. |
 | Backend | Sin cambio obligatorio de proveedor: Supabase sigue siendo fuente de verdad | Puede añadirse **compresión** o **delta sync** en API. |
 
@@ -132,7 +132,7 @@ Objetivo: la app de campo **funciona sin internet** y sincroniza con el cloud si
 
 ## Referencias
 
-- [ROADMAP_PRODUCTO_14_MESES.md](./ROADMAP_PRODUCTO_14_MESES.md) — plan maestro: fases 0–5 y tickets T0.x–T5.x.
-- [ROADMAP.md](../ROADMAP.md) — vista por sprints T01–T35 (arranque).
+- [ROADMAP.md](../ROADMAP.md) — plan maestro: fases 0–5 y tickets T0.x–T5.x.
+- [ROADMAP_SPRINTS.md](./ROADMAP_SPRINTS.md) — vista por sprints T01–T35 (arranque).
 - [ADR-001](../ADR/ADR-001-stack-tecnologico.md) — decisión única del stack base.
 - [docs/Esqueleto.md](./Esqueleto.md) — alcance funcional por módulo.

@@ -301,7 +301,8 @@ PowerShell: `.\scripts\apply-priority-board-expert.ps1 -Run`
 ## 17. Documentacion
 
 - [README.md](https://github.com/Abraha33/erp-satelite/blob/main/README.md) — Copia canónica en el repo (mismo contenido que este readme)
-- [ROADMAP.md](https://github.com/Abraha33/erp-satelite/blob/main/ROADMAP.md) — Plan completo de fases y tickets
+- [ROADMAP.md](https://github.com/Abraha33/erp-satelite/blob/main/ROADMAP.md) — Plan maestro por fases (0–5) y tickets T0.x–T5.x
+- [docs/ROADMAP_SPRINTS.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/ROADMAP_SPRINTS.md) — Vista por sprints T01–T35
 - [docs/Esqueleto.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/Esqueleto.md) — Alcance funcional ERP + CRM
 - [docs/GITHUB_PROJECTS.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md) — Tablero ultra-lean, vistas, pack experto, scripts
 - [docs/GITHUB_PROJECT_WORKFLOWS.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECT_WORKFLOWS.md) — Workflows del Project (activar 2–7)

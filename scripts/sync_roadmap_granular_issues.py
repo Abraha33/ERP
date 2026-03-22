@@ -26,8 +26,7 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 from roadmap_milestones import milestone_title_for_granular_roadmap_id  # noqa: E402
 
-WORKSPACE_ROOT = REPO_ROOT.parent
-ROADMAP_PATH = (WORKSPACE_ROOT / "ROADMAP.md").resolve()
+ROADMAP_PATH = (REPO_ROOT / "ROADMAP.md").resolve()
 PROJECT_OWNER = "Abraha33"
 PROJECT_NUMBER = 11
 

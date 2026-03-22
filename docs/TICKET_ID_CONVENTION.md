@@ -11,7 +11,7 @@ Todo issue debe llevar el **ID entre corchetes al inicio**, un espacio y luego e
 ### 1) Tickets del ROADMAP (sprints 14 meses)
 
 - Patrón: **`[T##]`** con **dos dígitos** (`T01` … `T99`).
-- Alineado con [ROADMAP.md](../ROADMAP.md) (columna *Ticket*).
+- **`[T##]`** (sprints): alineado con [ROADMAP_SPRINTS.md](./ROADMAP_SPRINTS.md). **`T0.1.*` / `T1.*.*`…** (plan por fases): [ROADMAP.md](../ROADMAP.md).
 - Ejemplo: `[T01] Definición y documentación del Stack en el README`.
 
 **No usar:** `T01:` sin corchetes (legacy).
@@ -64,7 +64,7 @@ Para alinear milestones en issues ya existentes: `python scripts/sync_issue_mile
 
 ## Colision de numeros T##
 
-Si dos issues distintos usan el mismo `[T06]` (p. ej. uno del ROADMAP “Auth” y otro “Excel”), **solo uno** puede ser el T06 oficial del [ROADMAP.md](../ROADMAP.md). Al otro asignale otro prefijo en el titulo, p. ej. `[DOC-Excel] …` o renumeracion, y deja la referencia en el cuerpo: `**Ref ROADMAP:** fuera de tabla T06`.
+Si dos issues distintos usan el mismo `[T06]` (p. ej. uno del ROADMAP sprints “Auth” y otro “Excel”), **solo uno** puede ser el T06 oficial de [ROADMAP_SPRINTS.md](./ROADMAP_SPRINTS.md). Al otro asignale otro prefijo en el titulo, p. ej. `[DOC-Excel] …` o renumeracion, y deja la referencia en el cuerpo: `**Ref ROADMAP:** fuera de tabla T06`.
 
 ---
 
