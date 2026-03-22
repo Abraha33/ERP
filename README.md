@@ -218,7 +218,7 @@ Hitos alineados a [ROADMAP.md](./ROADMAP.md): **un milestone por fase** (rollup)
 
 Los nombres exactos en GitHub los define `scripts/roadmap_milestones.py` (`ensure_roadmap_milestones.py` los crea todos).
 
-**Scripts:** `python scripts/ensure_roadmap_milestones.py` → `import-backlog-to-github.py` / `sync_roadmap_granular_issues.py` asignan sprint; `sync_issue_milestones.py` alinea issues ya creados. Tickets `[E##-S##-##]` del CSV 5 meses: sprints **1–6** → Fase **1** S1–S5; **7–10** → Fase **2** S1–S4.
+**Scripts:** `python scripts/ensure_roadmap_milestones.py` → `import-backlog-to-github.py` / `sync_roadmap_granular_issues.py` asignan sprint; `sync_issue_milestones.py` alinea issues ya creados. Otro repositorio: `-R Owner/repo` en esos scripts o `python scripts/sync_milestones_for_project_repos.py` (lista en `scripts/project_milestone_repos.txt`). Tickets `[E##-S##-##]` del CSV 5 meses: sprints **1–6** → Fase **1** S1–S5; **7–10** → Fase **2** S1–S4.
 
 ---
 

@@ -8,6 +8,17 @@ El código vive en **`erp-satelite`**; el [Project 11](https://github.com/users/
 
 **IDs en títulos y orden:** convención `[T##]` (ROADMAP) y `[E##-S##-##]` (SCRUM) en [docs/TICKET_ID_CONVENTION.md](./TICKET_ID_CONVENTION.md). Para ver tickets **de primero a último** en una vista: **View** → **Sort** → **Title** → **Ascending** (y guarda la vista). Normalizar issues antiguos: `python scripts/normalize_issue_title_prefixes.py` (vista previa) y `python scripts/normalize_issue_title_prefixes.py --apply`.
 
+**Varios repositorios y el mismo Project:** el tablero solo muestra issues de repos **enlazados** al proyecto. Hoy suele estar solo [Abraha33/erp-satelite](https://github.com/Abraha33/erp-satelite). Para añadir otro repo (mismas milestones y sync de issues):
+
+1. Enlazar el repo al Project 11 (UI: *Project → … → Settings → Linked repositories*), o por CLI:  
+   `gh project link 11 --owner Abraha33 --repo NOMBRE_OTRO_REPO`
+2. Añadir la línea `Abraha33/NOMBRE_OTRO_REPO` en [scripts/project_milestone_repos.txt](../scripts/project_milestone_repos.txt).
+3. Crear hitos y alinear issues en **cada** repo:  
+   `python scripts/sync_milestones_for_project_repos.py`  
+   (o por repo: `python scripts/ensure_roadmap_milestones.py -R Owner/repo` y `python scripts/sync_issue_milestones.py --apply -R Owner/repo`).
+
+En las **vistas** del Project, activa el campo **Milestone** en la configuración de columnas/tarjetas si quieres ver el sprint junto al título (los milestones viven en el repo del issue).
+
 ---
 
 ## Mapa rápido: qué pestaña abrir

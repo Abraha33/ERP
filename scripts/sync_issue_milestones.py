@@ -7,13 +7,16 @@ Asigna milestone (fase rollup y, cuando aplica, sprint Fase N·S#) según títul
   python scripts/sync_issue_milestones.py --dry-run
   python scripts/sync_issue_milestones.py --apply
   python scripts/sync_issue_milestones.py --apply --state open --limit 50
+  python scripts/sync_issue_milestones.py --apply -R Abraha33/otro-repo
 
 Corrige el caso en que todo quedó en un solo milestone al importar sin mapeo por sprint/mes.
+Multi-repo: `python scripts/sync_milestones_for_project_repos.py`.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -32,9 +35,22 @@ from roadmap_milestones import (  # noqa: E402
 )
 
 
-def run_gh(args: list[str]) -> tuple[int, str]:
+def run_gh(args: list[str], repo: str | None = None) -> tuple[int, str]:
+    cmd: list[str] = ["gh"]
+    if not args:
+        cmd.extend(args)
+    elif args[0] == "api":
+        cmd.extend(args)
+    elif repo and len(args) >= 2 and args[0] == "repo" and args[1] == "view":
+        cmd.extend(["repo", "view", repo, *args[2:]])
+    elif repo:
+        cmd.append(args[0])
+        cmd.extend(["-R", repo])
+        cmd.extend(args[1:])
+    else:
+        cmd.extend(args)
     r = subprocess.run(
-        ["gh"] + args,
+        cmd,
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -45,16 +61,21 @@ def run_gh(args: list[str]) -> tuple[int, str]:
     return r.returncode, out.strip()
 
 
-def fetch_milestone_title_map() -> tuple[dict[str, str], list[str]]:
+def _repos_api_base(repo: str | None) -> str:
+    return f"repos/{repo}" if repo else "repos/{owner}/{repo}"
+
+
+def fetch_milestone_title_map(repo: str | None) -> tuple[dict[str, str], list[str]]:
     """(norm_key -> título exacto), lista de todos los títulos abiertos."""
     code, out = run_gh(
         [
             "api",
-            "repos/{owner}/{repo}/milestones",
+            f"{_repos_api_base(repo)}/milestones",
             "--paginate",
             "--jq",
             ".[] | .title",
-        ]
+        ],
+        repo=repo,
     )
     if code != 0:
         print(out, file=sys.stderr)
@@ -134,18 +155,32 @@ def main() -> None:
     ap.add_argument("--state", choices=("open", "closed", "all"), default="all")
     ap.add_argument("--limit", type=int, default=500)
     ap.add_argument("--sleep", type=float, default=0.12)
+    ap.add_argument(
+        "--repo",
+        "-R",
+        default=os.environ.get("GH_REPO"),
+        metavar="OWNER/REPO",
+        help="Repositorio (default: GH_REPO o repo actual de gh).",
+    )
     args = ap.parse_args()
+    repo = (args.repo or "").strip() or None
+    if repo and "/" not in repo:
+        print("Usa --repo Owner/nombre.", file=sys.stderr)
+        sys.exit(2)
     if args.apply and args.dry_run:
         print("Usa solo --apply o solo --dry-run.", file=sys.stderr)
         sys.exit(2)
     do_apply = args.apply and not args.dry_run
 
-    code, _ = run_gh(["repo", "view", "--json", "name"])
+    code, _ = run_gh(["repo", "view", "--json", "name"], repo=repo)
     if code != 0:
-        print("Ejecuta desde erp-satelite/ con gh autenticado.", file=sys.stderr)
+        print("Ejecuta con gh autenticado y repo válido (--repo o cwd en el clone).", file=sys.stderr)
         sys.exit(1)
 
-    gh_by_norm, gh_all_titles = fetch_milestone_title_map()
+    if repo:
+        print(f"Repositorio: {repo}")
+
+    gh_by_norm, gh_all_titles = fetch_milestone_title_map(repo)
     code, out = run_gh(
         [
             "issue",
@@ -156,7 +191,8 @@ def main() -> None:
             str(args.limit),
             "--json",
             "number,title,body,milestone",
-        ]
+        ],
+        repo=repo,
     )
     if code != 0:
         print(out, file=sys.stderr)
@@ -193,7 +229,8 @@ def main() -> None:
 
         if do_apply:
             code, err = run_gh(
-                ["issue", "edit", str(num), "--milestone", actual]
+                ["issue", "edit", str(num), "--milestone", actual],
+                repo=repo,
             )
             if code != 0:
                 print(f"  ERR #{num}: {err}", file=sys.stderr)
