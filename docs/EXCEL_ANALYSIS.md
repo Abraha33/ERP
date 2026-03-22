@@ -30,7 +30,7 @@
 
 ### Mapeo columnas → dominio
 
-El inventario campo a campo por entidad está en **[SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md)** (**Fase 1 · S1 — Modelar datos e importación** / estructura desde informes SAE).
+El inventario campo a campo por entidad está en **[SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md)** (**Fase 1 · S1 — Modelar datos e importación**, [milestone en GitHub](https://github.com/Abraha33/ERP/milestone/16); columnas `grupo` **SAE** / **ERP** / **DERIVED**).
 
 Resumen genérico (productos) — completar con export real:
 
@@ -42,7 +42,7 @@ Resumen genérico (productos) — completar con export real:
 | stock | Ver SAE_DATA_MAPPING | Por sucursal en columnas |
 | categoría | Ver SAE_DATA_MAPPING | |
 | unidad | Ver SAE_DATA_MAPPING | UM base / compra / venta |
-| código de barras | Ver SAE_DATA_MAPPING | Confirmar columna EAN |
+| código de barras | Ver SAE_DATA_MAPPING (`grupo` ERP; añadir columna en import) | - |
 
 ---
 
