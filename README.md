@@ -370,6 +370,7 @@ PowerShell: `.\scripts\apply-priority-board-expert.ps1 -Run`
 | `verify_priority_board_layout.py` | Comprueba Group by=Priority, columnas=Status (paridad Factura). |
 | `verify_team_items_layout.py` | Comprueba Table + Group by Status (paridad Factura Team items). |
 | `set_all_project_items_backlog.py` | Todos los items → Backlog (limpiar "No Status"). |
+| `set_issue_project_status.py` | Project 11: `--issue N` o `N,M` y `--status` (Icebox…Done). Ej. fundación: #195 In progress, #194,196–198 Ready. |
 | `migrate_status_to_priority_board.py` | Aplica schema Status (Icebox…Done) tras cambiar GraphQL. |
 | `migrate_priority_palette.py` | Restaura P0–P3 tras cambiar colores Priority. |
 | `ensure_role_labels.py` | Crea solo `role/*` y `priority/P0`…`P3` en el repo (idempotente). |
