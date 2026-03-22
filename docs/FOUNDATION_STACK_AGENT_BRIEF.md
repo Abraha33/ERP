@@ -1,8 +1,8 @@
 # Brief: fundación ERP Satélite — contexto para definir el tech stack
 
-**Propósito:** documento **único y explícito** para pegar en otro agente (o en una sesión aparte) y **definir o validar** el stack tecnológico de **fundación** del repo `erp-satelite`, sin asumir que ya está cerrado en el ADR hasta que tú lo apruebes.
+**Propósito:** documento **único y explícito** para pegar en otro agente y **revisar o reabrir** el debate del stack de fundación si hace falta. La decisión vigente está en **[ADR-001](../ADR/ADR-001-stack-tecnologico.md)** (**ACEPTADA**, 2026-03-22).
 
-**Alcance:** Fase 0 + línea base que soporta Fase 1 (App Satélite MVP). No es diseño funcional del ERP completo; es **decisiones técnicas globales** y **criterios** para elegirlas.
+**Alcance:** Fase 0 + línea base que soporta Fase 1 (App Satélite MVP). No sustituye al ADR ni a [STACK_POR_FASE.md](./STACK_POR_FASE.md); sirve como **guion de trabajo** y checklist de capas.
 
 ---
 

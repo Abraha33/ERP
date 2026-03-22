@@ -17,6 +17,8 @@ El código vive en **`erp-satelite`**; el [Project 11](https://github.com/users/
    `python scripts/sync_milestones_for_project_repos.py`  
    (o por repo: `python scripts/ensure_roadmap_milestones.py -R Owner/repo` y `python scripts/sync_issue_milestones.py --apply -R Owner/repo`).
 
+**Milestones con contenido:** cada sprint (`Fase N · S#`) debe tener al menos un issue cuyo título empiece por `[Stack] Fase N · S…` (definición de stack/librerías; guía en `docs/STACK_POR_FASE.md`). Cada rollup `Fase N — …` (fases 0 y 2–5) debe tener un issue cuyo título empiece por `[Stack] Fase N —` (stack de la fase). La Fase 1 no usa rollup en GitHub. Multi-repo: `python scripts/ensure_milestone_stack_and_coverage.py --all-repos --apply` (vista previa sin `--apply`). Pasada completa: `python scripts/full_project_health.py --apply`.
+
 En las **vistas** del Project, activa el campo **Milestone** en la configuración de columnas/tarjetas si quieres ver el sprint junto al título (los milestones viven en el repo del issue).
 
 ---

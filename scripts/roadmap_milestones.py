@@ -7,8 +7,8 @@ Cada fase 1–5 tiene milestones **por sprint** (Tb.c → sprint Sb dentro de Fa
 - T0.*.* → milestone de fase (Fase 0) o rollup de fase cuando no hay stream de sprint.
 - [E##-S##-##]: sprints 1–6 → F1 S1–S5; 7–10 → F2 S1–S4 (plan 5 meses).
 
-En GitHub: **rollup** `Fase N — …` por fase **y** milestones `Fase N · S#` por sprint
-(`ensure_roadmap_milestones.py` crea ambos).
+En GitHub: **rollup** `Fase N — …` por fase (excepto **Fase 1**, solo sprints `Fase 1 · S#`)
+y milestones `Fase N · S#` por sprint (`ensure_roadmap_milestones.py` los crea).
 """
 from __future__ import annotations
 
@@ -16,9 +16,10 @@ import re
 import unicodedata
 
 # Títulos canónicos para `gh issue edit --milestone` (crear con ensure_roadmap_milestones.py)
+# Rollups por fase en GitHub. La **Fase 1** no usa milestone rollup: el trabajo vive solo en
+# `Fase 1 · S1` … `S5`. Para asignación genérica "fase 1 sin sprint" ver `milestone_title_for_phase`.
 PHASE_TO_MILESTONE: dict[int, str] = {
     0: "Fase 0 — Fundación",
-    1: "Fase 1 — ERP Satélite (MVP)",
     2: "Fase 2 — ERP Básico",
     3: "Fase 3 — ERP Completo",
     4: "Fase 4 — CRM",
@@ -101,9 +102,26 @@ def milestone_title_for_granular_roadmap_id(ticket_id: str) -> str | None:
 
 def milestone_title_from_issue_title(title: str) -> str | None:
     """
-    Título de issue: T2.1.3 - …, [E05-S10-01] …, [T01] …
+    Título de issue: T2.1.3 - …, [E05-S10-01] …, [T01] …, [Stack] …, [Arquitectura] …, [Sprint N/5] …
     """
     t = title.strip()
+    m = re.match(r"^\[Stack\]\s*Fase\s*(\d+)\s*·\s*S(\d+)", t, re.I)
+    if m:
+        return milestone_title_for_sprint(int(m.group(1)), int(m.group(2)))
+    m = re.match(r"^\[Stack\]\s*Fase\s*(\d+)\s*(?:—|-)\s*", t, re.I)
+    if m:
+        ph = int(m.group(1))
+        return milestone_title_for_phase(ph)
+    m = re.match(r"^\[Arquitectura\]\s*Fase\s*(\d+)\s*(?:—|-)\s*", t, re.I)
+    if m:
+        ph = int(m.group(1))
+        return milestone_title_for_phase(ph)
+    m = re.match(r"^\[Sprint\s*(\d+)/5\]", t, re.I)
+    if m:
+        return milestone_title_for_phase(2)
+    if re.search(r"CREAR\s+MILESTONES", t, re.I):
+        return milestone_title_for_phase(0)
+
     m = re.match(r"^T(\d+)\.(\d+)\.\d+\b", t, re.I)
     if m:
         phase, stream = int(m.group(1)), int(m.group(2))
@@ -130,6 +148,16 @@ def milestone_title_from_issue_title(title: str) -> str | None:
             return ms
         if ph is not None:
             return milestone_title_for_phase(ph)
+        return None
+    m = re.match(r"^\[T(\d+)\]\s*", t, re.I)
+    if m:
+        n = int(m.group(1))
+        ms = milestone_title_from_coarse_roadmap_t(n)
+        if ms is not None:
+            return ms
+        p = _phase_from_coarse_t_number(n)
+        if p is not None:
+            return milestone_title_for_phase(p)
         return None
     p = phase_from_issue_title(t)
     if p is None:
@@ -197,6 +225,28 @@ def all_ensure_milestone_titles() -> list[str]:
         d = SPRINT_TITLES_BY_PHASE[ph]
         out.extend(d[i] for i in sorted(d))
     return out
+
+
+def all_rollup_milestone_titles() -> list[str]:
+    """Solo hitos `Fase N — …` (fundación + rollups producto)."""
+    return [PHASE_TO_MILESTONE[i] for i in sorted(PHASE_TO_MILESTONE)]
+
+
+def all_sprint_milestone_titles() -> list[str]:
+    """Solo milestones `Fase N · S# — …` (cada fase producto con sus sprints)."""
+    out: list[str] = []
+    for ph in sorted(SPRINT_TITLES_BY_PHASE):
+        d = SPRINT_TITLES_BY_PHASE[ph]
+        out.extend(d[i] for i in sorted(d))
+    return out
+
+
+def parse_sprint_milestone_title(title: str) -> tuple[int, int] | None:
+    """`Fase 3 · S2 — …` → (3, 2)."""
+    m = re.search(r"Fase\s*(\d+)\s*·\s*S(\d+)", title.strip(), re.I)
+    if not m:
+        return None
+    return int(m.group(1)), int(m.group(2))
 
 
 def phase_from_calendar_month(month: int) -> int:
@@ -331,6 +381,31 @@ def phase_from_issue_title(title: str) -> int | None:
     return None
 
 
+def milestone_title_from_coarse_roadmap_t(n: int) -> str | None:
+    """
+    Tickets [T01]…[T25] del ROADMAP (sprints 1–5 del MVP Satélite) → milestone **sprint** Fase 1.
+    T01–T03 → Fase 0; T26+ → None (usa solo rollup vía _phase_from_coarse_t_number).
+
+    Alineación con ROADMAP.md: T04–T10 backend/modelo, T11–T15 app login+catálogo, T16–T20 recepción,
+    T21–T22 misiones, T23–T25 arqueo/dashboard/notif.
+    """
+    if n <= 0:
+        return None
+    if n <= 3:
+        return milestone_title_for_phase(0)
+    if 4 <= n <= 10:
+        return milestone_title_for_sprint(1, 1)
+    if 11 <= n <= 15:
+        return milestone_title_for_sprint(1, 2)
+    if 16 <= n <= 20:
+        return milestone_title_for_sprint(1, 3)
+    if 21 <= n <= 22:
+        return milestone_title_for_sprint(1, 4)
+    if 23 <= n <= 25:
+        return milestone_title_for_sprint(1, 5)
+    return None
+
+
 def _phase_from_coarse_t_number(n: int) -> int | None:
     """
     [T01]…[T35] alineados al ROADMAP por número (aprox.).
@@ -352,6 +427,8 @@ def _phase_from_coarse_t_number(n: int) -> int | None:
 
 
 def milestone_title_for_phase(phase: int) -> str | None:
+    if phase == 1:
+        return milestone_title_for_sprint(1, 1)
     return PHASE_TO_MILESTONE.get(phase)
 
 

@@ -8,6 +8,9 @@ Asigna milestone (fase rollup y, cuando aplica, sprint Fase N·S#) según títul
   python scripts/sync_issue_milestones.py --apply
   python scripts/sync_issue_milestones.py --apply --state open --limit 50
   python scripts/sync_issue_milestones.py --apply -R Abraha33/otro-repo
+  python scripts/sync_issue_milestones.py --apply --fallback-milestone "Fase 0 — Fundación"
+
+Reconoce también títulos `[Stack] …`, `[Arquitectura] …`, `[Sprint N/5] …` y `CREAR MILESTONES` (ver `roadmap_milestones.milestone_title_from_issue_title`).
 
 Corrige el caso en que todo quedó en un solo milestone al importar sin mapeo por sprint/mes.
 Multi-repo: `python scripts/sync_milestones_for_project_repos.py`.
@@ -156,6 +159,11 @@ def main() -> None:
     ap.add_argument("--limit", type=int, default=500)
     ap.add_argument("--sleep", type=float, default=0.12)
     ap.add_argument(
+        "--fallback-milestone",
+        metavar="TÍTULO",
+        help='Si el issue no tiene milestone y no hay regla por título/cuerpo, asignar este hito (ej. "Fase 0 — Fundación").',
+    )
+    ap.add_argument(
         "--repo",
         "-R",
         default=os.environ.get("GH_REPO"),
@@ -212,6 +220,9 @@ def main() -> None:
         if want is None:
             ph = phase_from_body(body)
             want = milestone_title_for_phase(ph) if ph is not None else None
+        cur = (item.get("milestone") or {}).get("title")
+        if want is None and args.fallback_milestone and not (cur or "").strip():
+            want = args.fallback_milestone.strip()
         if want is None:
             skipped += 1
             continue
@@ -222,7 +233,6 @@ def main() -> None:
             missing_ms += 1
             continue
 
-        cur = (item.get("milestone") or {}).get("title")
         if cur == actual:
             skipped += 1
             continue

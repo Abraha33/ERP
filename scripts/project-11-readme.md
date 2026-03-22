@@ -152,7 +152,7 @@ El workflow [daily-progress.yml](https://github.com/Abraha33/erp-satelite/blob/m
 Siguen el [ROADMAP.md](https://github.com/Abraha33/erp-satelite/blob/main/ROADMAP.md):
 
 - **Fase 0** — Fundacion (repo, stack, Excel)
-- **Fase 1** — ERP Satélite / MVP (Mes 1–3); sprints S1–S5 en milestones `Fase 1 · S# — …`; rollup `Fase 1 — ERP Satélite (MVP)`; **Fase 0 — Fundación** para T0.*
+- **Fase 1** — ERP Satélite / MVP (Mes 1–3); solo milestones `Fase 1 · S# — …` (sin rollup en GitHub); **Fase 0 — Fundación** para T0.*
 - **Fase 2** — ERP Basico (Mes 4–7)
 - **Fase 3** — ERP Completo (Mes 8–10)
 - **Fase 4** — CRM (Mes 11–12)
