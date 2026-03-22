@@ -1,7 +1,7 @@
 # ERP Satelite Operativa
 
 Sistema empresarial completo (ERP + CRM) construido por un solo founder en 14 meses.
-Stack: por definir. Ver [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
+Stack: **Expo + Supabase + FastAPI (worker) + Playwright**; offline **WatermelonDB** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
 
 ---
 
@@ -210,7 +210,7 @@ Hitos alineados a [ROADMAP.md](./ROADMAP.md): **un milestone por fase** (rollup)
 | Fase | Milestone rollup (opcional en filtros) | Sprints (`Tb.c.*` → **Sb**) |
 |------|----------------------------------------|-----------------------------|
 | **0** | `Fase 0 — Fundación` | (sin sub-sprints; todo `T0.1.*` usa el rollup) |
-| **1 · ERP Satélite** | `Fase 1 — ERP Satélite (MVP)` | **S1–S5:** modelo datos/importación, login/catálogo, recepción/traslados, misiones conteo, arqueo caja |
+| **1 · ERP Satélite** | *(sin milestone rollup; solo sprints)* | **S1–S5:** modelo datos/importación, login/catálogo, recepción/traslados, misiones conteo, arqueo caja |
 | **2 · ERP Básico** | `Fase 2 — ERP Básico` | **S1–S4:** catálogos, compras, ventas, inventario |
 | **3 · ERP Completo** | `Fase 3 — ERP Completo` | **S1–S4:** contabilidad, RRHH, reportes, auditoría |
 | **4 · CRM** | `Fase 4 — CRM` | **S1–S5:** comunicación interna, transcripción, casos, pipeline, historial cliente |
@@ -219,6 +219,8 @@ Hitos alineados a [ROADMAP.md](./ROADMAP.md): **un milestone por fase** (rollup)
 Los nombres exactos en GitHub los define `scripts/roadmap_milestones.py` (`ensure_roadmap_milestones.py` los crea todos).
 
 **Scripts:** `python scripts/ensure_roadmap_milestones.py` → `import-backlog-to-github.py` / `sync_roadmap_granular_issues.py` asignan sprint; `sync_issue_milestones.py` alinea issues ya creados. Otro repositorio: `-R Owner/repo` en esos scripts o `python scripts/sync_milestones_for_project_repos.py` (lista en `scripts/project_milestone_repos.txt`). Tickets `[E##-S##-##]` del CSV 5 meses: sprints **1–6** → Fase **1** S1–S5; **7–10** → Fase **2** S1–S4.
+
+**Regla de oro (producto):** ningún milestone sprint `Fase N · S#` debe quedar sin al menos un issue **[Stack]** que fije stack y librerías para ese bloque (ver `docs/STACK_POR_FASE.md` y ADR-001). Cada rollup `Fase N — …` (fases 0 y 2–5) debe tener un **[Stack] Fase N — …** de la fase; la **Fase 1** no usa rollup en GitHub (solo sprints `Fase 1 · S#`). Script: `python scripts/ensure_milestone_stack_and_coverage.py --all-repos --dry-run` / `--apply`. Orquestador: `python scripts/full_project_health.py --dry-run` / `--apply`.
 
 ---
 
@@ -259,13 +261,13 @@ Monolito modular o servicios separados (API ERP, CRM, workers). Ver [docs/Esquel
 
 ## 10. Tech Stack confirmado
 
-Por definir en [ADR-001](./ADR/ADR-001-stack-tecnologico.md). Mientras tanto, la **línea base propuesta** y el desglose **por fase** (Satélite + scraper, ERP básico, ERP completo, CRM, offline) están en **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**.
+Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (2026-03-22): **React Native + Expo (SDK 51+)**, **TypeScript strict**, **Supabase** (Auth, Postgres, RLS, Storage, Realtime, Edge Functions), **FastAPI** (Python 3.12) para worker/jobs pesados, **Playwright** para integración SAE, **GitHub Actions** + **Expo EAS**, **WatermelonDB** reservado para **Fase 5**. Variables: [`.env.example`](./.env.example). Desglose por fase: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**.
 
 ---
 
 ## 11. Decisiones tecnicas pendientes
 
-Ver [ADR/](./ADR/) y [DECISIONS.md](./DECISIONS.md) (si existe). Las ampliaciones por etapa (BI, fiscal, colas CRM, etc.) se listan como *A definir* en [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md) hasta cerrar el ADR o un ADR hijo.
+La **base** del stack está cerrada (ADR-001). Pendientes típicos por etapa: BI, fiscal electrónico, librería de gráficos, proveedor de transcripción, etc. → ver columnas *A definir* en [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md) o nuevos ADR cuando entren en alcance. Ver también [ADR/](./ADR/) y `DECISIONS.md` si existe.
 
 ---
 
@@ -288,7 +290,7 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 ├── setup-erp-project.sh   # Setup Project 11 (repo, Status, Status update, vincula issues)
 └── erp-satelite/          # Repo Git: solo ramas permanentes main + develop (ver README §3.2)
     ├── ADR/               # Architecture Decision Records
-    ├── docs/               # STACK_POR_FASE, GITHUB_PROJECTS, WORKFLOWS, Esqueleto, EXCEL_ANALYSIS
+    ├── docs/               # STACK_POR_FASE, FOUNDATION_STACK_AGENT_BRIEF, GITHUB_PROJECTS, EXCEL_ANALYSIS…
     ├── scripts/            # Python, PowerShell, JSON, GraphQL (tablero, vistas, migraciones)
     ├── .github/workflows/  # daily-progress.yml (push/PR/schedule)
     ├── README.md
@@ -322,6 +324,17 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 ---
 
 ## 16. Setup inicial y scripts
+
+### Fase 0 — Fundación (checklist)
+
+| Paso | Ticket | Acción |
+|------|--------|--------|
+| 1 | T0.1.1 | Repo + ramas `main` / `develop` ([§3.2](#32-ramas-git-solo-main-y-develop)). |
+| 2 | T0.1.2 | Crear proyecto en [Supabase](https://supabase.com); copiar URL y keys. |
+| 3 | T0.1.3 | Revisar [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (stack aceptado). |
+| 4 | T0.1.4 | `cp .env.example .env` (o equivalente en Windows) y rellenar **sin** subir `.env`. |
+| 5 | T0.1.5–T0.1.6 | [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) al tener export del SAE. |
+| 6 | T0.1.7 | [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) alineado con ADR (ya referenciado). |
 
 ### Setup del proyecto (desde raiz ERP1)
 

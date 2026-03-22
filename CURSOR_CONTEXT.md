@@ -2,15 +2,20 @@
 
 ## Proyecto
 ERP+CRM construido por un solo founder (25h/semana) en 14 meses.
-Un solo codebase React Native + Expo para App movil (campo) y Web (oficina).
+Un solo codebase React Native + Expo para App móvil (campo) y Web (oficina).
+
+**Stack de fundación:** [ADR-001](./ADR/ADR-001-stack-tecnologico.md) — **ACEPTADA** (2026-03-22).
 
 ## Stack
-- Frontend: React Native + Expo SDK, NativeWind, Expo Router
-- Offline (**solo Fase 5**): WatermelonDB — no mezclar antes; ver [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)
-- Backend: Supabase (PostgreSQL 16, Auth, Storage, Realtime, Edge Functions)
-- Scraper (**Fase 1 Satélite**): Python 3.12 + Playwright
-- DevOps: GitHub Actions
-- IA: Cursor AI
+- **Frontend:** React Native + **Expo SDK 51+**, TypeScript `strict`, **NativeWind**, **Expo Router**
+- **BaaS:** **Supabase** (Postgres del proyecto, Auth email/contraseña, Storage, RLS, Realtime, Edge Functions)
+- **Worker / jobs pesados:** **FastAPI** (Python 3.12): importación grande, tareas largas; ver ADR-001 (Edge vs FastAPI)
+- **Scraper SAE (Fase 1):** Python 3.12 + **Playwright** 1.40+
+- **Offline (solo Fase 5):** **WatermelonDB** — no introducir en app productiva antes; ver [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)
+- **CI/CD:** GitHub Actions + **Expo EAS** (tokens en secrets, no en repo)
+- **IA:** Cursor AI
+
+**Variables de entorno:** nombres canónicos en [`.env.example`](./.env.example); nunca commitear `.env`.
 
 Desglose **por etapa** (ERP básico, completo, CRM, offline): siempre [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
 

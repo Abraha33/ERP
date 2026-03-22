@@ -1,16 +1,17 @@
 # Stack tecnológico por fase del producto
 
-Este documento **descompone el stack por etapa** del roadmap (14 meses): qué tecnologías entran en juego en cada fase, qué se **añade** respecto a la anterior y qué queda **pendiente de decidir** en [ADR-001](../ADR/ADR-001-stack-tecnologico.md).
+Este documento **descompone el stack por etapa** del roadmap (14 meses): qué tecnologías entran en juego en cada fase, qué se **añade** respecto a la anterior y qué queda **pendiente de decidir** fuera de [ADR-001](../ADR/ADR-001-stack-tecnologico.md).
 
-**Línea base propuesta** (alineada a [CURSOR_CONTEXT.md](../CURSOR_CONTEXT.md) hasta cerrar el ADR):
+**Línea base aceptada** (ADR-001, 2026-03-22; detalle en [CURSOR_CONTEXT.md](../CURSOR_CONTEXT.md)):
 
-- Cliente: **React Native + Expo** (móvil + web), TypeScript, **NativeWind**, **Expo Router**.
-- Datos cloud: **Supabase** (PostgreSQL, Auth, Storage, RLS, Realtime, Edge Functions).
+- Cliente: **React Native + Expo SDK 51+** (móvil + web), TypeScript strict, **NativeWind**, **Expo Router**.
+- BaaS: **Supabase** (PostgreSQL del proyecto, Auth, Storage, RLS, Realtime, Edge Functions).
+- **Worker / jobs pesados:** **FastAPI** (Python 3.12); **Edge Functions** para webhooks y lógica ligera (ver ADR-001).
 - Integración legacy: **Python 3.12 + Playwright** (scraper / automatización frente al SAE).
 - Offline (solo a partir de Fase 5): **WatermelonDB** + capa de sync.
-- CI: **GitHub Actions**.
+- CI/CD: **GitHub Actions** + **Expo EAS** (builds).
 
-Si el ADR elige otra combinación, actualiza este archivo y el ADR en el mismo commit.
+Cambios de stack global → actualizar ADR-001 y este archivo en el mismo commit.
 
 ---
 
@@ -33,7 +34,7 @@ Si el ADR elige otra combinación, actualiza este archivo y el ADR en el mismo c
 |------|-------------|--------|
 | Código / colaboración | Git, GitHub; solo ramas permanentes `main` / `develop` | Ver [README §3.2](../README.md#32-ramas-git-solo-main-y-develop). |
 | Automatización tablero | `gh` CLI, scripts Python/PowerShell en `scripts/` | Project 11, workflows documentados. |
-| Decisiones | Markdown, **ADR-001** | Stack global por cerrar. |
+| Decisiones | Markdown, **ADR-001** | Stack global **aceptado**; variables en `.env.example`. |
 | Datos fuente | Excel exportado del SAE, documentación en `EXCEL_ANALYSIS` | Sin runtime de app aún. |
 
 **Nuevo respecto a “nada”:** solo tooling y documentación.
@@ -48,7 +49,7 @@ Objetivo: operaciones de campo (recepción, traslados, conteos, arqueo) alimenta
 |------|-------------|--------|
 | **App móvil + web** | Expo, React Native, TypeScript, NativeWind, Expo Router | Un solo codebase; pruebas en Android + `expo start --web`. |
 | **Backend cloud** | Supabase (Postgres, Auth, Row Level Security, Storage) | Esquema y políticas por rol (admin / encargado / empleado). |
-| **API de negocio (si hace falta)** | Supabase Edge Functions **y/o** API **FastAPI** (Python) en monorepo | El backlog SCRUM (`[E01-S…]`) asume FastAPI para CRUD; puedes concentrar todo en Supabase + Edge Functions si simplificas — **decisión en ADR**. |
+| **API de negocio / jobs** | **FastAPI** (Python 3.12) para cargas pesadas; **Supabase Edge Functions** para webhooks y lógica corta | Criterio en [ADR-001](../ADR/ADR-001-stack-tecnologico.md) (tabla Edge vs FastAPI). |
 | **Scraper / legacy** | Python 3.12, Playwright | Carpeta `scraper/`; extracción o asistencia frente al SAE. |
 | **Importación** | Excel → validación → carga (script Python o Edge Function) | Alineado a tickets T1.1.5–T1.1.6. |
 | **Observabilidad mínima** | Logs Supabase, GitHub Actions (CI básico) | Tests smoke según madurez. |
