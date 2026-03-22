@@ -294,7 +294,8 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 ├── setup-erp-project.sh   # Setup Project 11 (repo, Status, Status update, vincula issues)
 └── erp-satelite/          # Repo Git: solo ramas permanentes main + develop (ver README §3.2)
     ├── ADR/               # Architecture Decision Records
-    ├── docs/               # STACK_POR_FASE, ROADMAP_SPRINTS (T01–T35), GITHUB_PROJECTS, EXCEL_ANALYSIS…
+    ├── docs/               # STACK_POR_FASE, ROADMAP_SPRINTS, SECURITY_POLICIES, EXCEL_ANALYSIS…
+    ├── supabase/migrations/ # Borradores SQL (RLS); aplicar con CLI Supabase cuando toque
     ├── apps/mobile/        # Expo (React Native + Router + NativeWind); ver apps/mobile/.env.example
     ├── worker/             # FastAPI (jobs pesados); uvicorn app.main:app desde worker/
     ├── scraper/            # Playwright + Python; pip install -r scraper/requirements.txt && playwright install
@@ -416,6 +417,7 @@ Detalle tabla por tabla: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**.
 - [docs/GITHUB_PROJECT_WORKFLOWS.md](./docs/GITHUB_PROJECT_WORKFLOWS.md) — Workflows del Project (activar 2–7)
 - [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
 - [docs/SAE_DATA_MAPPING.md](./docs/SAE_DATA_MAPPING.md) — Mapeo SAE/export → tablas ERP (compras, traslados, productos, terceros)
+- [docs/SECURITY_POLICIES.md](./docs/SECURITY_POLICIES.md) — Políticas declarativas admin/encargado/empleado; borrador RLS en `supabase/migrations/`
 - [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) — Contexto para el asistente IA
 - [.github/workflows/daily-progress.yml](./.github/workflows/daily-progress.yml) — Automatizacion push/PR/schedule
 - [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md) — Formato `[T##]` y `[E##-S##-##]` en titulos; orden en el Project
