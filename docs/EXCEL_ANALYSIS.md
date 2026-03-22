@@ -5,6 +5,8 @@
 
 **Stack de importación:** ver [ADR-001](../ADR/ADR-001-stack-tecnologico.md) (FastAPI worker / validación) y [STACK_POR_FASE.md](./STACK_POR_FASE.md) Fase 1.
 
+**Mapeo detallado SAE → tablas ERP (compras, traslados, productos, clientes, proveedores):** [SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md).
+
 ---
 
 ## 1. Obtención del archivo
@@ -28,15 +30,19 @@
 
 ### Mapeo columnas → dominio
 
+El inventario campo a campo por entidad está en **[SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md)** (milestone 2 / estructura desde informes SAE).
+
+Resumen genérico (productos) — completar con export real:
+
 | Campo ERP | Columna Excel (letra / nombre cabecera) | Notas |
 |-----------|----------------------------------------|--------|
-| código SKU | En progreso | |
-| nombre | En progreso | |
-| precio | En progreso | |
-| stock | En progreso | |
-| categoría | En progreso | |
-| unidad | En progreso | |
-| código de barras | En progreso | |
+| código SKU | Ver SAE_DATA_MAPPING § productos | ProductsPerUnits… |
+| nombre | Ver SAE_DATA_MAPPING | |
+| precio / listas | Ver SAE_DATA_MAPPING | Varias listas |
+| stock | Ver SAE_DATA_MAPPING | Por sucursal en columnas |
+| categoría | Ver SAE_DATA_MAPPING | |
+| unidad | Ver SAE_DATA_MAPPING | UM base / compra / venta |
+| código de barras | Ver SAE_DATA_MAPPING | Confirmar columna EAN |
 
 ---
 
