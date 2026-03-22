@@ -58,6 +58,8 @@ El script [scripts/import-backlog-to-github.py](../scripts/import-backlog-to-git
 
 Para alinear milestones en issues ya existentes: `python scripts/sync_issue_milestones.py --dry-run` → `--apply`. Tickets **`T{phase}.{sprint}.*`** usan `Fase {phase} · S{sprint} — …` (Fase **1** = ERP Satélite, S1–S5; F2–F4 y F5 según ROADMAP). También existen rollups `Fase N — …` por fase. CSV: sprints **1–6** → F1; **7–10** → F2; meses 4–7 / 8–10 también mapean a sprints F2/F3.
 
+**Épicas `[E*-S##-*]` con sprint mayor a 10:** el script asigna **Fase 3 · S#** (S15–S20 → S1–S4), **Fase 4 · S#** (S21–S24 → S1–S4), **Fase 5 · S#** (S25–S28 → S1–S2). **Fase 4 · S5** (historial cliente) sigue yendo con títulos **`T4.5.*`** o milestone rollup de fase 4.
+
 ---
 
 ## Colision de numeros T##

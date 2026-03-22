@@ -125,6 +125,9 @@ def milestone_title_from_issue_title(title: str) -> str | None:
             return milestone_title_for_sprint(1, min(sn, 5))
         if ph == 2 and 7 <= sn <= 10:
             return milestone_title_for_sprint(2, sn - 6)
+        ms = milestone_title_from_epic_sprint_number(sn)
+        if ms:
+            return ms
         if ph is not None:
             return milestone_title_for_phase(ph)
         return None
@@ -147,7 +150,7 @@ def month_int_from_csv_row(row: dict[str, str]) -> int | None:
 def milestone_title_for_csv_row(row: dict[str, str]) -> str | None:
     """
     Fase 1: mes 1–3 → reparto S1/S3/S5; o número de sprint SCRUM 1–6 → S1–S5.
-    Fase 2: mes 4–7 → S1–S4; Fase 3: mes 8–10 → S1–S3.
+    Fase 2: mes 4–7 → S1–S4; Fase 3: mes 8–9 → S1–S2; mes 10 → S3 o S4 según sprint CSV.
     """
     phase = phase_from_csv_row(row)
     if phase is None:
@@ -168,7 +171,14 @@ def milestone_title_for_csv_row(row: dict[str, str]) -> str | None:
     if phase == 2 and month is not None and 4 <= month <= 7:
         return milestone_title_for_sprint(2, month - 3)
     if phase == 3 and month is not None and 8 <= month <= 10:
-        stream = min(month - 7, 4)
+        if month <= 9:
+            stream = month - 7
+        else:
+            try:
+                sp = int(float(sprint_raw)) if sprint_raw else 0
+            except ValueError:
+                sp = 0
+            stream = 4 if sp >= 20 else 3
         ms = milestone_title_for_sprint(3, stream)
         if ms:
             return ms
@@ -213,6 +223,35 @@ def phase_from_scrum_sprint_number(sprint_num: int) -> int:
     # sprint 1-2 → month 1, 3-4 → 2, 5-6 → 3, 7-8 → 4, 9-10 → 5
     month = (sprint_num + 1) // 2
     return phase_from_calendar_month(month)
+
+
+def milestone_title_from_epic_sprint_number(sn: int) -> str | None:
+    """
+    Milestone **por sprint** para títulos `[E*-S{sn}-*]` fuera del bloque F1 (S1–6) y F2 (S7–10).
+
+    Calendario alineado a ROADMAP 14 meses: mes M ≈ (sn+1)//2 → fase vía phase_from_calendar_month.
+    - Fase 3 (meses 8–10): sn 15–20 → S1..S4 (pares de 2 semanas por stream).
+    - Fase 4 (meses 11–12): sn 21–24 → S1..S4; **S5** (Historial) sin par en sn → usar T4.5.* o rollup.
+    - Fase 5 (meses 13–14): sn 25–28 → S1..S2.
+    """
+    if sn <= 0:
+        return None
+    month = (sn + 1) // 2
+    ph = phase_from_calendar_month(month)
+    # F2 “extra” (mismo trimestre ERP básico): sn 11–14 → reparto a S2–S4
+    if ph == 2 and 11 <= sn <= 14:
+        stream = min(max(sn - 9, 2), 4)
+        return milestone_title_for_sprint(2, stream)
+    if ph == 3 and 15 <= sn <= 20:
+        stream = min((sn - 15) // 2 + 1, 4)
+        return milestone_title_for_sprint(3, stream)
+    if ph == 4 and 21 <= sn <= 24:
+        stream = min(sn - 20, 4)
+        return milestone_title_for_sprint(4, stream)
+    if ph == 5 and 25 <= sn <= 28:
+        stream = min((sn - 25) // 2 + 1, 2)
+        return milestone_title_for_sprint(5, stream)
+    return None
 
 
 def phase_from_granular_roadmap_id(ticket_id: str) -> int | None:
