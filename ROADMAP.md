@@ -36,7 +36,7 @@ Plan maestro del **producto completo**: no es solo la app de campo. Cubre **fund
 
 ## FASE 1: APP SATÉLITE — MVP CAMPO (Mes 1–3)
 
-### Sprint 1 — Modelo de datos e importación (Semana 3–4)
+### Sprint 1 — Modelar datos e importación (Semana 3–4)
 | Ticket | Tarea                                           | Horas | Prioridad |
 |--------|-------------------------------------------------|-------|-----------|
 | T1.1.1 | Tablas: productos, perfiles, tiendas, zonas     | 3h    | Alta      |

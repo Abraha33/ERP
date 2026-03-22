@@ -28,7 +28,7 @@ PHASE_TO_MILESTONE: dict[int, str] = {
 
 # Sprints por fase (segundo índice del id T{phase}.{stream}.*)
 FASE_1_SPRINT_TITLES: dict[int, str] = {
-    1: "Fase 1 · S1 — Modelo de datos e importación",
+    1: "Fase 1 · S1 — Modelar datos e importación",
     2: "Fase 1 · S2 — Login y catálogo",
     3: "Fase 1 · S3 — Recepción y traslados",
     4: "Fase 1 · S4 — Misiones de conteo",

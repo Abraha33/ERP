@@ -30,7 +30,7 @@
 
 ### Mapeo columnas → dominio
 
-El inventario campo a campo por entidad está en **[SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md)** (milestone 2 / estructura desde informes SAE).
+El inventario campo a campo por entidad está en **[SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md)** (**Fase 1 · S1 — Modelar datos e importación** / estructura desde informes SAE).
 
 Resumen genérico (productos) — completar con export real:
 

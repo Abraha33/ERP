@@ -214,7 +214,7 @@ Hitos alineados al plan maestro [ROADMAP.md](./ROADMAP.md) y a la vista sprint [
 | Fase | Milestone rollup (opcional en filtros) | Sprints (`Tb.c.*` → **Sb**) |
 |------|----------------------------------------|-----------------------------|
 | **0** | `Fase 0 — Fundación` | (sin sub-sprints; todo `T0.1.*` usa el rollup) |
-| **1 · ERP Satélite** | *(sin milestone rollup; solo sprints)* | **S1–S5:** modelo datos/importación, login/catálogo, recepción/traslados, misiones conteo, arqueo caja |
+| **1 · ERP Satélite** | *(sin milestone rollup; solo sprints)* | **S1–S5:** modelar datos e importación, login/catálogo, recepción/traslados, misiones conteo, arqueo caja |
 | **2 · ERP Básico** | `Fase 2 — ERP Básico` | **S1–S4:** catálogos, compras, ventas, inventario |
 | **3 · ERP Completo** | `Fase 3 — ERP Completo` | **S1–S4:** contabilidad, RRHH, reportes, auditoría |
 | **4 · CRM** | `Fase 4 — CRM` | **S1–S5:** comunicación interna, transcripción, casos, pipeline, historial cliente |
