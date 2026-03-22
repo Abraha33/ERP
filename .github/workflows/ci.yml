@@ -37,3 +37,48 @@ jobs:
         run: |
           python -m pip install -r scraper/requirements.txt
           python -m compileall scraper -q
+
+  db_migrations:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ci_schema
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ci_schema"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Apply Supabase-style migrations (stubs + SQL)
+        env:
+          PGPASSWORD: postgres
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: postgres
+          PGDATABASE: ci_schema
+        run: bash scripts/ci/apply_supabase_migrations.sh
+
+      - name: Schema snapshot (artifact)
+        env:
+          PGPASSWORD: postgres
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: postgres
+          PGDATABASE: ci_schema
+        run: pg_dump --schema-only --no-owner -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" "$PGDATABASE" | tee ci_schema.sql
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: postgres-schema
+          path: ci_schema.sql

@@ -300,7 +300,11 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
     ├── worker/             # FastAPI (jobs pesados); uvicorn app.main:app desde worker/
     ├── scraper/            # Playwright + Python; pip install -r scraper/requirements.txt && playwright install
     ├── scripts/            # Python, PowerShell, JSON, GraphQL (tablero, vistas, migraciones)
-    ├── .github/workflows/  # ci.yml, daily-progress.yml
+    ├── .github/workflows/  # ci.yml (incl. job db_migrations), daily-progress.yml
+    ├── supabase/
+    │   ├── ci/               # Stubs solo CI (simula auth Supabase en Postgres vanilla)
+    │   └── migrations/     # SQL versionado; CI las aplica en Postgres 16
+    ├── scripts/ci/         # apply_supabase_migrations.sh
     ├── README.md
     ├── ROADMAP.md
     ├── CURSOR_CONTEXT.md
@@ -343,6 +347,12 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 | 4 | T0.1.4 | `cp .env.example .env` (o equivalente en Windows) y rellenar **sin** subir `.env`. | **En progreso** |
 | 5 | T0.1.5–T0.1.6 | [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) + [docs/SAE_DATA_MAPPING.md](./docs/SAE_DATA_MAPPING.md) al tener export del SAE. | **En progreso** |
 | 6 | T0.1.7 | [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) alineado con ADR (ya referenciado). | Hecho |
+
+### CI — validar migraciones SQL
+
+En cada push/PR a `main` o `develop`, el job **`db_migrations`** en [.github/workflows/ci.yml](./.github/workflows/ci.yml) levanta **Postgres 16**, aplica `supabase/ci/0000_local_pg_supabase_stubs.sql` (simula `auth.users`, `auth.uid()`, rol `authenticated`) y luego todos los `.sql` de `supabase/migrations/` en orden. Si algo falla, el workflow falla. El artefacto **`postgres-schema`** contiene un `pg_dump --schema-only` para revisar el esquema resultante (pestaña *Actions* → run → *Artifacts*).
+
+Local (con Docker): `docker run -d --name pg-ci -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ci_schema -p 5433:5432 postgres:16-alpine` y luego `PGHOST=localhost PGPORT=5433 PGDATABASE=ci_schema PGPASSWORD=postgres bash scripts/ci/apply_supabase_migrations.sh`.
 
 ### Setup del proyecto (desde raiz ERP1)
 
