@@ -4,11 +4,19 @@
 *.key
 secrets.*
 
-# Dependencias (se definirán tras ADR-001)
+# Dependencias
 node_modules/
 venv/
+.venv/
 __pycache__/
 *.pyc
+.Python
+
+# Expo / Metro (monorepo)
+apps/mobile/.expo/
+apps/mobile/dist/
+apps/mobile/web-build/
+apps/mobile/.metro-health-check*
 
 # Build outputs
 dist/
