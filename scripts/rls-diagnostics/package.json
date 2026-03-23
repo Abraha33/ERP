@@ -1,0 +1,17 @@
+{
+  "name": "rls-diagnostics",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx rls_diagnostics.ts",
+    "diag": "tsx rls_diagnostics.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.8",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "~5.9.2"
+  }
+}

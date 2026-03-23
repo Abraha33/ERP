@@ -73,3 +73,17 @@ Workflow: `.github/workflows/supabase-deploy.yml`
 
 Nunca editar esquema directamente en SQL Editor sin migración equivalente en `supabase/migrations/`.  
 Si se hace un hotfix manual, crear inmediatamente la migración espejo y subirla a Git.
+
+## 9) Health check RLS (anon + usuarios de prueba)
+
+Script: `scripts/rls-diagnostics/rls_diagnostics.ts` — hace login por rol y prueba `SELECT`/`INSERT` acordes al borrador en `supabase/migrations/`.
+
+```bash
+cd scripts/rls-diagnostics
+npm install
+npm run diag
+```
+
+Configura en `.env` raíz: `SUPABASE_URL`, `SUPABASE_ANON_KEY` (o `EXPO_PUBLIC_*`), `RLS_TEST_*` emails/password y `RLS_TEST_EMPRESA_ID` / `RLS_TEST_SUCURSAL_ID`. Cada usuario de prueba debe tener fila en `public.profiles` con `empresa_id`, `sucursal_id` y `app_role`.
+
+Salida: JSON en stdout; código de salida ≠ 0 si algún test falla. `turnos_caja` queda como *skip* hasta existir la tabla en migraciones.
