@@ -87,3 +87,7 @@ npm run diag
 Configura en `.env` raíz: `SUPABASE_URL`, `SUPABASE_ANON_KEY` (o `EXPO_PUBLIC_*`), `RLS_TEST_*` emails/password y `RLS_TEST_EMPRESA_ID` / `RLS_TEST_SUCURSAL_ID`. Cada usuario de prueba debe tener fila en `public.profiles` con `empresa_id`, `sucursal_id` y `app_role`.
 
 Salida: JSON en stdout; código de salida ≠ 0 si algún test falla. `turnos_caja` queda como *skip* hasta existir la tabla en migraciones.
+
+## 10) Pantalla en la app Expo (solo `__DEV__`)
+
+Con `apps/mobile/.env` relleno (`EXPO_PUBLIC_SUPABASE_*`), en desarrollo aparece en **Tab One** el enlace **Dev: Supabase health / RLS**, que abre `/dev/supabase-health`: prueba `SELECT` cortos por tabla y permite iniciar sesión con un usuario de prueba para ver el efecto de RLS en el dispositivo o en web local. En build de producción `__DEV__` es `false` y la pantalla no muestra herramientas útiles.

@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.8",
     "@react-navigation/native": "^7.1.33",
     "expo": "~55.0.8",
     "expo-constants": "~55.0.9",
