@@ -88,6 +88,10 @@ Configura en `.env` raíz: `SUPABASE_URL`, `SUPABASE_ANON_KEY` (o `EXPO_PUBLIC_*
 
 Salida: JSON en stdout; código de salida ≠ 0 si algún test falla. `turnos_caja` queda como *skip* hasta existir la tabla en migraciones.
 
-## 10) Pantalla en la app Expo (solo `__DEV__`)
+## 10) Invitar usuario y error `empresa_id` en `user_profiles`
+
+Si al invitar desde el Dashboard falla con **not-null `empresa_id`**, el trigger que crea la fila de perfil no está recibiendo el UUID de empresa. Guía y SQL de ejemplo: [SUPABASE_AUTH_USER_PROFILES.md](./SUPABASE_AUTH_USER_PROFILES.md).
+
+## 11) Pantalla en la app Expo (solo `__DEV__`)
 
 Con `apps/mobile/.env` relleno (`EXPO_PUBLIC_SUPABASE_*`), en desarrollo aparece en **Tab One** el enlace **Dev: Supabase health / RLS**, que abre `/dev/supabase-health`: prueba `SELECT` cortos por tabla y permite iniciar sesión con un usuario de prueba para ver el efecto de RLS en el dispositivo o en web local. En build de producción `__DEV__` es `false` y la pantalla no muestra herramientas útiles.
