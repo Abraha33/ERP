@@ -13,7 +13,7 @@ Plan maestro del **producto completo**: no es solo la app de campo. Cubre **fund
 
 **Stack por fase:** [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
 
-**Última revisión:** 2026-03-22 — alineado con [README.md §16](./README.md#16-setup-inicial-y-scripts) y scaffold en la raíz del repo (`apps/mobile`, `worker/`, `scraper/`, CI).
+**Última revisión:** 2026-03-24 — stack backend operativo: app → **Supabase SDK** (RLS), **Realtime** (inventario/traslados), **RPC** (flujos transaccionales p. ej. caja); SAE → **scripts Python** CSV/XLS (sin FastAPI obligatorio). Ver [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md) y [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
 
 **Vista por sprints (T01–T35, ~14 semanas):** [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md).
 
@@ -30,7 +30,7 @@ Plan maestro del **producto completo**: no es solo la app de campo. Cubre **fund
 | T0.1.6 | Documentar columnas en EXCEL_ANALYSIS.md        | 1h    | Alta      | **En progreso** (ver [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md)) |
 | T0.1.7 | Completar CURSOR_CONTEXT.md con stack definido  | 1h    | Alta      | **Hecho** |
 
-**Scaffold de código (Fase 0, fuera de la tabla T0.1.* original):** en la raíz del repo ya existen `apps/mobile` (Expo + Expo Router + NativeWind + TypeScript strict), `worker/` (FastAPI + `/health`), `scraper/` (stub Playwright + `.env`), `.github/workflows/ci.yml` y `eas.json` en mobile. No implica tablas Supabase ni producto en producción.
+**Scaffold de código (Fase 0, fuera de la tabla T0.1.* original):** en la raíz del repo ya existen `apps/mobile` (Expo + Expo Router + NativeWind + TypeScript strict), `worker/` (FastAPI stub — **opcional** según jobs), `scraper/` (stub Playwright + `.env`), `.github/workflows/ci.yml` y `eas.json` en mobile. La integración SAE prevista es por **scripts** Python hacia Supabase; no implica tablas completas ni producto en producción.
 
 ---
 

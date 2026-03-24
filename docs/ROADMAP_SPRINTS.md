@@ -1,6 +1,6 @@
 # Vista por sprints — T01 a T35 (~14 semanas)
 
-**Última revisión:** 2026-03-22.
+**Última revisión:** 2026-03-24 (stack backend: cliente Supabase + Realtime + RPC; SAE vía scripts Python).
 
 Este archivo es la **descomposición en sprints** para el arranque. El **plan maestro por fases** (fundación, App Satélite, ERP básico, ERP completo, CRM, offline — 14 meses) está en **[ROADMAP.md](../ROADMAP.md)** en la raíz del repo. Las Fases 3 y 5 del plan maestro no están desglosadas aquí.
 
@@ -21,7 +21,7 @@ Este archivo es la **descomposición en sprints** para el arranque. El **plan ma
 | T01 | Stack definido en README y ADR | Markdown, ADR | 2h | Alta | **Hecho** |
 | T02 | Repo y entorno local listos (solo ramas permanentes **main** + **develop**) | Git, Node 20, Python 3.12 | 2h | Alta | **Hecho** (repo + CI typecheck/compile) |
 | T03 | Supabase + tablas base + RLS | PostgreSQL, Supabase | 3h | Alta | **Pendiente** (proyecto/claves: en progreso en checklist §16 README) |
-| T04 | Scraper Python/Playwright vs SAE | Python 3.12, Playwright | 3h | Alta | **En progreso** (carpeta `scraper/` + stub; faltan flujos SAE) |
+| T04 | Integración SAE: scripts Python (CSV/XLS ↔ Supabase) + Playwright solo si hace falta UI | Python 3.12, Supabase API / Postgres, Playwright opcional | 3h | Alta | **En progreso** |
 | T05 | App Expo (móvil + web): Router + NativeWind | Expo SDK 55+, TypeScript strict | 2h | Alta | **Hecho** (`apps/mobile`, plantilla tabs + NativeWind; `eas.json`) |
 
 ## SPRINT 2: BACKEND BASE (Semana 3-4)
@@ -78,14 +78,17 @@ Este archivo es la **descomposición en sprints** para el arranque. El **plan ma
 | T34 | Alertas stock minimo | Supabase Edge Functions | 3h | Media |
 | T35 | Reporte mensual automatico | Python, Resend | 3h | Baja |
 
-## TECH STACK (ADR-001, resumen)
+## TECH STACK (ADR-001 + revisión 2026-03-24, resumen)
 | Capa | Tecnologia |
 |------|-----------|
 | App móvil + web | React Native + Expo SDK 51+ (`apps/mobile`), TypeScript strict, Expo Router |
 | UI | NativeWind (Tailwind) |
-| BaaS / DB | Supabase (PostgreSQL, Auth, RLS, Storage, Realtime, Edge Functions) |
-| Jobs pesados | FastAPI (Python 3.12) en `worker/` |
-| Scraper SAE | Python 3.12 + Playwright en `scraper/` |
+| Acceso datos (app) | Supabase JS/TS SDK, RLS; operaciones multi-paso vía **RPC** |
+| BaaS / DB | Supabase (PostgreSQL, Auth, RLS, Storage, **Realtime**, RPC, Edge Functions) |
+| Tiempo real (ej. inventario / traslados) | Supabase **Realtime** |
+| Integración SAE | **Scripts Python** (CSV/XLS ↔ Supabase por API o Postgres directo); export inverso para alimentar SAE |
+| UI legacy / scraper opcional | Python 3.12 + Playwright en `scraper/` cuando no baste el archivo |
+| Jobs pesados / HTTP persistente | FastAPI (Python 3.12) en `worker/` — **opcional**, no obligatorio para import SAE |
 | Offline (Fase 5 producto) | WatermelonDB — ver [ROADMAP.md](../ROADMAP.md) y [STACK_POR_FASE.md](./STACK_POR_FASE.md) |
 | CI / builds | GitHub Actions + Expo EAS |
 

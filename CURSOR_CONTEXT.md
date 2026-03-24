@@ -8,9 +8,12 @@ Un solo codebase React Native + Expo para App móvil (campo) y Web (oficina).
 
 ## Stack
 - **Frontend:** React Native + **Expo SDK 51+**, TypeScript `strict`, **NativeWind**, **Expo Router**
-- **BaaS:** **Supabase** (Postgres del proyecto, Auth email/contraseña, Storage, RLS, Realtime, Edge Functions)
-- **Worker / jobs pesados:** **FastAPI** (Python 3.12): importación grande, tareas largas; ver ADR-001 (Edge vs FastAPI)
-- **Scraper SAE (Fase 1):** Python 3.12 + **Playwright** 1.40+
+- **BaaS:** **Supabase** (Postgres del proyecto, Auth email/contraseña, Storage, **RLS**, **Realtime**, **RPC**, Edge Functions)
+- **App → datos:** Supabase **client SDK** (JS/TS en Expo) con **RLS**; lógica transaccional compleja en **RPC** (SQL). Un cliente Dart usaría el SDK Dart equivalente contra el mismo proyecto.
+- **Tiempo real:** **Supabase Realtime** para casos como **inventario** y **traslados**.
+- **Integración SAE:** **scripts Python** (CSV/XLS ↔ Supabase vía API o Postgres directo); export inverso a archivos para el SAE. **No** se asume FastAPI para este flujo.
+- **Playwright / scraper (opcional):** Python 3.12 + **Playwright** 1.40+ solo cuando haga falta la UI legacy
+- **Worker HTTP (opcional):** **FastAPI** (Python 3.12) para jobs que exijan servidor persistente o deps pesadas; ver ADR-001 (Edge vs FastAPI)
 - **Offline (solo Fase 5):** **WatermelonDB** — no introducir en app productiva antes; ver [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)
 - **CI/CD:** GitHub Actions + **Expo EAS** (tokens en secrets, no en repo)
 - **IA:** Cursor AI

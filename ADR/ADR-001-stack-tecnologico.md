@@ -26,7 +26,7 @@ La decisión de stack debe **minimizar superficie de mantenimiento** y **maximiz
 - A3. PWA + React  
 
 ### Backend
-- **B1. Supabase (BaaS) + worker FastAPI (Python 3.12)** → **elegida**
+- **B1. Supabase (BaaS) como contrato principal de la app + Python para integración; FastAPI solo opcional para jobs** → **elegida** (detalle operativo 2026-03-24 en “Decisión final” y revisión)
 - B2. Firebase + Cloud Functions  
 - B3. API propia (NestJS) + Supabase solo como DB  
 
@@ -46,14 +46,23 @@ La decisión de stack debe **minimizar superficie de mantenimiento** y **maximiz
 |------|------------|-------------------------|
 | Móvil + web | React Native + **Expo SDK** | SDK **51+** (revisar en `package.json` al crear app) |
 | Lenguaje app | **TypeScript** (`strict: true`) | 5.x |
-| BaaS | **Supabase** | Auth, Postgres, Storage, RLS, Realtime, Edge Functions |
+| BaaS | **Supabase** | Auth, Postgres, Storage, RLS, **Realtime**, **RPC**, Edge Functions |
+| Acceso desde app | **Supabase client SDK** (JS/TS en Expo) | **RLS** obligatorio en tablas expuestas; sin API propia intermedia para el CRUD típico |
+| Lógica transaccional | **Supabase RPC** (SQL) | p. ej. abrir/cerrar turno de caja, operaciones multi-fila atómicas |
 | Auth MVP | **Supabase Auth** (email/contraseña) | — |
 | Base de datos | **PostgreSQL** (instancia del proyecto Supabase) | La versión la fija Supabase en el panel |
-| Migraciones | **Supabase CLI** + SQL en repo (`database/migrations/`) | Coherente con README |
-| Worker pesado / jobs | **FastAPI** (Python **3.12**) | Importación pesada, scraper auxiliar, tareas largas |
-| Scraper SAE | **Playwright** (Python) | **1.40+** |
+| Migraciones | **Supabase CLI** + SQL en repo (`database/migrations/` o `supabase/migrations/`) | Coherente con README |
+| Integración SAE / archivos | **Scripts Python** (CLI) | CSV/XLS ↔ Supabase vía **API** (anon/service según script) o **conexión directa** Postgres; export inverso para alimentar SAE — **no** requiere FastAPI |
+| Worker HTTP / jobs largos (opcional) | **FastAPI** (Python **3.12**) | VPS/runner, webhooks pesados, orquestación que no convenga en un script |
+| Scraper UI SAE (opcional) | **Playwright** (Python) | **1.40+**; solo cuando el legacy no entregue export útil |
 | CI/CD | **GitHub Actions** + **Expo EAS** (builds) | Tokens en GitHub Secrets / EAS, no en `.env` del repo |
 | Offline (Fase 5) | **WatermelonDB** | Reservado; sync documentado en fases posteriores |
+
+### Revisión 2026-03-24 — Backend operativo y SAE
+
+- **App (web/móvil):** consumo **directo** de Supabase con **SDK** y políticas **RLS**; **Realtime** para escenarios como inventario y traslados; **RPC** para reglas de negocio complejas (cerrar caja, etc.).
+- **SAE:** capa de integración = **scripts Python** separados del runtime de la app; sin servicio FastAPI obligatorio para import/export.
+- **FastAPI / `worker/`:** se mantiene como **opción** para cargas que sigan requiriendo HTTP persistente o dependencias que no encajen en un script puntual.
 
 ---
 
@@ -72,12 +81,12 @@ La **lista canónica de nombres** (sin valores secretos) vive en **[`.env.exampl
 
 ---
 
-## Regla práctica: Edge Functions vs FastAPI
+## Regla práctica: Edge Functions vs RPC vs scripts Python vs FastAPI
 
-| Usar **Supabase Edge Functions** cuando… | Usar **FastAPI** cuando… |
-|------------------------------------------|---------------------------|
-| Webhook corto, transformación ligera, cercano a Postgres/Auth | Job largo, **Playwright**, importación Excel grande, dependencias Python pesadas |
-| Baja latencia y poco estado | Necesitas control total del runtime Python 3.12 |
+| Usar **RPC (Postgres)** cuando… | Usar **Edge Functions** cuando… | Usar **scripts Python** cuando… | Usar **FastAPI** cuando… |
+|-----------------------------------|--------------------------------|----------------------------------|---------------------------|
+| Varias tablas deben actualizarse con una regla atómica y la llamada viene de la app autenticada | Webhook HTTP corto, transformación ligera, cercano a Postgres/Auth | Import/export SAE por CSV/XLS, validaciones batch, ETL puntual (CLI) | Job largo con servidor HTTP persistente, o dependencias que no encajan en script ni Edge |
+| Ej.: abrir/cerrar turno de caja con validaciones | Baja latencia y poco estado | Conexión Postgres directa o Supabase API con service role (solo entornos de confianza) | **Playwright** u orquestación muy pesada fuera del bucle de import por archivo |
 
 ---
 
@@ -85,7 +94,7 @@ La **lista canónica de nombres** (sin valores secretos) vive en **[`.env.exampl
 
 **Positivas**
 
-- Un solo repo; **TypeScript** en app y **Python** acotado a worker/scraper.
+- Un solo repo; **TypeScript** en app y **Python** acotado a **scripts SAE**, scraper opcional y **worker** FastAPI si hace falta.
 - Supabase cubre Auth, RLS y Realtime sin montar backend propio desde cero.
 - **Expo EAS** permite builds nativos sin depender solo de una Mac física para distribución.
 - Stack muy documentado en comunidad y en asistentes IA.

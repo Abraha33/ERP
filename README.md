@@ -1,7 +1,7 @@
 # ERP Satelite Operativa
 
 Sistema empresarial completo (ERP + CRM) construido por un solo founder en 14 meses.
-Stack: **Expo + Supabase + FastAPI (worker) + Playwright**; offline **WatermelonDB** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
+Stack: **Expo + Supabase** (SDK directo, RLS, **Realtime**, **RPC**) + **scripts Python** (SAE CSV/XLS ↔ Supabase) + **Playwright** opcional; **FastAPI (`worker/`)** solo si un job lo requiere; offline **WatermelonDB** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
 
 **Plan maestro del producto** (fases 0–5: fundación, App Satélite, ERP básico, ERP completo, CRM, offline): **[ROADMAP.md](./ROADMAP.md)**. **Vista por sprints** (T01–T35, arranque): [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md).
 
@@ -265,7 +265,7 @@ Monolito modular o servicios separados (API ERP, CRM, workers). Ver [docs/Esquel
 
 ## 10. Tech Stack confirmado
 
-Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (2026-03-22): **React Native + Expo (SDK 51+)**, **TypeScript strict**, **Supabase** (Auth, Postgres, RLS, Storage, Realtime, Edge Functions), **FastAPI** (Python 3.12) para worker/jobs pesados, **Playwright** para integración SAE, **GitHub Actions** + **Expo EAS**, **WatermelonDB** reservado para **Fase 5**. Variables: [`.env.example`](./.env.example). Desglose por fase: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**. **Conexión real** (proyecto Supabase + `.env` relleno) y **Excel SAE** documentado: **en progreso** — §16.
+Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (2026-03-22, **revisión backend 2026-03-24**): **React Native + Expo (SDK 51+)**, **TypeScript strict**, **Supabase** (Auth, Postgres, RLS, Storage, **Realtime**, **RPC**, Edge Functions), acceso desde app vía **SDK**; integración **SAE** vía **scripts Python** (CSV/XLS, API o Postgres directo); **FastAPI** (Python 3.12) en `worker/` **opcional**; **Playwright** cuando haga falta UI legacy; **GitHub Actions** + **Expo EAS**, **WatermelonDB** reservado para **Fase 5**. Variables: [`.env.example`](./.env.example). Desglose por fase: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**. **Conexión real** (proyecto Supabase + `.env` relleno) y **Excel SAE** documentado: **en progreso** — §16.
 
 ---
 
@@ -428,8 +428,10 @@ Detalle tabla por tabla: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**.
 - [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
 - [docs/SAE_DATA_MAPPING.md](./docs/SAE_DATA_MAPPING.md) — Mapeo SAE/export → tablas ERP (compras, traslados, productos, terceros)
 - [docs/SUPABASE_CLI_VERSIONING.md](./docs/SUPABASE_CLI_VERSIONING.md) — Flujo versionado para migraciones SQL, RLS/policies y Edge Functions
+- [docs/SUPABASE_LOCAL_MIGRATION_FLOW.md](./docs/SUPABASE_LOCAL_MIGRATION_FLOW.md) — Orden local-first de migraciones (`01_schema`, `02_seed_dev`, `03_triggers_user_profiles`)
 - [docs/SUPABASE_AUTH_USER_PROFILES.md](./docs/SUPABASE_AUTH_USER_PROFILES.md) — Invite Auth + `user_profiles.empresa_id` (trigger / metadata)
 - [docs/SECURITY_POLICIES.md](./docs/SECURITY_POLICIES.md) — Políticas declarativas admin/encargado/empleado; borrador RLS en `supabase/migrations/`
+- [docs/sql/seed_business_tables_rls_dev.sql](./docs/sql/seed_business_tables_rls_dev.sql) — Seed dev masivo (productos, terceros, compras/OC/traslados) para probar RLS
 - [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) — Contexto para el asistente IA
 - [.github/workflows/daily-progress.yml](./.github/workflows/daily-progress.yml) — Automatizacion push/PR/schedule
 - [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md) — Formato `[T##]` y `[E##-S##-##]` en titulos; orden en el Project

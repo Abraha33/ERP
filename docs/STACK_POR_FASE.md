@@ -2,12 +2,15 @@
 
 Este documento **descompone el stack por etapa** del roadmap (14 meses): qué tecnologías entran en juego en cada fase, qué se **añade** respecto a la anterior y qué queda **pendiente de decidir** fuera de [ADR-001](../ADR/ADR-001-stack-tecnologico.md).
 
-**Línea base aceptada** (ADR-001, 2026-03-22; detalle en [CURSOR_CONTEXT.md](../CURSOR_CONTEXT.md)):
+**Línea base aceptada** (ADR-001 + revisión 2026-03-24; detalle en [CURSOR_CONTEXT.md](../CURSOR_CONTEXT.md)):
 
 - Cliente: **React Native + Expo SDK 51+** (móvil + web), TypeScript strict, **NativeWind**, **Expo Router**.
-- BaaS: **Supabase** (PostgreSQL del proyecto, Auth, Storage, RLS, Realtime, Edge Functions).
-- **Worker / jobs pesados:** **FastAPI** (Python 3.12); **Edge Functions** para webhooks y lógica ligera (ver ADR-001).
-- Integración legacy: **Python 3.12 + Playwright** (scraper / automatización frente al SAE).
+- Acceso a datos (app web/móvil): **Supabase client SDK** (**JS/TS** en Expo) con **RLS**; sin capa API propia intermedia para el CRUD habitual. *(Un cliente **Dart** usaría el SDK Dart de Supabase con el mismo proyecto y políticas.)*
+- BaaS: **Supabase** (PostgreSQL del proyecto, Auth, Storage, RLS, **Realtime**, **RPC**, Edge Functions).
+- **Tiempo casi real:** **Supabase Realtime** para escenarios como **inventario** y **traslados** (suscripciones a tablas/cambios relevantes).
+- **Operaciones complejas y transaccionales:** **Supabase RPC** (funciones SQL expuestas con validaciones), p. ej. **abrir/cerrar turno de caja**, cierres que tocan varias filas bajo una misma regla de negocio.
+- **Integración SAE (fuera del “backend” de la app):** **scripts Python** (CLI, **no** FastAPI obligatorio): leer **CSV/XLS** del SAE, validar y **insertar/actualizar en Supabase** vía **API** (PostgREST / service role según el script) o **conexión directa** a Postgres; también **exportar** desde Supabase a CSV/XLS para alimentar el SAE. **Playwright** sigue siendo opcional solo cuando haga falta automatizar la UI legacy, no como sustituto del pipeline por archivos.
+- **Worker HTTP / jobs largos:** **FastAPI** (Python 3.12) y **Edge Functions** permanecen como **opciones** para webhooks, tareas muy pesadas o deps que no convengan en un script puntual (ver ADR-001).
 - Offline (solo a partir de Fase 5): **WatermelonDB** + capa de sync.
 - CI/CD: **GitHub Actions** + **Expo EAS** (builds).
 
@@ -35,7 +38,7 @@ Cambios de stack global → actualizar ADR-001 y este archivo en el mismo commit
 | Código / colaboración | Git, GitHub; solo ramas permanentes `main` / `develop` | Ver [README §3.2](../README.md#32-ramas-git-solo-main-y-develop). |
 | Automatización tablero | `gh` CLI, scripts Python/PowerShell en `scripts/` | Project 11, workflows documentados. |
 | Decisiones | Markdown, **ADR-001** | Stack global **aceptado**; variables en `.env.example`. |
-| Datos fuente | Excel exportado del SAE, documentación en `EXCEL_ANALYSIS` | Sin runtime de app aún. |
+| Datos fuente | Excel/CSV del SAE, documentación en `EXCEL_ANALYSIS` | Carga hacia Supabase vía **scripts Python** (no API propia obligatoria). |
 
 **Estado fundación (2026-03):** proyecto **Supabase**, **`.env` / entornos locales** (Expo, worker) y contenido de **[EXCEL_ANALYSIS.md](./EXCEL_ANALYSIS.md)** — **en progreso**; ADR y plantilla de variables ya fijadas en repo.
 
@@ -50,10 +53,10 @@ Objetivo: operaciones de campo (recepción, traslados, conteos, arqueo) alimenta
 | Capa | Tecnologías | Notas |
 |------|-------------|--------|
 | **App móvil + web** | Expo, React Native, TypeScript, NativeWind, Expo Router | Un solo codebase; pruebas en Android + `expo start --web`. |
-| **Backend cloud** | Supabase (Postgres, Auth, Row Level Security, Storage) | Esquema y políticas por rol (admin / encargado / empleado). |
-| **API de negocio / jobs** | **FastAPI** (Python 3.12) para cargas pesadas; **Supabase Edge Functions** para webhooks y lógica corta | Criterio en [ADR-001](../ADR/ADR-001-stack-tecnologico.md) (tabla Edge vs FastAPI). |
-| **Scraper / legacy** | Python 3.12, Playwright | Carpeta `scraper/`; extracción o asistencia frente al SAE. |
-| **Importación** | Excel → validación → carga (script Python o Edge Function) | Alineado a tickets T1.1.5–T1.1.6. |
+| **Backend cloud + contrato de app** | Supabase (Postgres, Auth, RLS, Storage, **Realtime**, **RPC**) | Lectura/escritura desde la app con **SDK** y RLS; reglas transaccionales en **RPC** cuando el flujo lo requiera. |
+| **Jobs / hosting extra** | **Edge Functions** (webhooks, tareas cortas); **FastAPI** solo si un job exige servidor Python persistente | Criterio en [ADR-001](../ADR/ADR-001-stack-tecnologico.md) (revisión 2026-03-24 + tabla Edge vs FastAPI). |
+| **Scraper / UI legacy (opcional)** | Python 3.12, Playwright | Carpeta `scraper/`; solo cuando el SAE no entregue datos por archivo. |
+| **Importación / exportación SAE** | **Scripts Python** (CSV/XLS ↔ Supabase por API o Postgres directo) | Sin obligación de exponer FastAPI para este flujo; alineado a T1.1.5–T1.1.6. |
 | **Observabilidad mínima** | Logs Supabase, GitHub Actions (CI básico) | Tests smoke según madurez. |
 
 **Nuevo respecto a Fase 0:** runtime de app, base de datos de producto, scraper, pipeline Excel.
@@ -67,7 +70,7 @@ Objetivo: sustituir **parcialmente** el SAE con catálogos, compras, ventas, inv
 | Capa | Tecnologías | Notas |
 |------|-------------|--------|
 | Cliente | Mismo Expo (móvil + **web oficina** ampliada) | Más pantallas administrativas; reutilizar componentes. |
-| Datos | Supabase: más tablas, RLS por módulo, migraciones SQL versionadas | `database/migrations/`, `database/policies/`. |
+| Datos | Supabase: más tablas, RLS por módulo, migraciones SQL versionadas, **Realtime/RPC** según módulo | `database/migrations/`, `database/policies/` (o `supabase/migrations/` según convención del repo). |
 | Facturación / fiscal | **A definir por país** (ej. DIAN electrónica si aplica) | Puede ser integración externa, microservicio o proveedor; documentar en ADR cuando entre en alcance. |
 | Reportes MVP | Export CSV/Excel, vistas SQL, gráficos ligeros en app (**Recharts**, **Victory**, etc. — elegir uno) | Evitar BI pesado hasta Fase 3 si no es necesario. |
 | Background | Edge Functions y/o **colas** ligeras (pg_cron, Supabase scheduled functions) | Para jobs de inventario, alertas stock. |
