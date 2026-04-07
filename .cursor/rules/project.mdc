@@ -1,0 +1,79 @@
+---
+alwaysApply: true
+---
+
+# ERP Satélite — reglas de proyecto (Cursor)
+
+## Stack (línea base)
+
+- **Cliente:** React Native + Expo (SDK 51+), TypeScript strict, NativeWind, Expo Router (`erp-satelite/apps/mobile`).
+- **BaaS:** Supabase (PostgreSQL, Auth, Storage, RLS, Realtime, RPC, Edge Functions).
+- **Datos en app:** Supabase JS/TS con **RLS**; sin API propia para CRUD habitual salvo decisión explícita (ver ADR-001 en repo).
+- **Integración SAE / batch:** scripts Python (CSV/XLS ↔ Supabase); Playwright solo si hace falta UI legacy.
+- **CI/CD:** GitHub Actions + Expo EAS cuando aplique.
+
+Detalle por fase: `docs/STACK_POR_FASE.md`. Contexto fundación: `docs/FOUNDATION_STACK_AGENT_BRIEF.md`.
+
+## Esquema y tablas (estado del repo)
+
+### Migraciones versionadas (`supabase/migrations/`)
+
+- **`20260322190000_draft_rls_core.sql`** (borrador): tipos `doc_estado_oc`, `doc_estado_traslado`; tablas `profiles`, `productos`, `compras_*`, `ordenes_compra_*`, `traslados_*`, `clientes`, `proveedores`; funciones de sesión y políticas RLS de ejemplo. **No asumir que todo está aplicado en remoto** sin comprobar.
+- **`20260323213000_01_schema.sql`:** extensión `pgcrypto`; DDL base en consolidación (comentarios de convención).
+- **`20260323213100_03_triggers_user_profiles.sql`:** trigger `on_auth_user_created` → `public.handle_new_auth_user()` sincroniza `auth.users` con **`public.user_profiles`** (`user_id`, `rol_principal`, `activo`, etc.); **no** fuerza `empresa_id`/`sucursal_id` al alta para no romper FK tempranas.
+
+### Convivencia `profiles` vs `user_profiles`
+
+- El borrador RLS lee **`public.profiles`** en `current_empresa_id()` / `current_sucursal_id()` / `app_role()`.
+- El trigger reciente usa **`public.user_profiles`**.
+- Si las políticas esperan `profiles` y solo existe `user_profiles`, las funciones de sesión deben alinearse (ver `docs/sql/rls_session_helpers_user_profiles.sql` y `docs/SUPABASE_AUTH_USER_PROFILES.md`).
+
+### Introspección en caliente
+
+Ejecutar queries bajo `scripts/introspection/` contra el proyecto Supabase (SQL Editor o `psql`) antes de asumir objetos en producción.
+
+## Roles de aplicación (RLS)
+
+Valores canónicos (minúsculas en comparaciones de políticas): **`admin`**, **`encargado`**, **`empleado`**.
+
+- **`admin`:** catálogo y operaciones globales de empresa (según `docs/SECURITY_POLICIES.md`).
+- **`encargado`:** ámbito sucursal; aprueba / opera documentos asignados al contexto.
+- **`empleado`:** documentos propios o asignados (`empleado_asignado_id`), estados iniciales (`BORRADOR`, `ENVIADO`), sin gestión de catálogo salvo excepción documentada.
+
+Fuente declarativa sin SQL: `docs/SECURITY_POLICIES.md`.
+
+## Funciones de sesión (patrón Supabase)
+
+En el borrador del repo (tabla `profiles`):
+
+- `public.current_empresa_id()` → `uuid`
+- `public.current_sucursal_id()` → `uuid`
+- `public.app_role()` → `text`
+- `public.empleados_del_encargado(p_encargado uuid)` → `SETOF uuid` (jerarquía opcional)
+
+Deben ser **`STABLE`**, **`SECURITY DEFINER`**, `SET search_path = public`, y leer solo la fila del usuario actual (`auth.uid()`).
+
+## Convenciones de código y repo
+
+- **Issues / títulos:** `docs/TICKET_ID_CONVENTION.md` (`[T##]`, `[E##-S##-##]`).
+- **Commits:** `feat|fix|docs|chore(scope): descripción` (mensaje claro, imperativo o descriptivo consistente con el historial).
+- **Migraciones:** SQL idempotente donde sea posible; comentarios de convención en cabecera; no mezclar datos de producción en migraciones (semillas en `supabase/seeds/` solo local/dev).
+- **App:** rutas Expo Router bajo `app/`; componentes reutilizables; variables de entorno vía `.env` / `app.config` según el paquete móvil.
+
+## Prohibiciones (salvo issue/ADR explícito)
+
+- Desactivar RLS en tablas de negocio multi-tenant o exponer `service_role` en el cliente.
+- Credenciales o URLs de producción en código o commits.
+- Nuevas dependencias pesadas sin justificar tamaño, mantenimiento y alineación con ADR-001.
+- “Limpiar” o renombrar masivamente tablas `profiles` / `user_profiles` sin plan de migración y actualización de políticas.
+
+## Documentación operativa (no duplicar en el chat)
+
+- Tablero / workflows GitHub: `docs/WORKFLOW.md`, `docs/GITHUB_PROJECTS.md`.
+- Ciclo de ticket (8 pasos): `docs/ticket-workflow.md` (evita colisión con `WORKFLOW.md` en sistemas case-insensitive).
+- Preguntas abiertas: `docs/open-questions.md`.
+- Checklist sesión: `docs/daily-checklist.md`.
+
+## Repo de aplicación
+
+Código de producto principal: **`Abraha33/erp-satelite`** (este monorepo puede contener `erp-satelite/` como subcarpeta o documentación raíz; ajustar rutas según clone local).

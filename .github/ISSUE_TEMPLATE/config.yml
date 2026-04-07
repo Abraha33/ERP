@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Project 11 — Workflows (tablero)
+    url: https://github.com/users/Abraha33/projects/11/workflows
+    about: Automatizaciones del campo Status (Icebox…Done), auto-add, auto-close. Guía en docs/WORKFLOW.md del repositorio.
+  - name: Ciclo de ticket (8 pasos)
+    url: https://github.com/Abraha33/erp-satelite/blob/main/docs/ticket-workflow.md
+    about: Si el enlace no apunta a tu copia del doc, abre docs/ticket-workflow.md en el monorepo local (ERP).
