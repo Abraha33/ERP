@@ -4,7 +4,10 @@
   "type": "module",
   "scripts": {
     "start": "tsx rls_diagnostics.ts",
-    "diag": "tsx rls_diagnostics.ts"
+    "diag": "tsx rls_diagnostics.ts",
+    "live": "tsx service_live_check.ts",
+    "health": "tsx rls_health.ts",
+    "test:rls": "tsx rls_health.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",
