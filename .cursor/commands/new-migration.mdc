@@ -1,8 +1,6 @@
 ---
-description: "Slash /new-migration — SQL versionado, archivo y db push"
 alwaysApply: false
 ---
-
 # Receta: /new-migration
 
 Ejecuta **en orden**. Objetivo: nueva migración **versionada** y aplicada al entorno que el usuario elija.
