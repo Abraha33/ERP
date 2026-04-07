@@ -1,0 +1,80 @@
+---
+description: "Slash /new-feature — rama, contexto y ciclo completo de feature"
+alwaysApply: false
+---
+
+# Receta: /new-feature
+
+Inicia un feature de punta a punta. Ejecuta **en orden**.
+
+## 0) Capturar intención
+
+Del usuario necesitas: **título corto**, **issue #** (si existe), **ámbito** (solo app / solo BD / ambos).
+
+## 1) Leer contexto (archivos obligatorios)
+
+Abre y ten presente:
+
+- `.cursor/rules/project.mdc`
+- `docs/session-context.md`
+- `docs/ticket-workflow.md`
+
+Si hay issue: lee el cuerpo del issue (`gh issue view N -R Abraha33/erp-satelite` o web).
+
+## 2) Base de rama y pull
+
+- `git fetch origin`
+- `git checkout develop` (o `main` si el equipo integra desde ahí)
+- `git pull`
+
+Si no existe `develop`, usa la rama de integración que indique el README del repo activo.
+
+## 3) Crear rama
+
+Formato según `docs/git-branches.md`:
+
+```bash
+git checkout -b feature/ID-titulo-en-kebab
+```
+
+Ejemplo: `feature/T14-sucursales-settings`. Para trabajo casi solo SQL usa prefijo `db/`.
+
+## 4) Árbol de trabajo
+
+- App Expo: carpeta `erp-satelite/apps/mobile` (o la ruta real del paquete en el clone).
+- Supabase: `supabase/migrations/` en la raíz donde esté configurado.
+
+Confirma rutas con el usuario si el monorepo tiene varias copias.
+
+## 5) Plan mínimo antes de codear
+
+Escribe en el chat (o en el issue) 3–7 viñetas:
+
+- Archivos/rutas que tocarás.
+- Migración nueva sí/no.
+- Riesgo RLS y cómo lo probarás.
+
+## 6) Implementar
+
+- Código mínimo necesario; TypeScript strict; sin `service_role` en cliente.
+- Migraciones: si aplica, sigue la receta **`/new-migration`** (`.cursor/rules/new-migration.mdc`).
+
+## 7) Verificación
+
+- DoD: `docs/estimation-and-definition-of-done.md`.
+- Prueba rápida manual según plataformas tocadas.
+
+## 8) Push y PR
+
+```bash
+git push -u origin HEAD
+gh pr create -R Abraha33/erp-satelite --base develop --fill
+```
+
+Ajusta `-R` y `--base`. Enlaza `Closes #N` en el cuerpo si corresponde.
+
+## 9) Salida obligatoria
+
+- Nombre de rama.
+- Enlace al PR (o estado si falló `gh`).
+- Lista de archivos clave tocados.

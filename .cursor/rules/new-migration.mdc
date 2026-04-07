@@ -1,0 +1,81 @@
+---
+description: "Slash /new-migration — SQL versionado, archivo y db push"
+alwaysApply: false
+---
+
+# Receta: /new-migration
+
+Ejecuta **en orden**. Objetivo: nueva migración **versionada** y aplicada al entorno que el usuario elija.
+
+## 0) Confirmar contexto
+
+- Pregunta si el cambio es **solo local** (CLI Supabase) o también **remoto enlazado** (`supabase link`).
+- Directorio con `supabase/config.toml` (raíz del monorepo ERP o subcarpeta donde viva Supabase).
+
+## 1) Sincronizar rama
+
+- Estar en rama de BD según `docs/git-branches.md` (prefijo `db/…` si el cambio es solo SQL/RLS).
+- `git pull` sobre la base acordada (`develop` o `main`).
+
+## 2) Crear archivo de migración (comando exacto)
+
+Desde el directorio que contiene `supabase/`:
+
+```bash
+supabase migration new NOMBRE_CORTO_SNAKE
+```
+
+Sustituye `NOMBRE_CORTO_SNAKE` por algo descriptivo (ej. `empresas_sucursales_rls`).
+
+Localiza el archivo generado en `supabase/migrations/` (timestamp + `_nombre.sql`).
+
+## 3) Escribir SQL
+
+- Sigue convenciones de `docs/SUPABASE_LOCAL_MIGRATION_FLOW.md` (DDL en migración; seeds en `supabase/seeds/` si solo es dev).
+- RLS: alinea con `docs/SECURITY_POLICIES.md`.
+- Incluye cabecera comentada: propósito, tablas tocadas, dependencia `profiles` vs `user_profiles` si aplica.
+- Referencia de estilo: `docs/examples/migration-example.sql` (no copiar ciego; adaptar).
+
+## 4) Aplicar cambios
+
+**Opción A — Solo local (recomendado para iterar)**
+
+```bash
+supabase db reset
+```
+
+(Recarga migraciones + seed según `config.toml`. Destructivo en local.)
+
+**Opción B — Empujar a proyecto remoto enlazado**
+
+```bash
+supabase db push
+```
+
+Solo si el usuario confirmó **link** al proyecto correcto y entiende el impacto en remoto.
+
+**Opción C — Sin resetear datos locales**
+
+Si ya existe flujo del equipo con `supabase migration up` / repair, úsalo tal como esté documentado en el repo; si no hay doc, prefiere Opción A en dev.
+
+## 5) Verificación mínima
+
+- Arranca o comprueba `supabase status` si aplica.
+- Ejecuta al menos una query de `scripts/introspection/current-public-schema.sql` o `current-rls-policies.sql` contra la BD objetivo para confirmar que el objeto existe.
+
+## 6) Git
+
+```bash
+git add supabase/migrations/ARCHIVO_NUEVO.sql
+git commit -m "db(supabase): NOMBRE_CORTO descripcion breve"
+```
+
+## 7) Actualizar documentación
+
+- Edita `docs/session-context.md` con tablas/políticas nuevas o pendientes resueltos.
+
+## 8) Salida obligatoria
+
+- Ruta del archivo `supabase/migrations/...sql` creado.
+- Comando de aplicación usado (`db reset` / `db push` / otro).
+- Recordatorio: **no** aplicar `db push` a producción sin confirmación explícita del usuario.

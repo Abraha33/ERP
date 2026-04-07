@@ -77,3 +77,17 @@ Deben ser **`STABLE`**, **`SECURITY DEFINER`**, `SET search_path = public`, y le
 ## Repo de aplicación
 
 Código de producto principal: **`Abraha33/erp-satelite`** (este monorepo puede contener `erp-satelite/` como subcarpeta o documentación raíz; ajustar rutas según clone local).
+
+## Comandos slash (recetas)
+
+Escribe `/nombre` en el chat de Cursor. Cada comando está en **`.cursor/commands/<nombre>.md`** y la receta detallada en **`.cursor/rules/<nombre>.mdc`**. El agente debe seguir la **`.mdc`** paso a paso, sin sustituirla por un flujo genérico.
+
+| Comando | Regla |
+|---------|--------|
+| `/create-ticket` | `create-ticket.mdc` |
+| `/close-ticket` | `close-ticket.mdc` |
+| `/new-migration` | `new-migration.mdc` |
+| `/debug-sql` | `debug-sql.mdc` |
+| `/new-feature` | `new-feature.mdc` |
+| `/sync-context` | `sync-context.mdc` |
+| `/review-pr` | `review-pr.mdc` |

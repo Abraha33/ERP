@@ -1,0 +1,62 @@
+---
+description: "Slash /sync-context — actualiza CURSOR_CONTEXT.md y session-context.md"
+alwaysApply: false
+---
+
+# Receta: /sync-context
+
+Mantén alineados **contexto para humanos/IA** y **estado del esquema**. Ejecuta **en orden**.
+
+## 0) Decidir fuente de verdad
+
+- **A)** Solo lo que hay **commiteado** en `supabase/migrations/` (sin conectar a BD).
+- **B)** Estado **real** de una BD: ejecutar `scripts/introspection/*.sql` y consolidar.
+
+Si el usuario no especifica, usa **B** en staging/local y **A** como respaldo.
+
+## 1) Revisar migraciones y triggers en repo
+
+Lista archivos en `supabase/migrations/` y resume:
+
+- Tablas nuevas o alteradas (por nombre).
+- Triggers auth → `user_profiles` / `profiles`.
+- RLS: archivos o secciones relevantes.
+
+## 2) (Opcional) Introspección en BD
+
+Si hay conexión, ejecuta y conserva notas de:
+
+- `scripts/introspection/current-public-schema.sql`
+- `scripts/introspection/current-rls-policies.sql`
+
+Compara con lo que dice `docs/session-context.md`. Registra divergencias.
+
+## 3) Actualizar `docs/session-context.md`
+
+- Tabla de objetos: añade/quita filas según realidad.
+- **Pendientes conocidos:** mueve a resueltos o añade nuevos (p. ej. empresas/sucursales).
+- **Decisiones activas:** solo lo vigente.
+- Actualiza la línea `Actualizado: YYYY-MM-DD` al final.
+
+## 4) Actualizar `CURSOR_CONTEXT.md` (raíz del repo)
+
+Mantén coherente con `project.mdc` y el stack:
+
+- **Stack:** sin contradicción con ADR-001 / `docs/STACK_POR_FASE.md`.
+- **Estructura:** rutas reales (`erp-satelite/apps/mobile`, `supabase/migrations`, etc.); corrige si el doc menciona `app/` en raíz y el código vive en subcarpeta.
+- **Estado fundación / Supabase:** una o dos frases sobre en progreso vs listo.
+- **Reglas Cursor:** alinea bullets con `.cursor/rules/project.mdc` (commits, TS strict, sin secrets).
+
+No dupliques páginas enteras de otros docs; enlaza.
+
+## 5) Commit (si el usuario quiere persistir)
+
+```bash
+git add docs/session-context.md CURSOR_CONTEXT.md
+git commit -m "docs: sync session-context and CURSOR_CONTEXT"
+```
+
+## 6) Salida obligatoría
+
+- Resumen de **qué cambió** en cada archivo (viñetas).
+- Si hubo divergencia repo vs BD, lista explícita.
