@@ -1,0 +1,43 @@
+---
+description: Sincronizar CURSOR_CONTEXT.md y docs/session-context.md con el estado real
+---
+
+# Command: sync-context
+
+## Cuándo usarlo
+- Al inicio de cada día de trabajo
+- Después de hacer merge de un PR
+- Cuando Cursor parece perdido o da sugerencias fuera de contexto
+- Al cambiar de fase o sprint
+
+## Qué actualizar
+
+### CURSOR_CONTEXT.md (raíz del repo)
+Campos obligatorios:
+- Fase activa (F0 / F1 / F2...)
+- Sprint activo (número o descripción)
+- Issue actual en progreso (#número + título)
+- Rama actual
+- Último merge realizado
+
+### docs/session-context.md
+Campos obligatorios:
+- Fecha de última actualización
+- Estado de tablas en Supabase (qué existe, qué está pendiente)
+- Pendientes inmediatos (lista corta, máximo 5 items)
+- Último trabajo realizado
+- Decisiones activas vigentes
+
+## Checklist de sincronización
+
+- [ ] CURSOR_CONTEXT.md refleja el issue actual
+- [ ] docs/session-context.md tiene los pendientes correctos
+- [ ] La rama activa coincide con el issue en progreso
+- [ ] supabase db status no tiene migraciones pendientes sin aplicar
+- [ ] GitHub Projects muestra el issue en "In Progress"
+
+## Commit del sync
+```bash
+git add CURSOR_CONTEXT.md docs/session-context.md
+git commit -m "chore: sync context — <descripción de qué cambió>"
+```

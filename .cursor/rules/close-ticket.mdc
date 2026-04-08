@@ -1,0 +1,41 @@
+---
+description: Cerrar un issue correctamente — DoD completo antes de hacer merge
+---
+
+# Command: close-ticket
+
+## Checklist — NO cerrar sin que todo esté en verde
+
+### Código
+- [ ] TypeScript sin errores: tsc --noEmit limpio
+- [ ] Sin console.log de debug
+- [ ] Sin any sin justificación
+- [ ] Manejo de error en TODAS las llamadas a Supabase
+
+### Base de datos (si hubo cambio)
+- [ ] Migración creada en supabase/migrations/
+- [ ] Migración aplicada en remoto: supabase db push
+- [ ] RLS habilitada en tablas nuevas
+- [ ] Policies con prefijo p_<tabla>_<acción>_<rol>
+
+### Prueba de cierre
+- [ ] Ejecutar MANUALMENTE cada paso de la prueba de cierre del issue
+- [ ] Caso positivo: pasa ✅
+- [ ] Caso negativo: falla como se esperaba ✅
+- [ ] Verificado con al menos 2 roles distintos
+
+### Pull Request
+- [ ] PR hacia develop (NUNCA hacia main)
+- [ ] Título: [#<número>] Descripción breve
+- [ ] Body incluye: Closes #<número>
+- [ ] Si hubo migración: mencionarla en el PR
+
+### Registro
+- [ ] Comentar en el issue: horas reales invertidas
+- [ ] Actualizar docs/session-context.md si cambió algo estructural
+- [ ] Actualizar CURSOR_CONTEXT.md si cambió fase o sprint
+
+## Criterio de salida
+- PR mergeado a develop
+- Issue cerrado automáticamente por "Closes #<número>"
+- Horas reales registradas en el issue

@@ -1,0 +1,48 @@
+---
+description: Checklist completo antes de hacer merge de un PR
+---
+
+# Command: review-pr
+
+## Checklist de revisión — en orden
+
+### Código
+- [ ] Sin errores TypeScript (tsc --noEmit)
+- [ ] Sin any sin justificar
+- [ ] Sin console.log de debug
+- [ ] Imports organizados (no hay imports no usados)
+- [ ] Manejo de error en TODA llamada a Supabase: const { data, error } = ...
+
+### Seguridad
+- [ ] Sin hardcode de empresa_id, sucursal_id, o UUIDs de usuario
+- [ ] Sin lógica de negocio expuesta en Client Components
+- [ ] Las rutas protegidas verifican sesión antes de renderizar
+
+### Base de datos
+- [ ] Si hay migración: está en supabase/migrations/ con timestamp correcto
+- [ ] RLS habilitada en tablas nuevas
+- [ ] Policies cubren los 3 roles (admin, encargado, empleado)
+- [ ] Índices creados en columnas de filtro (empresa_id, sucursal_id, FK)
+
+### PR en GitHub
+- [ ] Título: [#<número>] Descripción breve
+- [ ] Body tiene: Closes #<número>
+- [ ] Base branch es develop (NUNCA main)
+- [ ] Si hubo migración: mencionada en el body del PR
+
+### Prueba de cierre
+- [ ] Ejecutada manualmente
+- [ ] Verificada con rol empleado
+- [ ] Verificada con rol encargado o admin
+- [ ] Caso negativo comprobado (RLS funciona)
+
+## Hacer merge
+```bash
+# Solo después de que todo el checklist esté en verde
+# Merge en GitHub via PR — no hacer merge local
+```
+
+## Post-merge
+- [ ] Borrar la rama feature/* en GitHub
+- [ ] Actualizar CURSOR_CONTEXT.md
+- [ ] Registrar horas reales en el issue cerrado

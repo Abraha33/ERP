@@ -1,0 +1,62 @@
+---
+description: Iniciar el desarrollo de una feature nueva de forma ordenada
+---
+
+# Command: new-feature
+
+## Pasos completos de inicio
+
+### 1. Verificar que el issue existe y tiene prueba de cierre
+- Abrir el issue en GitHub
+- Confirmar que tiene: descripción, prueba de cierre, talla, milestone
+- Si no tiene prueba de cierre → usar /create-ticket primero
+
+### 2. Actualizar contexto
+```bash
+git checkout develop
+git pull origin develop
+```
+- Abrir CURSOR_CONTEXT.md → verificar que refleja el sprint actual
+- Abrir docs/session-context.md → verificar estado de BD
+
+### 3. Crear rama
+```bash
+git checkout -b feature/<número-issue>-<descripcion-corta>
+# Ejemplo: git checkout -b feature/42-listado-ordenes-compra
+```
+
+### 4. Identificar si hay cambio de BD
+- ¿Necesita tabla nueva? → crear migración antes de código (ver /new-migration)
+- ¿Necesita columna nueva? → migración primero
+- ¿Solo lectura de tablas existentes? → ir directo a código
+
+### 5. Estructura de archivos a crear
+```
+app/(módulo)/
+  <nombre-página>/
+    page.tsx          → Server Component con fetch
+    _components/      → Client Components de la página
+    actions.ts        → Server Actions si hay mutations
+```
+
+### 6. Patrón de fetch (Server Component)
+```typescript
+// app/(purchases)/ordenes-compra/page.tsx
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+
+export default async function OrdenesCompraPage() {
+  const supabase = createServerComponentClient({ cookies })
+  const { data, error } = await supabase
+    .from('ordenes_compra_encabezado')
+    .select('*')
+  
+  if (error) console.error(error) // manejar siempre
+  return <div>{/* UI */}</div>
+}
+```
+
+## Criterio de salida
+- Rama creada desde develop actualizado
+- Migración creada si hay cambio de BD
+- Primer archivo de la feature commiteado

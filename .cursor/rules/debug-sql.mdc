@@ -1,0 +1,72 @@
+---
+description: Diagnosticar problemas de RLS, policies, funciones o queries en Supabase
+---
+
+# Command: debug-sql
+
+## Cuándo usarlo
+- Una query retorna vacío cuando no debería
+- Error: "new row violates row-level security policy"
+- Una función SECURITY DEFINER no se comporta como se espera
+- Un trigger no se está disparando
+
+## Paso 1 — Verificar que RLS está activa
+
+```sql
+SELECT relname AS tabla, relrowsecurity AS rls_on
+FROM pg_class
+WHERE relnamespace = 'public'::regnamespace AND relkind = 'r'
+ORDER BY relname;
+```
+
+## Paso 2 — Ver todas las policies de la tabla problema
+
+```sql
+SELECT policyname, cmd, roles, qual, with_check
+FROM pg_policies
+WHERE schemaname = 'public' AND tablename = '<tu_tabla>'
+ORDER BY cmd, policyname;
+```
+
+## Paso 3 — Simular sesión del usuario con problema
+
+```sql
+-- Reemplazar el JWT con el del usuario real (Supabase Dashboard > Auth > Users)
+SET LOCAL role = authenticated;
+SET LOCAL request.jwt.claims = '{"sub": "<user-uuid>"}';
+
+-- Verificar qué ve el usuario
+SELECT public.app_role(), public.current_empresa_id(), public.current_sucursal_id();
+
+-- Ejecutar la query que falla
+SELECT * FROM public.<tu_tabla> LIMIT 10;
+```
+
+## Paso 4 — Verificar funciones de sesión
+
+```sql
+-- Estas deben retornar valores no nulos para un usuario autenticado
+SELECT
+  auth.uid() AS uid,
+  public.app_role() AS rol,
+  public.current_empresa_id() AS empresa,
+  public.current_sucursal_id() AS sucursal;
+```
+
+## Paso 5 — Ver triggers activos en la tabla
+
+```sql
+SELECT trigger_name, event_manipulation, action_timing, action_statement
+FROM information_schema.triggers
+WHERE event_object_schema = 'public'
+  AND event_object_table = '<tu_tabla>';
+```
+
+## Diagnósticos comunes
+
+| Síntoma | Causa probable | Fix |
+|---|---|---|
+| SELECT retorna vacío | Policy USING con condición falsa | Revisar empresa_id en la condición |
+| INSERT bloqueado | Policy WITH CHECK faltante o incorrecta | Agregar WITH CHECK |
+| app_role() retorna null | Usuario sin fila en profiles | Verificar trigger auth→profiles |
+| current_empresa_id() retorna null | empresa_id null en profiles | Actualizar fila en profiles |

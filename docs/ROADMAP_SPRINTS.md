@@ -87,8 +87,8 @@ Este archivo es la **descomposición en sprints** para el arranque. El **plan ma
 | BaaS / DB | Supabase (PostgreSQL, Auth, RLS, Storage, **Realtime**, RPC, Edge Functions) |
 | Tiempo real (ej. inventario / traslados) | Supabase **Realtime** |
 | Integración SAE | **Scripts Python** (CSV/XLS ↔ Supabase por API o Postgres directo); export inverso para alimentar SAE |
-| UI legacy / scraper opcional | Python 3.12 + Playwright en `scraper/` cuando no baste el archivo |
-| Jobs pesados / HTTP persistente | FastAPI (Python 3.12) en `worker/` — **opcional**, no obligatorio para import SAE |
+| UI legacy / scraper opcional | Python 3.12 + Playwright en `tools/scraper/` cuando no baste el archivo |
+| Jobs pesados / HTTP persistente | FastAPI (Python 3.12) en `tools/worker/` — **opcional**, no obligatorio para import SAE |
 | Offline (Fase 5 producto) | WatermelonDB — ver [ROADMAP.md](../ROADMAP.md) y [STACK_POR_FASE.md](./STACK_POR_FASE.md) |
 | CI / builds | GitHub Actions + Expo EAS |
 

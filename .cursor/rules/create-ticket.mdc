@@ -1,0 +1,45 @@
+---
+description: Crear un nuevo issue en GitHub con el método correcto
+---
+
+# Command: create-ticket
+
+## Cuándo usarlo
+Cuando vas a empezar trabajo nuevo y necesitas registrarlo antes de escribir código.
+
+## Pasos obligatorios
+
+1. **Identificar el tipo** de trabajo:
+   - Cambio de BD → template: database.md
+   - UI/pantalla → template: frontend.md
+   - Lógica servidor → template: backend.md
+   - CI/CD → template: devops.md
+   - Deuda técnica → template: platform.md
+   - Especificación → template: product.md
+   - Bug en pruebas → template: qa.md
+
+2. **Escribir la prueba de cierre ANTES de cualquier otra cosa.**
+   Formato obligatorio:
+   - Paso 1: acción concreta y verificable
+   - Paso 2: resultado esperado visible
+   - Paso 3: caso negativo (qué NO debe pasar)
+
+3. **Asignar:**
+   - Milestone: F0 / F1 / F2 / F3 / F4 / F5
+   - Label de rol: role: backend / frontend / database / devops / design / qa
+   - Talla: size: XS (0.5-1h) / S (1-3h) / M (3-6h) / L (6-12h) / XL (+12h → dividir)
+   - Prioridad: P0 / P1 / P2 / P3
+
+4. **Verificar:** ¿el issue es XL? → dividir en sub-issues antes de continuar.
+
+5. **Crear la rama** solo después de que el issue tenga número:
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b feature/<número>-<descripcion-corta>
+   ```
+
+## Criterio de salida
+- Issue creado con número asignado
+- Prueba de cierre escrita
+- Rama creada desde develop

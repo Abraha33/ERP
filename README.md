@@ -1,7 +1,7 @@
 # ERP Satelite Operativa
 
 Sistema empresarial completo (ERP + CRM) construido por un solo founder en 14 meses.
-Stack: **Expo + Supabase** (SDK directo, RLS, **Realtime**, **RPC**) + **scripts Python** (SAE CSV/XLS ↔ Supabase) + **Playwright** opcional; **FastAPI (`worker/`)** solo si un job lo requiere; offline **WatermelonDB** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
+Stack: **Expo + Supabase** (SDK directo, RLS, **Realtime**, **RPC**) + **scripts Python** (SAE CSV/XLS ↔ Supabase) + **Playwright** opcional; **FastAPI (`tools/worker/`)** solo si un job lo requiere; offline **WatermelonDB** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
 
 **Plan maestro del producto** (fases 0–5: fundación, App Satélite, ERP básico, ERP completo, CRM, offline): **[ROADMAP.md](./ROADMAP.md)**. **Vista por sprints** (T01–T35, arranque): [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md).
 
@@ -265,7 +265,7 @@ Monolito modular o servicios separados (API ERP, CRM, workers). Ver [docs/Esquel
 
 ## 10. Tech Stack confirmado
 
-Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (2026-03-22, **revisión backend 2026-03-24**): **React Native + Expo (SDK 51+)**, **TypeScript strict**, **Supabase** (Auth, Postgres, RLS, Storage, **Realtime**, **RPC**, Edge Functions), acceso desde app vía **SDK**; integración **SAE** vía **scripts Python** (CSV/XLS, API o Postgres directo); **FastAPI** (Python 3.12) en `worker/` **opcional**; **Playwright** cuando haga falta UI legacy; **GitHub Actions** + **Expo EAS**, **WatermelonDB** reservado para **Fase 5**. Variables: [`.env.example`](./.env.example). Desglose por fase: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**. **Conexión real** (proyecto Supabase + `.env` relleno) y **Excel SAE** documentado: **en progreso** — §16.
+Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (2026-03-22, **revisión backend 2026-03-24**): **React Native + Expo (SDK 51+)**, **TypeScript strict**, **Supabase** (Auth, Postgres, RLS, Storage, **Realtime**, **RPC**, Edge Functions), acceso desde app vía **SDK**; integración **SAE** vía **scripts Python** (CSV/XLS, API o Postgres directo); **FastAPI** (Python 3.12) en `tools/worker/` **opcional**; **Playwright** cuando haga falta UI legacy; **GitHub Actions** + **Expo EAS**, **WatermelonDB** reservado para **Fase 5**. Variables: [`.env.example`](./.env.example). Desglose por fase: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**. **Conexión real** (proyecto Supabase + `.env` relleno) y **Excel SAE** documentado: **en progreso** — §16.
 
 ---
 
@@ -297,8 +297,8 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
     ├── docs/               # STACK_POR_FASE, ROADMAP_SPRINTS, SECURITY_POLICIES, EXCEL_ANALYSIS…
     ├── supabase/migrations/ # Borradores SQL (RLS); aplicar con CLI Supabase cuando toque
     ├── apps/mobile/        # Expo (React Native + Router + NativeWind); ver apps/mobile/.env.example
-    ├── worker/             # FastAPI (jobs pesados); uvicorn app.main:app desde worker/
-    ├── scraper/            # Playwright + Python; pip install -r scraper/requirements.txt && playwright install
+    ├── tools/worker/       # FastAPI (jobs pesados); uvicorn desde tools/worker/
+    ├── tools/scraper/      # Playwright + Python; pip install -r tools/scraper/requirements.txt && playwright install
     ├── scripts/            # Python, PowerShell, JSON, GraphQL (tablero, vistas, migraciones)
     ├── .github/workflows/  # ci.yml (incl. job db_migrations), daily-progress.yml
     ├── supabase/

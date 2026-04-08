@@ -30,7 +30,7 @@ Plan maestro del **producto completo**: no es solo la app de campo. Cubre **fund
 | T0.1.6 | Documentar columnas en EXCEL_ANALYSIS.md        | 1h    | Alta      | **En progreso** (ver [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md)) |
 | T0.1.7 | Completar CURSOR_CONTEXT.md con stack definido  | 1h    | Alta      | **Hecho** |
 
-**Scaffold de código (Fase 0, fuera de la tabla T0.1.* original):** en la raíz del repo ya existen `apps/mobile` (Expo + Expo Router + NativeWind + TypeScript strict), `worker/` (FastAPI stub — **opcional** según jobs), `scraper/` (stub Playwright + `.env`), `.github/workflows/ci.yml` y `eas.json` en mobile. La integración SAE prevista es por **scripts** Python hacia Supabase; no implica tablas completas ni producto en producción.
+**Scaffold de código (Fase 0, fuera de la tabla T0.1.* original):** en la raíz del repo ya existen `apps/mobile` (Expo + Expo Router + NativeWind + TypeScript strict), `tools/worker/` (FastAPI stub — **opcional** según jobs), `tools/scraper/` (stub Playwright + `.env`), `.github/workflows/ci.yml` y `eas.json` en mobile. La integración SAE prevista es por **scripts** Python hacia Supabase; no implica tablas completas ni producto en producción.
 
 ---
 

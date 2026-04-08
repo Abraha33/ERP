@@ -62,7 +62,7 @@ La decisión de stack debe **minimizar superficie de mantenimiento** y **maximiz
 
 - **App (web/móvil):** consumo **directo** de Supabase con **SDK** y políticas **RLS**; **Realtime** para escenarios como inventario y traslados; **RPC** para reglas de negocio complejas (cerrar caja, etc.).
 - **SAE:** capa de integración = **scripts Python** separados del runtime de la app; sin servicio FastAPI obligatorio para import/export.
-- **FastAPI / `worker/`:** se mantiene como **opción** para cargas que sigan requiriendo HTTP persistente o dependencias que no encajen en un script puntual.
+- **FastAPI / `tools/worker/`:** se mantiene como **opción** para cargas que sigan requiriendo HTTP persistente o dependencias que no encajen en un script puntual.
 
 ---
 

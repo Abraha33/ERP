@@ -55,7 +55,7 @@ Objetivo: operaciones de campo (recepción, traslados, conteos, arqueo) alimenta
 | **App móvil + web** | Expo, React Native, TypeScript, NativeWind, Expo Router | Un solo codebase; pruebas en Android + `expo start --web`. |
 | **Backend cloud + contrato de app** | Supabase (Postgres, Auth, RLS, Storage, **Realtime**, **RPC**) | Lectura/escritura desde la app con **SDK** y RLS; reglas transaccionales en **RPC** cuando el flujo lo requiera. |
 | **Jobs / hosting extra** | **Edge Functions** (webhooks, tareas cortas); **FastAPI** solo si un job exige servidor Python persistente | Criterio en [ADR-001](../ADR/ADR-001-stack-tecnologico.md) (revisión 2026-03-24 + tabla Edge vs FastAPI). |
-| **Scraper / UI legacy (opcional)** | Python 3.12, Playwright | Carpeta `scraper/`; solo cuando el SAE no entregue datos por archivo. |
+| **Scraper / UI legacy (opcional)** | Python 3.12, Playwright | Carpeta `tools/scraper/`; solo cuando el SAE no entregue datos por archivo. |
 | **Importación / exportación SAE** | **Scripts Python** (CSV/XLS ↔ Supabase por API o Postgres directo) | Sin obligación de exponer FastAPI para este flujo; alineado a T1.1.5–T1.1.6. |
 | **Observabilidad mínima** | Logs Supabase, GitHub Actions (CI básico) | Tests smoke según madurez. |
 

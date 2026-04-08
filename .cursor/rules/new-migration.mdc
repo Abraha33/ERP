@@ -1,0 +1,80 @@
+---
+description: Crear y aplicar una migración SQL con el método correcto
+---
+
+# Command: new-migration
+
+## Regla de oro
+NUNCA modificar la BD desde el dashboard de Supabase.
+SIEMPRE: crear archivo → editar → db push.
+
+## Pasos
+
+### 1. Crear el archivo
+```bash
+supabase migration new <nombre_descriptivo>
+# Ejemplos:
+# supabase migration new add_empresas_sucursales
+# supabase migration new add_rls_productos
+# supabase migration new fix_trigger_profiles
+```
+Esto genera: `supabase/migrations/<timestamp>_<nombre>.sql`
+
+### 2. Escribir el SQL
+Estructura obligatoria del archivo:
+
+```sql
+-- =============================================================================
+-- Descripción: qué hace esta migración
+-- Issue relacionado: #<número>
+-- =============================================================================
+
+-- Crear tabla (si aplica)
+CREATE TABLE public.<tabla> (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  empresa_id uuid NOT NULL,  -- siempre presente para multi-tenant
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Índice por empresa (obligatorio en tablas con empresa_id)
+CREATE INDEX idx_<tabla>_empresa ON public.<tabla>(empresa_id);
+
+-- Habilitar RLS (obligatorio en TODAS las tablas)
+ALTER TABLE public.<tabla> ENABLE ROW LEVEL SECURITY;
+
+-- Policies por rol
+CREATE POLICY p_<tabla>_select_empleado ON public.<tabla>
+  FOR SELECT TO authenticated
+  USING (empresa_id = public.current_empresa_id());
+
+CREATE POLICY p_<tabla>_all_admin ON public.<tabla>
+  FOR ALL TO authenticated
+  USING  (public.app_role() = 'admin' AND empresa_id = public.current_empresa_id())
+  WITH CHECK (public.app_role() = 'admin' AND empresa_id = public.current_empresa_id());
+
+-- Grants
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.<tabla> TO authenticated;
+```
+
+### 3. Aplicar
+```bash
+supabase db push
+```
+
+### 4. Verificar
+```sql
+-- En SQL Editor de Supabase:
+SELECT relname, relrowsecurity FROM pg_class
+WHERE relnamespace = 'public'::regnamespace AND relname = '<tabla>';
+```
+
+### 5. Commit
+```bash
+git add supabase/migrations/
+git commit -m "db: <descripción breve> (#<issue>)"
+```
+
+## Criterio de salida
+- Archivo en supabase/migrations/ commiteado
+- supabase db push sin errores
+- RLS verificada en la tabla nueva

@@ -24,14 +24,17 @@ Un solo codebase React Native + Expo para App móvil (campo) y Web (oficina).
 
 Desglose **por etapa** (ERP básico, completo, CRM, offline): siempre [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
 
-## Estructura
-app/          → React Native + Expo
-scraper/      → Python/Playwright
-database/
-  migrations/ → SQL migraciones
-  policies/   → RLS policies
-ADR/          → Architecture Decision Records
-docs/         → Documentacion tecnica
+## Estructura (canónica — alinear con `.cursor/rules/project.mdc`)
+app/                    → Next.js App Router
+supabase/migrations/    → Única fuente de verdad BD
+supabase/functions/     → Edge Functions
+tools/scraper/          → Python/Playwright (auxiliar)
+tools/worker/           → Python/FastAPI (auxiliar, opcional)
+scripts/introspection/  → SQL de diagnóstico
+docs/legacy/            → Borradores huérfanos (p. ej. SQL que antes vivían bajo `database/`)
+apps/mobile/            → Expo (satélite / legado en este monorepo, si aplica)
+ADR/                    → Architecture Decision Records
+docs/                   → Documentación técnica
 
 ## Reglas Cursor
 - Siempre TypeScript estricto
