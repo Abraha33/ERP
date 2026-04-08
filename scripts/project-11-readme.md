@@ -162,7 +162,7 @@ Siguen el [ROADMAP.md](https://github.com/Abraha33/erp-satelite/blob/main/ROADMA
 
 ## 6. Como leer un Issue
 
-- **Titulo:** prefijo semantico + frase clara. Ejemplos: `[Setup] Inicializar Expo en blanco`, `[DB] Tabla productos y RLS`, `[Scraper] Login en SAE con Playwright`. Evita titulos solo tipo `T3.1.1: Provider factory` como titulo principal; el ID numerico puede ir en el cuerpo.
+- **Titulo:** prefijo semantico + frase clara. Ejemplos: `[Setup] Módulo Android base (Compose)`, `[DB] Tabla productos y RLS`, `[Scraper] Login en SAE con Playwright`. Evita titulos solo tipo `T3.1.1: Provider factory` como titulo principal; el ID numerico puede ir en el cuerpo.
 - **Cuerpo:** descripcion, criterios de aceptacion, enlace a milestone o fase.
 - **Labels:** `role/*` + opcional `priority/P*`; etapas = **Status** del Project.
 - **Milestone:** sprint o fase.
@@ -306,6 +306,6 @@ PowerShell: `.\scripts\apply-priority-board-expert.ps1 -Run`
 - [docs/Esqueleto.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/Esqueleto.md) — Alcance funcional ERP + CRM
 - [docs/GITHUB_PROJECTS.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECTS.md) — Tablero ultra-lean, vistas, pack experto, scripts
 - [docs/GITHUB_PROJECT_WORKFLOWS.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/GITHUB_PROJECT_WORKFLOWS.md) — Workflows del Project (activar 2–7)
-- [docs/EXCEL_ANALYSIS.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
+- [docs/legacy/EXCEL_ANALYSIS.md](https://github.com/Abraha33/erp-satelite/blob/main/docs/legacy/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
 - [CURSOR_CONTEXT.md](https://github.com/Abraha33/erp-satelite/blob/main/CURSOR_CONTEXT.md) — Contexto para el asistente IA
 - [daily-progress.yml](https://github.com/Abraha33/erp-satelite/blob/main/.github/workflows/daily-progress.yml) — Automatizacion push/PR/schedule

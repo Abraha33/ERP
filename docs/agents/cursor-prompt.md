@@ -4,7 +4,7 @@ Copia al abrir una sesión de trabajo en este monorepo (ajusta ramas y número d
 
 ---
 
-**Contexto:** Repo ERP Satélite — Expo + Supabase, RLS obligatorio en datos de negocio. Lee las reglas del proyecto en `.cursor/rules/project.mdc` y el estado en `docs/session-context.md`.
+**Contexto:** Repo ERP Satélite — **Kotlin + Jetpack Compose + Supabase**; RLS obligatorio en datos de negocio. Lee las reglas del proyecto en `.cursor/rules/project.mdc` y el estado en `docs/session-context.md`.
 
 **Mi objetivo hoy:** [describir en 1–3 frases]
 

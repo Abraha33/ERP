@@ -11,9 +11,9 @@ Plan maestro del **producto completo**: no es solo la app de campo. Cubre **fund
 | **4** | **CRM** (canales, pipeline, historial cliente) | Mes 11–12 | Gestión comercial activa |
 | **5** | **Offline-first** (BD local, sync, conflictos) | Mes 13–14 | App funciona sin internet |
 
-**Stack por fase:** [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
+**Stack por fase:** [docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md).
 
-**Última revisión:** 2026-03-24 — stack backend operativo: app → **Supabase SDK** (RLS), **Realtime** (inventario/traslados), **RPC** (flujos transaccionales p. ej. caja); SAE → **scripts Python** CSV/XLS (sin FastAPI obligatorio). Ver [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md) y [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
+**Última revisión:** 2026-04-08 — cliente producto **Kotlin + Compose + Supabase Kotlin** (RLS); backend **Realtime** / **RPC** según módulo; SAE → **scripts Python** CSV/XLS (FastAPI opcional en `tools/worker/`). Ver [docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md) y [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
 
 **Vista por sprints (T01–T35, ~14 semanas):** [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md).
 
@@ -27,10 +27,10 @@ Plan maestro del **producto completo**: no es solo la app de campo. Cubre **fund
 | T0.1.3 | Definir stack tecnológico (ADR-001)             | 3h    | Alta      | **Hecho** |
 | T0.1.4 | Configurar variables de entorno base            | 1h    | Alta      | **En progreso** (plantillas + `.env` locales; falta rellenar secretos) |
 | T0.1.5 | Analizar estructura del Excel exportado del SAE | 2h    | Alta      | **En progreso** |
-| T0.1.6 | Documentar columnas en EXCEL_ANALYSIS.md        | 1h    | Alta      | **En progreso** (ver [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md)) |
+| T0.1.6 | Documentar columnas en EXCEL_ANALYSIS.md        | 1h    | Alta      | **En progreso** (ver [docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md)) |
 | T0.1.7 | Completar CURSOR_CONTEXT.md con stack definido  | 1h    | Alta      | **Hecho** |
 
-**Scaffold de código (Fase 0, fuera de la tabla T0.1.* original):** en la raíz del repo ya existen `apps/mobile` (Expo + Expo Router + NativeWind + TypeScript strict), `tools/worker/` (FastAPI stub — **opcional** según jobs), `tools/scraper/` (stub Playwright + `.env`), `.github/workflows/ci.yml` y `eas.json` en mobile. La integración SAE prevista es por **scripts** Python hacia Supabase; no implica tablas completas ni producto en producción.
+**Scaffold de código (Fase 0):** en la raíz del repo existen `apps/android/` (placeholder producto Kotlin), `apps/mobile/` (**legado** hasta retirada), `tools/worker/` (FastAPI stub **opcional**), `tools/scraper/`, `scripts/sae/`, `supabase/`, `.github/workflows/ci.yml`. La integración SAE prevista es por **scripts** Python hacia Supabase; no implica tablas completas ni producto en producción.
 
 ---
 

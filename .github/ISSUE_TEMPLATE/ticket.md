@@ -16,7 +16,7 @@ labels: ''
 - [ ] Paso 1
 ## Definition of Done
 - [ ] Funciona en Android fisico
-- [ ] Funciona en web (expo start --web)
+- [ ] Probado en Android (emulador o físico) cuando afecte UI
 - [ ] RLS verificado
 - [ ] Sin errores en consola
 - [ ] Commit: feat|fix|docs|chore(scope): descripcion

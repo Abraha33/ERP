@@ -6,54 +6,48 @@ alwaysApply: true
 # ERP Satélite — Reglas Globales
 
 ## Stack
-- Next.js 14 App Router + TypeScript + Tailwind CSS
-- Supabase (Postgres + Auth + Storage + Edge Functions)
-- Cliente: supabase-js v2 — NO usar Prisma, Drizzle ni fetch directo
-- Carpeta app/ para Next.js, supabase/ para CLI y migraciones
+- **Android:** Kotlin + Jetpack Compose + Material 3
+- **Persistencia local:** Room; **background:** WorkManager (sync, reintentos)
+- **Backend:** Supabase (Postgres + Auth + Storage + Edge Functions + Realtime + RPC)
+- **Cliente red:** Supabase Kotlin (`supabase-kt` u SDK oficial) — NO Prisma/Drizzle en app; NO exponer `service_role` en APK
+- **Carpetas:** `apps/android/` (app), `supabase/` (CLI y migraciones)
 
 ## Estructura canónica
 ```
-app/                    → Next.js App Router
+apps/android/           → App Kotlin + Compose (Gradle)
 supabase/migrations/    → ÚNICA fuente de verdad de BD
 supabase/functions/     → Edge Functions
 docs/                   → Documentación operativa
-tools/scraper/          → Scraper Python (auxiliar, no ERP core)
-tools/worker/           → Worker Python (auxiliar, no ERP core)
+tools/scraper/          → Scraper Python (auxiliar)
+tools/worker/           → Worker FastAPI (auxiliar)
+scripts/sae/            → Import/export SAE (Python)
 scripts/introspection/  → SQLs de diagnóstico (solo lectura)
+worker/                 → Reservado (.gitkeep); ver tools/worker/
 ```
 
 ## BD — Reglas críticas
-- NUNCA modificar tablas desde el dashboard de Supabase
-- SIEMPRE: supabase migration new <nombre> → editar → supabase db push
-- RLS habilitada en TODAS las tablas sin excepción
-- Roles: admin > encargado > empleado (columna app_role en profiles)
-- Funciones de sesión disponibles:
-  - public.current_empresa_id()
-  - public.current_sucursal_id()
-  - public.app_role()
-- NUNCA hardcodear empresa_id ni sucursal_id
+- NUNCA modificar tablas desde el dashboard de Supabase (salvo emergencia documentada)
+- SIEMPRE: `supabase migration new <nombre>` → editar → `supabase db push`
+- RLS habilitada en TODAS las tablas expuestas a PostgREST
+- Roles: admin > encargado > empleado (`app_role` en `profiles`)
+- Funciones de sesión: `public.current_empresa_id()`, `public.current_sucursal_id()`, `public.app_role()`
+- Convenciones de columnas: `docs/reference/schema-conventions.md`
+- NUNCA hardcodear `empresa_id` ni `sucursal_id`
 
-## Tablas base existentes
-- profiles (app_role, empresa_id, sucursal_id)
-- productos
-- compras_encabezado / compras_detalle
-- ordenes_compra_encabezado / ordenes_compra_detalle
-- traslados_encabezado / traslados_detalle
-- clientes
-- proveedores
+## Tablas base (documentadas / borrador)
+- profiles (+ `deleted_at`, `updated_at`, `sync_status` según migración M0)
+- productos, clientes, proveedores, compras_*, ordenes_compra_*, traslados_*
 
-## Convenciones
-- Archivos: kebab-case
-- Componentes React: PascalCase
-- Funciones/variables: camelCase
+## Convenciones Kotlin / SQL
+- Archivos Kotlin: PascalCase (tipos), camelCase (miembros)
+- Paquetes: minúsculas
 - Tablas SQL: snake_case plural
-- Policies RLS: p_<tabla>_<acción>_<rol>
-- Ramas: feature/<issue>-<descripcion>
+- Policies RLS: `p_<tabla>_<acción>_<rol>`
+- Ramas: `feature/<issue>-<descripcion>`
 
 ## Prohibiciones absolutas
-- ❌ Push directo a main
-- ❌ any en TypeScript sin comentario justificado
-- ❌ Tablas sin RLS
-- ❌ Hardcode de IDs
-- ❌ Librerías sin ADR actualizado
-- ❌ Lógica de negocio en componentes UI
+- ❌ Push directo a `main`
+- ❌ Tablas sin RLS en producción
+- ❌ Hardcode de UUIDs de tenant o usuario
+- ❌ Proponer el stack **JS móvil legado** (`apps/mobile`) como stack de producto; solo Kotlin + Compose en `apps/android/`
+- ❌ Lógica de negocio compleja solo en Composables; extraer a capa dominio / UseCases / ViewModels

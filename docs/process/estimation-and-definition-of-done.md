@@ -5,7 +5,7 @@
 Un ticket se considera **hecho** cuando:
 
 1. **Funcionalidad:** Cumple los criterios de aceptación del issue sin regresiones obvias en el flujo tocado.
-2. **Cliente:** Probado en **Android** y en **web** (`expo start --web`) si el cambio afecta UI o navegación compartida.
+2. **Cliente:** Probado en **Android** (emulador o dispositivo) si el cambio afecta UI; web solo si el ticket lo define.
 3. **Datos:** Si hay lectura/escritura a Supabase, **RLS verificado** con usuario de prueba (rol `empleado` / `encargado` / `admin` según el caso), no solo con `service_role`.
 4. **Calidad:** Sin errores nuevos relevantes en consola; TypeScript sin errores en el paquete afectado.
 5. **Repositorio:** PR revisado y mergeado a la rama acordada (`develop`); issue enlazado.

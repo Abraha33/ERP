@@ -4,7 +4,7 @@ Project 11: todas las tarjetas del repo erp-satelite en **In progress** → **Do
 opcionalmente con texto en **Status update**.
 
   python scripts/bulk_in_progress_to_done.py --dry-run
-  python scripts/bulk_in_progress_to_done.py --message "Stack inicial listo (Expo, worker, scraper, CI)."
+  python scripts/bulk_in_progress_to_done.py --message "Stack inicial listo (Android, worker, scraper, CI)."
 """
 from __future__ import annotations
 
@@ -24,8 +24,8 @@ STATUS_FIELD_ID = "PVTSSF_lAHOCgQ2Ec4BSVkLzg_5tbo"
 REPO_FULL = "Abraha33/erp-satelite"
 
 DEFAULT_MESSAGE = (
-    "Completado: inicialización stack ADR-001 (apps/mobile Expo+NativeWind, worker FastAPI, "
-    "scraper Playwright stub, .env.example, .gitignore, CI). Sin tablas Supabase."
+    "Completado: inicialización stack ADR-001 (apps/android Compose, tools/worker FastAPI opcional, "
+    "tools/scraper Playwright stub, .env.example, .gitignore, CI). Sin tablas Supabase."
 )
 
 

@@ -16,47 +16,32 @@ description: Iniciar el desarrollo de una feature nueva de forma ordenada
 git checkout develop
 git pull origin develop
 ```
-- Abrir CURSOR_CONTEXT.md → verificar que refleja el sprint actual
-- Abrir docs/session-context.md → verificar estado de BD
+- Abrir `CURSOR_CONTEXT.md` → verificar sprint / fase
+- Abrir `docs/session-context.md` → estado de BD
 
 ### 3. Crear rama
 ```bash
 git checkout -b feature/<número-issue>-<descripcion-corta>
-# Ejemplo: git checkout -b feature/42-listado-ordenes-compra
 ```
 
 ### 4. Identificar si hay cambio de BD
-- ¿Necesita tabla nueva? → crear migración antes de código (ver /new-migration)
-- ¿Necesita columna nueva? → migración primero
-- ¿Solo lectura de tablas existentes? → ir directo a código
+- ¿Nueva tabla o columna? → migración primero (ver /new-migration)
+- ¿Solo lectura? → código en app
 
-### 5. Estructura de archivos a crear
+### 5. Estructura de archivos (Android)
 ```
-app/(módulo)/
-  <nombre-página>/
-    page.tsx          → Server Component con fetch
-    _components/      → Client Components de la página
-    actions.ts        → Server Actions si hay mutations
+apps/android/app/src/main/java/<paquete>/<feature>/
+  <Feature>Screen.kt      → Composable pantalla
+  <Feature>ViewModel.kt   → Estado y llamadas a repositorio
+  <Feature>Repository.kt  → Supabase / Room
 ```
 
-### 6. Patrón de fetch (Server Component)
-```typescript
-// app/(purchases)/ordenes-compra/page.tsx
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-
-export default async function OrdenesCompraPage() {
-  const supabase = createServerComponentClient({ cookies })
-  const { data, error } = await supabase
-    .from('ordenes_compra_encabezado')
-    .select('*')
-  
-  if (error) console.error(error) // manejar siempre
-  return <div>{/* UI */}</div>
-}
-```
+### 6. Patrón de acceso a Supabase (Kotlin)
+- Inyectar cliente Supabase (singleton) o repositorio.
+- Siempre comprobar `result` / excepciones; no ignorar errores de red ni de RLS.
+- No meter `service_role` en el binario; solo URL + anon en app.
 
 ## Criterio de salida
-- Rama creada desde develop actualizado
-- Migración creada si hay cambio de BD
+- Rama creada desde `develop` actualizado
+- Migración creada si hubo cambio de BD
 - Primer archivo de la feature commiteado

@@ -27,7 +27,7 @@ Los pasos están alineados con el **Status** del Project (**Icebox**, **Backlog*
 
 ## 5. Verificación local
 
-- App: Android y/o `expo start --web` según alcance.
+- App: emulador/dispositivo **Android** (`apps/android/`); web solo si un ticket explícito lo pide (stack TBD).
 - Supabase local o proyecto de staging: RLS probado con usuario real (no solo `service_role`).
 - Sin errores relevantes en consola / logs.
 

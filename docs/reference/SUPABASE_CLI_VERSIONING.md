@@ -84,7 +84,7 @@ npm install
 npm run diag
 ```
 
-Configura en `.env` raíz: `SUPABASE_URL`, `SUPABASE_ANON_KEY` (o `EXPO_PUBLIC_*`), `RLS_TEST_*` emails/password y `RLS_TEST_EMPRESA_ID` / `RLS_TEST_SUCURSAL_ID`. Cada usuario de prueba debe tener fila en `public.profiles` con `empresa_id`, `sucursal_id` y `app_role`.
+Configura en `.env` raíz: `SUPABASE_URL`, `SUPABASE_ANON_KEY` (y variables públicas de cliente definidas en `.env.example`), `RLS_TEST_*` emails/password y `RLS_TEST_EMPRESA_ID` / `RLS_TEST_SUCURSAL_ID`. Cada usuario de prueba debe tener fila en `public.profiles` con `empresa_id`, `sucursal_id` y `app_role`.
 
 Salida: JSON en stdout; código de salida ≠ 0 si algún test falla. `turnos_caja` queda como *skip* hasta existir la tabla en migraciones.
 
@@ -92,6 +92,6 @@ Salida: JSON en stdout; código de salida ≠ 0 si algún test falla. `turnos_ca
 
 Si al invitar desde el Dashboard falla con **not-null `empresa_id`**, el trigger que crea la fila de perfil no está recibiendo el UUID de empresa. Guía y SQL de ejemplo: [SUPABASE_AUTH_USER_PROFILES.md](./SUPABASE_AUTH_USER_PROFILES.md).
 
-## 11) Pantalla en la app Expo (solo `__DEV__`)
+## 11) Pantalla dev Supabase en cliente legado (solo desarrollo)
 
-Con `apps/mobile/.env` relleno (`EXPO_PUBLIC_SUPABASE_*`), en desarrollo aparece en **Tab One** el enlace **Dev: Supabase health / RLS**, que abre `/dev/supabase-health`: prueba `SELECT` cortos por tabla y permite iniciar sesión con un usuario de prueba para ver el efecto de RLS en el dispositivo o en web local. En build de producción `__DEV__` es `false` y la pantalla no muestra herramientas útiles.
+En la carpeta **`apps/mobile/`** (stack anterior, no es la línea Kotlin), con variables públicas de Supabase en `.env`, en desarrollo puede existir una ruta tipo **Dev: Supabase health / RLS** para `SELECT` cortos y login de prueba. El producto nuevo vive en **`apps/android/`**; documenta ahí el equivalente cuando exista. En release, las herramientas de diagnóstico no deben exponerse.

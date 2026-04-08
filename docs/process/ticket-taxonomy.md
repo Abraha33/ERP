@@ -22,7 +22,7 @@ Alineados con scripts del repo (`ensure_role_labels.py`, import CSV). Ajustar en
 | **F2** | ERP básico | Catálogos, compras, ventas, inventario. |
 | **F3** | ERP completo | Contabilidad, RRHH, reportes, auditoría. |
 | **F4** | CRM | WhatsApp/Meta, pipeline comercial. |
-| **F5** | Offline-first | WatermelonDB, sync, conflictos. |
+| **F5** | Offline-first | Room, WorkManager, sync, conflictos. |
 
 Los nombres exactos de milestones en GitHub pueden generarse con scripts (`ensure_roadmap_milestones.py`, etc.); ver [TICKET_ID_CONVENTION.md](./TICKET_ID_CONVENTION.md) para mapeo CSV ↔ milestone.
 

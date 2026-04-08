@@ -1,6 +1,6 @@
 # Mapa módulo → carpeta `app/` → fase
 
-> La app Expo vive típicamente en **`erp-satelite/apps/mobile`**. Las rutas son **Expo Router** (`app/`). Hasta que existan pantallas por módulo, las rutas reales pueden ser pocas; esta tabla es la **convención objetivo**.
+> La app de producto vive en **`apps/android/`** (Compose, navegación Kotlin). `apps/mobile/` es **legado** hasta retirada. Esta tabla es la **convención objetivo** de paquetes / pantallas.
 
 | Módulo ERP | Rutas sugeridas (`app/`) | Fase roadmap |
 |------------|---------------------------|--------------|
@@ -15,7 +15,7 @@
 | Contabilidad | `app/(app)/contabilidad/…` | F3 |
 | RRHH | `app/(app)/rrhh/…` | F3 |
 | CRM / inbox | `app/(app)/crm/…` | F4 |
-| Sync / offline | capa WatermelonDB + pantallas de estado | F5 |
+| Sync / offline | Room + WorkManager + pantallas de estado | F5 |
 
 ## Layout técnico
 

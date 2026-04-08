@@ -1,5 +1,5 @@
 ---
-name: Frontend (Expo / RN / Web)
+name: Frontend (Compose / Android)
 about: Pantallas, navegación, estado UI en la app
 title: '[T01] '
 labels: role/frontend
@@ -9,7 +9,7 @@ labels: role/frontend
 
 ## Rutas / pantallas
 
-`app/` … (Expo Router)
+`apps/android/…` (Compose, paquetes Kotlin)
 
 ## Estados UI
 
@@ -17,17 +17,17 @@ Carga, error vacío, permisos denegados.
 
 ## Datos
 
-Tablas Supabase / hooks; comprobar RLS desde la app.
+Tablas Supabase / repositorios Kotlin; comprobar RLS desde la app.
 
 ## Plataformas
 
 - [ ] Android
-- [ ] Web (expo start --web)
+- [ ] Web (solo si el ticket lo exige; stack web TBD)
 
 ## Dependencias
 
 ## Definition of Done
 
-- [ ] Sin errores TS en el paquete
+- [ ] Proyecto compila sin errores (Kotlin / Compose)
 - [ ] Sin regresiones obvias en navegación
 - [ ] DoD general en docs/estimation-and-definition-of-done.md

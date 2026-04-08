@@ -6,11 +6,11 @@ description: Cerrar un issue correctamente — DoD completo antes de hacer merge
 
 ## Checklist — NO cerrar sin que todo esté en verde
 
-### Código
-- [ ] TypeScript sin errores: tsc --noEmit limpio
-- [ ] Sin console.log de debug
-- [ ] Sin any sin justificación
-- [ ] Manejo de error en TODAS las llamadas a Supabase
+### Código (Android / Kotlin)
+- [ ] `./gradlew :app:compileDebugKotlin` (o `lint`) sin errores nuevos
+- [ ] Sin `Log.d`/`println` de debug en paths de producción
+- [ ] Sin suprimir errores de Supabase/RLS sin manejo explícito
+- [ ] Manejo de error en TODAS las llamadas a red / Supabase
 
 ### Base de datos (si hubo cambio)
 - [ ] Migración creada en supabase/migrations/

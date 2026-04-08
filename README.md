@@ -1,11 +1,11 @@
 # ERP Satelite Operativa
 
 Sistema empresarial completo (ERP + CRM) construido por un solo founder en 14 meses.
-Stack: **Expo + Supabase** (SDK directo, RLS, **Realtime**, **RPC**) + **scripts Python** (SAE CSV/XLS ↔ Supabase) + **Playwright** opcional; **FastAPI (`tools/worker/`)** solo si un job lo requiere; offline **WatermelonDB** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md).
+Stack: **Kotlin + Jetpack Compose + Room** (Android) + **Supabase** (Postgres, RLS, **Realtime**, **RPC**) + **scripts Python** (`scripts/sae/`, CSV/XLS ↔ Supabase) + **Playwright** opcional en `tools/scraper/`; **FastAPI** en `tools/worker/` solo si un job lo requiere; offline **Room + WorkManager** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md). Variables: [`.env.example`](./.env.example).
 
 **Plan maestro del producto** (fases 0–5: fundación, App Satélite, ERP básico, ERP completo, CRM, offline): **[ROADMAP.md](./ROADMAP.md)**. **Vista por sprints** (T01–T35, arranque): [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md).
 
-**Fundación (operativo):** proyecto **Supabase**, **`.env` / entornos locales** y **[docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md)** — **en progreso** (tabla en [§16](#16-setup-inicial-y-scripts)).
+**Fundación (operativo):** proyecto **Supabase**, **`.env` / entornos locales** y **[docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md)** — **en progreso** (tabla en [§16](#16-setup-inicial-y-scripts)).
 
 ---
 
@@ -186,7 +186,7 @@ En **GitHub Projects** usa el campo **Status**: **Icebox** → **Backlog** → *
 |-------|-----|
 | **`role/*`** | **Exactamente uno por issue** — capa principal (filtro `label:role/...` en el Project). |
 | **`priority/P0`** … **`priority/P3`** | **Como máximo uno** — misma escala que el campo **Priority** del tablero (P0 urgente → P3 baja); mantén label y campo alineados. |
-| `role/frontend` | Expo / RN / UI de producto. |
+| `role/frontend` | Compose / Android — UI de producto. |
 | `role/backend` | API, reglas de negocio, servicios. |
 | `role/database` | Schema, migrations, RLS, SQL, Supabase. |
 | `role/platform` | Repo, CI/CD, scripts, `.env`, hygiene del Project. |
@@ -224,7 +224,7 @@ Los nombres exactos en GitHub los define `scripts/roadmap_milestones.py` (`ensur
 
 **Scripts:** `python scripts/ensure_roadmap_milestones.py` → `import-backlog-to-github.py` / `sync_roadmap_granular_issues.py` asignan sprint; `sync_issue_milestones.py` alinea issues ya creados. Otro repositorio: `-R Owner/repo` en esos scripts o `python scripts/sync_milestones_for_project_repos.py` (lista en `scripts/project_milestone_repos.txt`). Tickets `[E##-S##-##]` del CSV 5 meses: sprints **1–6** → Fase **1** S1–S5; **7–10** → Fase **2** S1–S4.
 
-**Regla de oro (producto):** ningún milestone sprint `Fase N · S#` debe quedar sin al menos un issue **[Stack]** que fije stack y librerías para ese bloque (ver `docs/STACK_POR_FASE.md` y ADR-001). Cada rollup `Fase N — …` (fases 0 y 2–5) debe tener un **[Stack] Fase N — …** de la fase; la **Fase 1** no usa rollup en GitHub (solo sprints `Fase 1 · S#`). Script: `python scripts/ensure_milestone_stack_and_coverage.py --all-repos --dry-run` / `--apply`. Orquestador: `python scripts/full_project_health.py --dry-run` / `--apply`.
+**Regla de oro (producto):** ningún milestone sprint `Fase N · S#` debe quedar sin al menos un issue **[Stack]** que fije stack y librerías para ese bloque (ver `docs/reference/STACK_POR_FASE.md` y ADR-001). Cada rollup `Fase N — …` (fases 0 y 2–5) debe tener un **[Stack] Fase N — …** de la fase; la **Fase 1** no usa rollup en GitHub (solo sprints `Fase 1 · S#`). Script: `python scripts/ensure_milestone_stack_and_coverage.py --all-repos --dry-run` / `--apply`. Orquestador: `python scripts/full_project_health.py --dry-run` / `--apply`.
 
 ---
 
@@ -265,13 +265,13 @@ Monolito modular o servicios separados (API ERP, CRM, workers). Ver [docs/Esquel
 
 ## 10. Tech Stack confirmado
 
-Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (2026-03-22, **revisión backend 2026-03-24**): **React Native + Expo (SDK 51+)**, **TypeScript strict**, **Supabase** (Auth, Postgres, RLS, Storage, **Realtime**, **RPC**, Edge Functions), acceso desde app vía **SDK**; integración **SAE** vía **scripts Python** (CSV/XLS, API o Postgres directo); **FastAPI** (Python 3.12) en `tools/worker/` **opcional**; **Playwright** cuando haga falta UI legacy; **GitHub Actions** + **Expo EAS**, **WatermelonDB** reservado para **Fase 5**. Variables: [`.env.example`](./.env.example). Desglose por fase: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**. **Conexión real** (proyecto Supabase + `.env` relleno) y **Excel SAE** documentado: **en progreso** — §16.
+Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (revisión **2026-04-08**): **Kotlin**, **Jetpack Compose**, **Room**, **Supabase Kotlin** + mismo backend Supabase (Auth, Postgres, RLS, Storage, **Realtime**, **RPC**); integración **SAE** vía **scripts Python**; **FastAPI** en `tools/worker/` **opcional**; **Playwright** en `tools/scraper/` si hace falta UI legacy; **GitHub Actions** + Gradle cuando exista `apps/android/`. Desglose por fase: **[docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md)**. **Conexión real** (proyecto Supabase + `.env` relleno) y **Excel SAE**: **en progreso** — §16.
 
 ---
 
 ## 11. Decisiones tecnicas pendientes
 
-La **base** del stack está cerrada (ADR-001). Pendientes típicos por etapa: BI, fiscal electrónico, librería de gráficos, proveedor de transcripción, etc. → ver columnas *A definir* en [STACK_POR_FASE.md](./docs/STACK_POR_FASE.md) o nuevos ADR cuando entren en alcance. Ver también [ADR/](./ADR/) y `DECISIONS.md` si existe.
+La **base** del stack está cerrada (ADR-001). Pendientes típicos por etapa: BI, fiscal electrónico, librería de gráficos, proveedor de transcripción, etc. → ver columnas *A definir* en [STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md) o nuevos ADR cuando entren en alcance. Ver también [ADR/](./ADR/) y `DECISIONS.md` si existe.
 
 ---
 
@@ -296,7 +296,7 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
     ├── ADR/               # Architecture Decision Records
     ├── docs/               # STACK_POR_FASE, ROADMAP_SPRINTS, SECURITY_POLICIES, EXCEL_ANALYSIS…
     ├── supabase/migrations/ # Borradores SQL (RLS); aplicar con CLI Supabase cuando toque
-    ├── apps/mobile/        # Expo (React Native + Router + NativeWind); ver apps/mobile/.env.example
+    ├── apps/android/       # Kotlin + Compose (producto); apps/mobile/ = legado hasta retirada
     ├── tools/worker/       # FastAPI (jobs pesados); uvicorn desde tools/worker/
     ├── tools/scraper/      # Playwright + Python; pip install -r tools/scraper/requirements.txt && playwright install
     ├── scripts/            # Python, PowerShell, JSON, GraphQL (tablero, vistas, migraciones)
@@ -345,7 +345,7 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 | 2 | T0.1.2 | Crear proyecto en [Supabase](https://supabase.com); copiar URL y keys. | **En progreso** |
 | 3 | T0.1.3 | Revisar [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (stack aceptado). | Hecho |
 | 4 | T0.1.4 | `cp .env.example .env` (o equivalente en Windows) y rellenar **sin** subir `.env`. | **En progreso** |
-| 5 | T0.1.5–T0.1.6 | [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) + [docs/SAE_DATA_MAPPING.md](./docs/SAE_DATA_MAPPING.md) al tener export del SAE. | **En progreso** |
+| 5 | T0.1.5–T0.1.6 | [docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md) + [docs/reference/SAE_DATA_MAPPING.md](./docs/reference/SAE_DATA_MAPPING.md) al tener export del SAE. | **En progreso** |
 | 6 | T0.1.7 | [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) alineado con ADR (ya referenciado). | Hecho |
 
 ### CI — validar migraciones SQL
@@ -407,13 +407,13 @@ Cada fase del roadmap usa un **subconjunto** del stack total; así evitas adelan
 | Fase | Qué define |
 |------|-----------|
 | **0** Fundación | Git, `gh`, ADR, análisis Excel — sin app en producción. |
-| **1** App Satélite | Expo + Supabase + import Excel + **Python/Playwright (scraper)**. |
+| **1** App Satélite | **Kotlin + Compose + Supabase Kotlin** + import Excel + **Python/Playwright (scraper)** opcional. |
 | **2** ERP básico | Lo anterior + módulos web/MVP (catálogos, compras, ventas, stock); reportes ligeros; fiscal TBD. |
 | **3** ERP completo | Contabilidad, RRHH, reportes avanzados (BI opcional), auditoría fuerte. |
 | **4** CRM | WhatsApp Cloud API, workers, transcripción; inbox en la misma app. |
-| **5** Offline-first | **WatermelonDB**, sync, conflictos; cloud sigue siendo Supabase. |
+| **5** Offline-first | **Room** + **WorkManager**, sync, conflictos; cloud sigue siendo Supabase. |
 
-Detalle tabla por tabla: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**. Cierra opciones globales en [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
+Detalle tabla por tabla: **[docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md)**. Cierra opciones globales en [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
 
 ---
 
@@ -422,11 +422,11 @@ Detalle tabla por tabla: **[docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md)**.
 - [ROADMAP.md](./ROADMAP.md) — Plan maestro por fases (0–5) y tickets T0.x–T5.x
 - [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md) — Vista por sprints T01–T35 (arranque)
 - [docs/Esqueleto.md](./docs/Esqueleto.md) — Alcance funcional ERP + CRM
-- [docs/STACK_POR_FASE.md](./docs/STACK_POR_FASE.md) — Stack tecnológico por fase (Satélite, ERP, CRM, offline)
+- [docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md) — Stack tecnológico por fase (Satélite, ERP, CRM, offline)
 - [docs/GITHUB_PROJECTS.md](./docs/GITHUB_PROJECTS.md) — Tablero ultra-lean (solo dev), vistas, pack experto, scripts
 - [docs/GITHUB_PROJECT_WORKFLOWS.md](./docs/GITHUB_PROJECT_WORKFLOWS.md) — Workflows del Project (activar 2–7)
-- [docs/EXCEL_ANALYSIS.md](./docs/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
-- [docs/SAE_DATA_MAPPING.md](./docs/SAE_DATA_MAPPING.md) — Mapeo SAE/export → tablas ERP (compras, traslados, productos, terceros)
+- [docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
+- [docs/reference/SAE_DATA_MAPPING.md](./docs/reference/SAE_DATA_MAPPING.md) — Mapeo SAE/export → tablas ERP (compras, traslados, productos, terceros)
 - [docs/SUPABASE_CLI_VERSIONING.md](./docs/SUPABASE_CLI_VERSIONING.md) — Flujo versionado para migraciones SQL, RLS/policies y Edge Functions
 - [docs/SUPABASE_LOCAL_MIGRATION_FLOW.md](./docs/SUPABASE_LOCAL_MIGRATION_FLOW.md) — Orden local-first de migraciones (`01_schema`, `02_seed_dev`, `03_triggers_user_profiles`)
 - [docs/SUPABASE_AUTH_USER_PROFILES.md](./docs/SUPABASE_AUTH_USER_PROFILES.md) — Invite Auth + `user_profiles.empresa_id` (trigger / metadata)

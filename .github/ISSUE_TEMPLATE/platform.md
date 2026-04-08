@@ -12,7 +12,7 @@ labels: role/platform
 - [ ] Android
 - [ ] iOS
 - [ ] Web
-- [ ] Tooling local (Node, Expo SDK)
+- [ ] Tooling local (JDK, Android Studio / Gradle)
 
 ## Síntoma o mejora
 

@@ -1,9 +1,8 @@
-Crear el proyecto Expo en blanco con template adecuado (blank o tabs). Verificar que compile para web y para un emulador móvil. Configurar estructura de carpetas (screens, components, hooks) y ESLint/Prettier básico. Sin UI todavía: solo la app en blanco funcionando.
+Crear el módulo Android base en `apps/android/` (Kotlin, Jetpack Compose, Gradle). Verificar que compile e instale en emulador o dispositivo. Estructura mínima de paquetes (`ui`, `data`, `domain` o equivalente acordado en el ticket). Sin pantallas de negocio todavía: solo app shell o pantalla vacía que arranque.
 
 ## Definition of Done
-- [ ] Proyecto Expo creado (npx create-expo-app)
-- [ ] Ejecuta correctamente en web (npx expo start --web)
-- [ ] Ejecuta en emulador Android o iOS (o ambos)
-- [ ] Estructura de carpetas: screens/, components/, hooks/
-- [ ] ESLint y Prettier configurados
-- [ ] .env.example con SUPABASE_URL y SUPABASE_ANON_KEY (placeholders)
+- [ ] Proyecto Gradle en `apps/android/` (minSdk / compileSdk acordados)
+- [ ] `./gradlew installDebug` (o tarea equivalente) en emulador Android
+- [ ] Estructura de carpetas/paquetes documentada en el PR
+- [ ] ktlint o convención de formato acordada (si aplica)
+- [ ] `.env.example` en raíz del monorepo con `SUPABASE_URL` y `SUPABASE_ANON_KEY` (placeholders), alineado con ADR-001

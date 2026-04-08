@@ -16,7 +16,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 
 # name -> (color without #, description)
 LABELS: dict[str, tuple[str, str]] = {
-    "role/frontend": ("1D76DB", "Expo / RN / UI producto (pantallas, navegacion)"),
+    "role/frontend": ("1D76DB", "Compose / Android — UI producto (pantallas, navegacion)"),
     "role/backend": ("5319E7", "API, logica de negocio, servicios server-side"),
     "role/database": ("0E8A16", "Schema, migrations, RLS, SQL, Supabase"),
     "role/platform": ("FBCA04", "Repo, CI/CD, scripts, env, hygiene del Project"),

@@ -1,6 +1,6 @@
 # Mapeo SAE / export → modelo ERP (Satélite)
 
-**Propósito:** documentar la **estructura y datos** que se pretenden extraer de informes y export del **SAE** hacia tablas objetivo del ERP. Complementa [EXCEL_ANALYSIS.md](./EXCEL_ANALYSIS.md) (checklist de obtención y calidad del archivo).
+**Propósito:** documentar la **estructura y datos** que se pretenden extraer de informes y export del **SAE** hacia tablas objetivo del ERP. Complementa [EXCEL_ANALYSIS.md](../legacy/EXCEL_ANALYSIS.md) (checklist de obtención y calidad del archivo).
 
 **Milestone (GitHub):** [Fase 1 · S1 — Modelar datos e importación](https://github.com/Abraha33/ERP/milestone/16) — esquema por campo: qué viene del **SAE**, qué es solo **ERP** y qué es **DERIVED** (lookup / reglas).
 

@@ -3,9 +3,9 @@
 **Tickets:** T0.1.5 (análisis) · T0.1.6 (columnas).  
 **Estado global:** **En progreso** — plantilla en repo; completar celdas cuando haya export real o datos parciales.
 
-**Stack de importación:** ver [ADR-001](../ADR/ADR-001-stack-tecnologico.md) (FastAPI worker / validación) y [STACK_POR_FASE.md](./STACK_POR_FASE.md) Fase 1.
+**Stack de importación:** ver [ADR-001](../../ADR/ADR-001-stack-tecnologico.md) (scripts Python / worker opcional) y [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md) Fase 1.
 
-**Mapeo detallado SAE → tablas ERP (compras, traslados, productos, clientes, proveedores):** [SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md).
+**Mapeo detallado SAE → tablas ERP (compras, traslados, productos, clientes, proveedores):** [SAE_DATA_MAPPING.md](../reference/SAE_DATA_MAPPING.md).
 
 ---
 
@@ -30,7 +30,7 @@
 
 ### Mapeo columnas → dominio
 
-El inventario campo a campo por entidad está en **[SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md)** (**Fase 1 · S1 — Modelar datos e importación**, [milestone en GitHub](https://github.com/Abraha33/ERP/milestone/16); columnas `grupo` **SAE** / **ERP** / **DERIVED**).
+El inventario campo a campo por entidad está en **[SAE_DATA_MAPPING.md](../reference/SAE_DATA_MAPPING.md)** (**Fase 1 · S1 — Modelar datos e importación**, [milestone en GitHub](https://github.com/Abraha33/ERP/milestone/16); columnas `grupo` **SAE** / **ERP** / **DERIVED**).
 
 Resumen genérico (productos) — completar con export real:
 

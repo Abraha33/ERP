@@ -3,7 +3,7 @@ r"""
 Política de producto (repo + Project):
 
 - Cada **milestone sprint** `Fase N · S#` debe tener al menos un issue **[Stack]** que fije
-  stack/librerías antes de implementar (ver `docs/STACK_POR_FASE.md`).
+  stack/librerías antes de implementar (ver `docs/reference/STACK_POR_FASE.md`).
 - Cada **milestone rollup** `Fase N — …` (fases 0, 2–5) debe tener un issue **[Stack] Fase N — …**
   que fije stack de la fase; si no existe, se crea. La **Fase 1** no tiene rollup en GitHub (solo sprints).
 
@@ -125,13 +125,13 @@ def stack_issue_body(milestone_title: str, repo: str) -> str:
 
 Antes de cerrar trabajo de **este milestone**, define o valida stack y librerías concretas para este bloque.
 
-- Guía por fase: [`docs/STACK_POR_FASE.md`]({base}/docs/STACK_POR_FASE.md)
+- Guía por fase: [`docs/reference/STACK_POR_FASE.md`]({base}/docs/reference/STACK_POR_FASE.md)
 - Stack global: [`ADR/ADR-001-stack-tecnologico.md`]({base}/ADR/ADR-001-stack-tecnologico.md)
 
 ## Checklist
 
 - [ ] Leído el apartado de esta fase en STACK_POR_FASE
-- [ ] Listadas dependencias nuevas (npm / pip / Expo) con versión objetivo
+- [ ] Listadas dependencias nuevas (Gradle / pip / GitHub Actions) con versión objetivo
 - [ ] Si cambia el criterio: actualizar ADR o `DECISIONS.md`
 
 **Milestone GitHub:** `{milestone_title}`
@@ -153,7 +153,7 @@ def rollup_stack_issue_body(milestone_title: str, repo: str, phase_hint: str) ->
 
 Define o valida **stack y librerías** para toda esta fase antes de implementar módulos grandes.
 
-- Guía por fase: [`docs/STACK_POR_FASE.md`]({base}/docs/STACK_POR_FASE.md) (Fase {phase_hint})
+- Guía por fase: [`docs/reference/STACK_POR_FASE.md`]({base}/docs/reference/STACK_POR_FASE.md) (Fase {phase_hint})
 - Stack global: [`ADR/ADR-001-stack-tecnologico.md`]({base}/ADR/ADR-001-stack-tecnologico.md)
 - Cada sprint **Fase {phase_hint} · S#** tiene además su issue **[Stack] Fase {phase_hint} · S…**.
 

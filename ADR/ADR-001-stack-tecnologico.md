@@ -1,16 +1,16 @@
 # ADR-001 — Stack tecnológico de fundación (ERP Satélite)
 
-**Estado:** ACEPTADA  
-**Fecha:** 2026-03-22  
+**Estado:** ACEPTADA (revisión **2026-04-08** — cliente **Kotlin + Compose + Room**)  
+**Fecha original:** 2026-03-22  
 **Decisor:** Abraha33 (acaceres163@unab.edu.co)
 
-El desglose **por fase** del producto sigue en [docs/STACK_POR_FASE.md](../docs/STACK_POR_FASE.md). Este ADR fija la **decisión global** de fundación; ese documento detalla qué se añade en cada etapa.
+El desglose **por fase** del producto sigue en [docs/reference/STACK_POR_FASE.md](../docs/reference/STACK_POR_FASE.md). Este ADR fija la **decisión global** de fundación.
 
 ---
 
 ## Contexto
 
-ERP Satélite es un ERP + CRM construido por un solo desarrollador (~25 h/semana) con horizonte de **14 meses** y **5 fases**. La Fase 1 es una app de operaciones de campo (**móvil-first**) que consume **Excel** exportado del sistema legacy **SAE**. Las fases posteriores escalan hacia ERP completo, CRM con WhatsApp y modo offline.
+ERP Satélite es un ERP + CRM construido por un solo desarrollador (~25 h/semana) con horizonte de **14 meses** y **5 fases**. La Fase 1 es una app de operaciones de campo (**móvil-first Android**) que consume **Excel** exportado del sistema legacy **SAE**. Las fases posteriores escalan hacia ERP completo, CRM con WhatsApp y modo offline.
 
 La decisión de stack debe **minimizar superficie de mantenimiento** y **maximizar velocidad de iteración** con asistentes IA.
 
@@ -18,15 +18,16 @@ La decisión de stack debe **minimizar superficie de mantenimiento** y **maximiz
 
 ---
 
-## Opciones evaluadas
+## Opciones evaluadas (frontend)
 
-### Frontend
-- **A1. React Native + Expo SDK** → **elegida**
-- A2. Flutter  
-- A3. PWA + React  
+### Frontend móvil
+- **A1. Kotlin + Jetpack Compose + Material 3** → **elegida**
+- A2. Cliente móvil en ecosistema **JavaScript multiplataforma** (histórico; **deprecado** 2026-04-08; **no** es el stack activo)
+- A3. Flutter  
+- A4. PWA + React  
 
 ### Backend
-- **B1. Supabase (BaaS) como contrato principal de la app + Python para integración; FastAPI solo opcional para jobs** → **elegida** (detalle operativo 2026-03-24 en “Decisión final” y revisión)
+- **B1. Supabase (BaaS) como contrato principal de la app + Python para integración; FastAPI solo opcional para jobs** → **elegida**
 - B2. Firebase + Cloud Functions  
 - B3. API propia (NestJS) + Supabase solo como DB  
 
@@ -36,7 +37,7 @@ La decisión de stack debe **minimizar superficie de mantenimiento** y **maximiz
 - C3. PlanetScale (MySQL)  
 
 ### Base de datos local (Fase 5)
-- **WatermelonDB** reservado para offline; no es obligatorio en el cliente antes de Fase 5.
+- **Room** (SQLite) en Android + **WorkManager** para sync en segundo plano; estrategia de conflictos documentada en fases posteriores. No es obligatorio antes de Fase 5.
 
 ---
 
@@ -44,49 +45,41 @@ La decisión de stack debe **minimizar superficie de mantenimiento** y **maximiz
 
 | Capa | Tecnología | Notas / versión mínima |
 |------|------------|-------------------------|
-| Móvil + web | React Native + **Expo SDK** | SDK **51+** (revisar en `package.json` al crear app) |
-| Lenguaje app | **TypeScript** (`strict: true`) | 5.x |
-| BaaS | **Supabase** | Auth, Postgres, Storage, RLS, **Realtime**, **RPC**, Edge Functions |
-| Acceso desde app | **Supabase client SDK** (JS/TS en Expo) | **RLS** obligatorio en tablas expuestas; sin API propia intermedia para el CRUD típico |
-| Lógica transaccional | **Supabase RPC** (SQL) | p. ej. abrir/cerrar turno de caja, operaciones multi-fila atómicas |
-| Auth MVP | **Supabase Auth** (email/contraseña) | — |
-| Base de datos | **PostgreSQL** (instancia del proyecto Supabase) | La versión la fija Supabase en el panel |
-| Migraciones | **Supabase CLI** + SQL en repo (`database/migrations/` o `supabase/migrations/`) | Coherente con README |
-| Integración SAE / archivos | **Scripts Python** (CLI) | CSV/XLS ↔ Supabase vía **API** (anon/service según script) o **conexión directa** Postgres; export inverso para alimentar SAE — **no** requiere FastAPI |
-| Worker HTTP / jobs largos (opcional) | **FastAPI** (Python **3.12**) | VPS/runner, webhooks pesados, orquestación que no convenga en un script |
-| Scraper UI SAE (opcional) | **Playwright** (Python) | **1.40+**; solo cuando el legacy no entregue export útil |
-| CI/CD | **GitHub Actions** + **Expo EAS** (builds) | Tokens en GitHub Secrets / EAS, no en `.env` del repo |
-| Offline (Fase 5) | **WatermelonDB** | Reservado; sync documentado en fases posteriores |
+| App Android | **Kotlin** + **Jetpack Compose** | UI declarativa; Material 3 recomendado |
+| Persistencia local | **Room** | Entidades alineadas a contrato Supabase donde aplique |
+| Jobs en background | **WorkManager** | Sync, reintentos, restricciones de red/batería |
+| Acceso red / Auth | **Supabase Kotlin** (`supabase-kt`) u oficial equivalente | **RLS** obligatorio; sin exponer `service_role` en la app |
+| Lógica transaccional cloud | **Supabase RPC** (SQL) | Operaciones multi-fila atómicas |
+| Auth MVP | **Supabase Auth** | Email/contraseña u OAuth según producto |
+| Base de datos | **PostgreSQL** (instancia Supabase) | Versionada por Supabase |
+| Migraciones | **Supabase CLI** + SQL en `supabase/migrations/` | Ver [docs/reference/schema-conventions.md](../docs/reference/schema-conventions.md) |
+| Integración SAE | **Scripts Python** (CLI) | CSV/XLS ↔ Supabase vía API o Postgres directo |
+| Worker HTTP (opcional) | **FastAPI** en `tools/worker/` | Python **3.12** |
+| Scraper UI SAE (opcional) | **Playwright** (Python) | Solo cuando el legacy no entregue export útil |
+| CI/CD | **GitHub Actions** | Builds Android (Gradle) en CI cuando el módulo exista |
+| Offline (Fase 5) | **Room** + sync documentada | Conflictos por `updated_at` / reglas explícitas |
 
-### Revisión 2026-03-24 — Backend operativo y SAE
+### Revisión 2026-04-08 — Cliente nativo Android
 
-- **App (web/móvil):** consumo **directo** de Supabase con **SDK** y políticas **RLS**; **Realtime** para escenarios como inventario y traslados; **RPC** para reglas de negocio complejas (cerrar caja, etc.).
-- **SAE:** capa de integración = **scripts Python** separados del runtime de la app; sin servicio FastAPI obligatorio para import/export.
-- **FastAPI / `tools/worker/`:** se mantiene como **opción** para cargas que sigan requiriendo HTTP persistente o dependencias que no encajen en un script puntual.
+- Se **depreca** como objetivo de producto la opción **A2** y la base de datos local **JS** usada antes en Fase 5; el repo puede conservar `apps/mobile` solo como legado hasta eliminación explícita.
+- La app de campo vive en **`apps/android/`** (proyecto Gradle cuando se inicialice).
 
 ---
 
 ## Variables de entorno
 
-La **lista canónica de nombres** (sin valores secretos) vive en **[`.env.example`](../.env.example)**. Incluye:
+La lista canónica está en **[`.env.example`](../.env.example)** (14 variables operativas + comentarios de CI). Incluye: Supabase, Postgres directo, SAE, Playwright, worker FastAPI, placeholders CRM, Android `APPLICATION_ID`, `ERP_ENVIRONMENT`, token CI.
 
-- **Supabase:** `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (solo entornos de confianza, nunca en el bundle Expo).
-- **FastAPI worker:** `DATABASE_URL`, `FASTAPI_SECRET_KEY`, `ALLOWED_ORIGINS`.
-- **Expo:** `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_API_BASE_URL` (solo claves **públicas**; en la práctica URL/anon suelen coincidir con las de Supabase).
-- **Playwright / SAE:** `SAE_*`, `PLAYWRIGHT_HEADLESS`.
-- **Fase 4 (placeholders):** WhatsApp, `OPENAI_API_KEY` — vacíos hasta CRM/transcripción.
-- **CI/EAS:** comentarios en `.env.example` para `EXPO_TOKEN`, `SUPABASE_ACCESS_TOKEN` en **GitHub Secrets**.
-
-**No duplicar** aquí el inventario completo: una sola fuente de verdad → `.env.example`.
+**No duplicar** el inventario completo en este ADR.
 
 ---
 
 ## Regla práctica: Edge Functions vs RPC vs scripts Python vs FastAPI
 
 | Usar **RPC (Postgres)** cuando… | Usar **Edge Functions** cuando… | Usar **scripts Python** cuando… | Usar **FastAPI** cuando… |
-|-----------------------------------|--------------------------------|----------------------------------|---------------------------|
-| Varias tablas deben actualizarse con una regla atómica y la llamada viene de la app autenticada | Webhook HTTP corto, transformación ligera, cercano a Postgres/Auth | Import/export SAE por CSV/XLS, validaciones batch, ETL puntual (CLI) | Job largo con servidor HTTP persistente, o dependencias que no encajan en script ni Edge |
-| Ej.: abrir/cerrar turno de caja con validaciones | Baja latencia y poco estado | Conexión Postgres directa o Supabase API con service role (solo entornos de confianza) | **Playwright** u orquestación muy pesada fuera del bucle de import por archivo |
+|----------------------------------|----------------------------------|-----------------------------------|---------------------------|
+| Varias tablas, regla atómica, llamada desde cliente autenticado | Webhook HTTP corto, transformación ligera | Import/export SAE por CSV/XLS, ETL CLI | Job largo con servidor HTTP persistente |
+| Ej.: cerrar turno de caja | Baja latencia | Service role solo en entornos de confianza | Playwright u orquestación pesada |
 
 ---
 
@@ -94,24 +87,22 @@ La **lista canónica de nombres** (sin valores secretos) vive en **[`.env.exampl
 
 **Positivas**
 
-- Un solo repo; **TypeScript** en app y **Python** acotado a **scripts SAE**, scraper opcional y **worker** FastAPI si hace falta.
-- Supabase cubre Auth, RLS y Realtime sin montar backend propio desde cero.
-- **Expo EAS** permite builds nativos sin depender solo de una Mac física para distribución.
-- Stack muy documentado en comunidad y en asistentes IA.
+- **Kotlin** y **Compose** alineados con tooling Android oficial y políticas de tienda.
+- **Room** integra bien con **WorkManager** para Fase 5 sin stack JS intermedio.
+- Supabase cubre Auth, RLS y Realtime sin backend propio desde cero.
 
 **Negativas / trade-offs**
 
-- Límites del **free tier** de Supabase (DB, storage, egress); valorar **Pro** al crecer (p. ej. Fase 2).
-- **WatermelonDB** en Fase 5 favorece **`updated_at` y convenciones de borrado** desde Fase 1 (alineado a tickets tipo T1.1.2).
-- **Playwright** en producción implica runtime tipo Chromium (~orden de 100MB+); ejecutar en **VPS**, **runner** o job aislado, no en el mismo proceso que la app móvil.
+- Límites del free tier de Supabase al crecer.
+- Dos superficies de cliente si persiste carpeta legado (`apps/mobile/`): mantener una sola fuente de verdad en ADR y README hasta limpieza.
 
 ---
 
 ## Tras cerrar este ADR (checklist)
 
-1. [x] [`.env.example`](../.env.example) actualizado.
-2. [x] [CURSOR_CONTEXT.md](../CURSOR_CONTEXT.md) alineado.
-3. [x] [README.md](../README.md) §10–11 y línea de stack inicial.
-4. [x] [STACK_POR_FASE.md](../docs/STACK_POR_FASE.md) — línea base y Fase 1 sin ambigüedad FastAPI.
-5. [ ] **En progreso:** proyecto **Supabase** (T0.1.2 / p. ej. #195), **`.env` local** y entornos (T0.1.4), **Excel SAE** en [EXCEL_ANALYSIS.md](../docs/EXCEL_ANALYSIS.md) (T0.1.5–6). Issues de documentación #1, #2, #3, #199–#201 cerrados; cerrar issue Supabase cuando el proyecto exista y `.env` esté rellenado (sin subir secretos).
-6. [ ] **Commit y push** en `develop` con estos archivos (operación tuya si no está hecho).
+1. [x] [`.env.example`](../.env.example) en raíz con variables canónicas.
+2. [x] [CURSOR_CONTEXT.md](../CURSOR_CONTEXT.md) alineado a Kotlin + Supabase.
+3. [x] [README.md](../README.md) línea de stack.
+4. [x] [STACK_POR_FASE.md](../docs/reference/STACK_POR_FASE.md) alineado a Kotlin + Room como línea base.
+5. [ ] Proyecto **Supabase** operativo y `.env` local sin subir secretos.
+6. [ ] Módulo **`apps/android/`** inicializado (Gradle) cuando arranque desarrollo de producto.

@@ -13,7 +13,7 @@ Copia en el cuerpo del PR o en un comentario del issue al terminar.
 ## Entorno
 
 - **Supabase:** [URL proyecto o local]
-- **Build app:** [Expo web / Android device / emulador]
+- **Build app:** [Android device / emulador — `./gradlew installDebug` o equivalente]
 
 ## Casos probados
 

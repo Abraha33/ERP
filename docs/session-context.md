@@ -1,37 +1,36 @@
 # Contexto de sesión — estado actual ERP
 
-> Documento **vivo**: actualízalo al cerrar una sesión relevante o tras merge de migraciones. No sustituye el esquema real en Postgres; para eso usa `scripts/introspection/`.
+> Documento **vivo**. No sustituye el esquema real en Postgres; usar `scripts/introspection/`.
 
-**Última revisión sugerida:** al leer este archivo, confirma fecha en git o añade línea `Actualizado: YYYY-MM-DD` abajo.
+## Fase y milestone
 
-## Tablas y objetos referenciados en el repo
+- **M0 (Workflow & Foundation):** en ejecución — [milestones/M0-workflow-foundation.md](./milestones/M0-workflow-foundation.md). Al cerrar W01–W08 → **M0 cerrado**, **S1 / Fase 1** pendiente de arranque formal en tablero.
+- **Stack cliente:** Kotlin + Compose + Room (offline Fase 5) — [ADR-001](../ADR/ADR-001-stack-tecnologico.md).
 
-| Área | Objetos (migraciones / docs) | Notas |
-|------|------------------------------|--------|
-| Auth → perfil | `public.handle_new_auth_user`, trigger `on_auth_user_created` | `supabase/migrations/20260323213100_03_triggers_user_profiles.sql` → **`user_profiles`** |
-| Perfil / tenant (borrador RLS) | `public.profiles`, `current_empresa_id()`, `current_sucursal_id()`, `app_role()` | `20260322190000_draft_rls_core.sql` |
-| Catálogo / ops (borrador) | `productos`, `clientes`, `proveedores` | RLS por `empresa_id` |
-| Compras / OC / traslados (borrador) | `compras_encabezado|detalle`, `ordenes_compra_*`, `traslados_*` | Enums `doc_estado_oc`, `doc_estado_traslado` |
-| Esquema base | `pgcrypto` en `01_schema` | DDL en consolidación |
+`Actualizado: 2026-04-08`
 
-## Pendientes conocidos (alineado a migraciones)
+## Tablas y objetos (repo)
 
-- Unificar o **puentear** `profiles` vs `user_profiles` en funciones de sesión y políticas.
-- Tablas **`empresas`** / **`sucursales`** como catálogo formal (FK en perfiles); ver [open-questions.md](./open-questions.md).
-- Triggers de **columnas restringidas** (estado/nota en OC y traslados) — mencionado en cabecera del borrador RLS.
-- Semillas locales: `supabase/seeds/02_seed_dev.sql` (si existe en tu clone) — solo dev.
+| Área | Objetos | Notas |
+|------|---------|--------|
+| Perfiles | `public.profiles`, políticas `p_profiles_*` | Migración M0 `20260408130000_m0_001_profiles.sql` + borrador `20260322190000_*` |
+| Auth → perfil app | `user_profiles` + trigger `handle_new_auth_user` | `20260323213100_03_triggers_user_profiles.sql` |
+| Funciones sesión | `current_empresa_id`, `current_sucursal_id`, `app_role` | Definidas en borrador RLS; alinear con tabla de perfil real |
+| Esquema | `pgcrypto` | `20260323213000_01_schema.sql` |
 
-## Decisiones activas (no reabrir sin ADR/issue)
+## Pendientes inmediatos (máx. 5)
 
-- Stack cliente: Expo + Supabase con RLS ([STACK_POR_FASE.md](./STACK_POR_FASE.md), ADR-001).
-- Roles de app: `admin` | `encargado` | `empleado` ([SECURITY_POLICIES.md](./SECURITY_POLICIES.md)).
-- IDs de issues: [TICKET_ID_CONVENTION.md](./TICKET_ID_CONVENTION.md).
+1. Inicializar proyecto Gradle en `apps/android/`.
+2. Unificar `profiles` vs `user_profiles` en políticas y funciones de sesión.
+3. Aplicar migraciones en Supabase local y validar RLS (W07).
+4. Completar checklist M0 (W06 PR de prueba, etc.).
+
+## Decisiones activas
+
+- Supabase como BaaS único para datos de producto; scripts Python para SAE.
+- Roles de app: `admin` | `encargado` | `empleado` — [SECURITY_POLICIES.md](./SECURITY_POLICIES.md).
 
 ## Entornos
 
-- Variables: `.env.example` en raíz / `apps/mobile` (según paquete en uso).
-- Flujo migraciones locales: [SUPABASE_LOCAL_MIGRATION_FLOW.md](./SUPABASE_LOCAL_MIGRATION_FLOW.md).
-
----
-
-`Actualizado: 2026-04-07` (plantilla inicial; corregir al cambiar el estado real).
+- Variables: [.env.example](../.env.example) en raíz.
+- Migraciones: [SUPABASE_LOCAL_MIGRATION_FLOW.md](./SUPABASE_LOCAL_MIGRATION_FLOW.md).

@@ -1,6 +1,6 @@
 ---
 name: DevOps / CI / despliegue
-about: Pipelines, EAS, secrets, infraestructura
+about: Pipelines, Android build, secrets, infraestructura
 title: '[T01] '
 labels: role/devops
 ---
@@ -10,7 +10,7 @@ labels: role/devops
 ## Ámbito
 
 - [ ] GitHub Actions
-- [ ] Expo EAS
+- [ ] Build / firma Android (Gradle, Play App Signing si aplica)
 - [ ] Supabase deploy / branches
 - [ ] Otro
 

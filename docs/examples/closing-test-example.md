@@ -17,7 +17,7 @@ No sustituye tests automatizados cuando existan, pero evita el “funciona en mi
 ## Ejemplo breve (narrativo)
 
 > **Ticket:** #45 — Lista de sucursales en ajustes.  
-> **Entorno:** Supabase staging + Expo web.  
+> **Entorno:** Supabase staging + build Android (debug).  
 > **admin@…:** abre Ajustes → Sucursales; ve 3 filas; crea “Bodega Norte”; aparece en lista.  
 > **encargado@…:** misma pantalla; ve solo sucursales con `empresa_id` igual al perfil; intento de insert vía API REST devuelve sin filas afectadas / error de política.  
 > **empleado@…:** no ve el ítem de menú (o lista vacía según spec).  
@@ -30,5 +30,5 @@ Usa [../agents/testing-prompt.md](../agents/testing-prompt.md) para la tabla y c
 ## Errores a evitar
 
 - Probar solo con **service role** o como `postgres` en SQL Editor sin `SET request.jwt.claim.sub`.
-- Olvidar **web** o **Android** cuando el ticket toca UI compartida.
+- Olvidar **Android** (o la plataforma del ticket) cuando el cambio toca UI.
 - Cerrar sin actualizar [../session-context.md](../session-context.md) si el esquema cambió.

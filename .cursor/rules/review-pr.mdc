@@ -6,17 +6,17 @@ description: Checklist completo antes de hacer merge de un PR
 
 ## Checklist de revisión — en orden
 
-### Código
-- [ ] Sin errores TypeScript (tsc --noEmit)
-- [ ] Sin any sin justificar
-- [ ] Sin console.log de debug
-- [ ] Imports organizados (no hay imports no usados)
-- [ ] Manejo de error en TODA llamada a Supabase: const { data, error } = ...
+### Código (Kotlin)
+- [ ] Compilación / lint del módulo `app` sin errores nuevos
+- [ ] Sin `!!` innecesario; null-safety razonable
+- [ ] Sin logs de debug en flujos de producción
+- [ ] Imports sin código muerto obvio
+- [ ] Manejo de error en TODA llamada a Supabase (Result / try-catch / canal de errores)
 
 ### Seguridad
 - [ ] Sin hardcode de empresa_id, sucursal_id, o UUIDs de usuario
-- [ ] Sin lógica de negocio expuesta en Client Components
-- [ ] Las rutas protegidas verifican sesión antes de renderizar
+- [ ] Lógica de negocio fuera de Composables cuando sea reutilizable o testeable
+- [ ] Pantallas sensibles tras auth (Splash/Nav condicionado a sesión)
 
 ### Base de datos
 - [ ] Si hay migración: está en supabase/migrations/ con timestamp correcto
