@@ -1,5 +1,7 @@
 # Estrategia de migraciones — backend (Postgres / Supabase)
 
+Auditoría puntual Fase 1 · S1 (tablas, RLS, gaps): [estado-bd-fase1-s1.md](./estado-bd-fase1-s1.md).
+
 ## Fuente de verdad
 
 - **Única:** carpeta `supabase/migrations/*.sql` en el monorepo.
@@ -31,7 +33,7 @@ Las migraciones pueden combinar olas 1+2 en un mismo archivo mientras el equipo 
 ## Riesgos conocidos del historial actual
 
 - Existe un borrador grande (`20260322190000_draft_rls_core.sql`) con tablas y RLS ya definidos para `productos`, `clientes`, etc.
-- Una migración posterior (`20260323213100_03_triggers_user_profiles.sql`) referencia `public.user_profiles`, tabla que **no** crea el borrador; el CI que aplica todas las migraciones en orden puede fallar hasta que esa cadena se corrija o la migración se alinee con `public.profiles`.
+- El archivo `20260323213100_03_triggers_user_profiles.sql` creó `handle_new_auth_user` apuntando a `user_profiles`; la migración **`20260420120000_s1_auth_profiles_and_updated_at_triggers.sql`** redefine la función para usar **`public.profiles`** (condicionada a metadata). El nombre del archivo 03 sigue siendo histórico.
 - **Regla práctica:** nuevas piezas del núcleo ERP deben ser **incrementales** (nuevos archivos timestamp) y no reescribir migraciones ya consideradas aplicadas en algún entorno.
 
 ## ERP núcleo vs CRM
