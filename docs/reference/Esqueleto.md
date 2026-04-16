@@ -6,10 +6,15 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 
 ## 0. Arquitectura y stack técnico
 
-- **Estilo**: monolito modular o servicios separados (API ERP, CRM, workers); definir límites por módulo.
-- **Comunicación**: API REST o GraphQL entre módulos y hacia clientes (POS, e-commerce, app); autenticación (JWT, OAuth, API keys).
-- **Persistencia**: una o más bases de datos; réplicas o caché para lecturas pesadas (reportes, dashboards) si aplica.
-- **Colas / workers**: flujos asíncronos para notificaciones, generación de reportes, envío a facturación electrónica, inventario_restauracion, integraciones externas; reintentos y dead-letter.
+- **Arquitectura (decisión cerrada)**: **monolito modular headless**.
+- **Backend principal**: **FastAPI (Python)**.
+- **API**: **REST versionada** bajo **`/api/v1`**.
+- **Comunicación interna (entre módulos)**: **llamadas internas en Python** (no HTTP entre módulos).
+- **Persistencia (MVP)**: **una sola BD transaccional**: PostgreSQL (Supabase).
+- **Auth**: Supabase Auth (JWT) validado en backend; **RBAC** por roles de negocio.
+- **Asíncrono (MVP)**: eventos in-process + tabla `jobs/outbox` en Postgres + worker (sin “plataforma de colas” externa).
+
+Referencia: [ADR-001](../ADR-001-architecture-stack.md).
 
 ---
 
@@ -137,17 +142,18 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
     - Transacciones: operaciones atómicas donde aplique (crear OV + reservar stock + asiento); consistencia eventual aceptada donde sea explícito (ej. historial CRM alimentado por ERP).
 - **Resiliencia**
     - Reconexión: reintentos y mensaje claro al usuario si falla crear pedido o consultar stock.
-    - POS o app en campo: si hay uso offline, definir qué se puede hacer sin red y cómo se sincroniza después (colas locales, resolución de conflictos).
+    - Offline: **no es requisito del MVP**. Si entra, entra **acotado a 1–2 flujos** con estrategia de conflictos explícita (ADR específico).
     - Timeouts y circuit breaker en llamadas a facturación electrónica y pasarelas de pago.
 
 ---
 
 ## 3. Integración CRM ↔ ERP
 
-- **APIs internas**: ERP expone endpoints para CRM (consulta stock, crear OV, registrar devolución); CRM consume y notifica (pedido confirmado, caso cerrado).
-- **APIs externas**: POS y canal electrónica llaman al ERP; facturación electrónica (SAT u otro); pasarelas de pago.
-- **Eventos / webhooks**: "pedido confirmado", "factura emitida", "stock bajo" para que otros sistemas o el CRM reaccionen sin acoplamiento rígido.
-- **Versionado de API**: v1/v2 o política de deprecación para no romper POS ni e-commerce.
+- **Principio**: ERP y CRM comparten proceso y BD transaccional, pero mantienen **límites por dominio** (módulos) para evitar caos.
+- **Integración interna (ERP↔CRM dentro del monolito)**: no hay “API entre módulos”. Hay **servicios internos** y **eventos de dominio in-process**.
+- **Integración externa**: clientes (Web ERP, POS, e-commerce, móvil) consumen **`/api/v1`**.
+- **Eventos/webhooks**: solo cuando haya un consumidor externo real. Dentro del monolito, eventos son in-process; para async se usa `jobs/outbox`.
+- **Versionado de API**: `/api/v1` no se rompe; cambios incompatibles van a `/api/v2` con deprecación.
 - Flujos concretos:
     - CRM consulta **stock** en el ERP; si "quedó bajo" dispara **inventario_restauracion**.
     - Pedido confirmado en CRM → crea o actualiza **orden de venta** en ERP.
@@ -159,8 +165,8 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 ### 3.1 Eventos de dominio y flujos asíncronos
 
 - **Eventos clave**: `PedidoConfirmado`, `PagoRecibido`, `StockPorDebajoDelMinimo`, `FacturaEmitida`, `OVCreada`, `DevolucionSolicitada`, etc.
-- **Consumidores**: CRM (actualizar estado, notificar), notificaciones (email/push), reportes, integraciones externas (facturación, envíos).
-- **Colas y workers**: procesamiento asíncrono con reintentos; dead-letter para fallos persistentes; criterio de reprocesar o escalar.
+- **Consumidores**: handlers in-process (actualizar estados, disparar validaciones); y procesos async vía `jobs/outbox` (notificaciones, reportes, integraciones).
+- **Worker**: consume `jobs/outbox` desde Postgres con reintentos; dead-letter simple (estado + razón) para fallos persistentes.
 
 ---
 
