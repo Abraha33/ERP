@@ -1,160 +1,235 @@
-# ROADMAP — Producto ERP + CRM Satélite (14 meses)
+# ROADMAP — ERP + CRM (8 fases)
 
-Plan maestro del **producto completo**: no es solo la app de campo. Cubre **fundación (Fase 0)**, **App Satélite** (MVP de operaciones en tienda/campo), **ERP básico** (MVP administrativo), **ERP completo**, **CRM** y **offline-first**. Este archivo es el **`ROADMAP.md` de la raíz del repositorio** (lo que ves al abrir el proyecto en GitHub). Si usas una carpeta monorepo local (`ERP/`) con scripts fuera del repo, el plan maestro canónico sigue siendo este mismo archivo dentro de `erp-satelite/`.
+Documento ejecutable alineado con **`docs/ADR-001-architecture-stack.md`**. Sin ambigüedad de stack: **FastAPI + Python 3.12**, **PostgreSQL Supabase**, **Alembic**, **Supabase Auth + JWT**, **RBAC**, **REST `/api/v1`**, **Next.js 15** (web), **Expo** (móvil Fase 6), eventos **LISTEN/NOTIFY**, **sin microservicios**.
 
-| Fase | Ámbito del producto | Período | Hito |
-|------|---------------------|---------|------|
-| **0** | Fundación (Git, stack ADR, Excel/SAE, entornos) | Semana 1–2 | Base lista para Fase 1 |
-| **1** | **App Satélite** — MVP campo (móvil + web, importación, scraper) | Mes 1–3 | Operaciones de campo activas |
-| **2** | **ERP básico** — MVP back-office (catálogos, compras, ventas, inventario) | Mes 4–7 | SAE parcialmente reemplazado |
-| **3** | **ERP completo** (contabilidad, RRHH, reportes, auditoría) | Mes 8–10 | SAE reemplazado totalmente |
-| **4** | **CRM** (canales, pipeline, historial cliente) | Mes 11–12 | Gestión comercial activa |
-| **5** | **Offline-first** (BD local, sync, conflictos) | Mes 13–14 | App funciona sin internet |
+## Alcance MVP vs post‑MVP
 
-**Stack por fase:** [docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md).
-
-**Última revisión:** 2026-04-08 — cliente producto **Kotlin + Compose + Supabase Kotlin** (RLS); backend **Realtime** / **RPC** según módulo; SAE → **scripts Python** CSV/XLS (FastAPI opcional en `tools/worker/`). Ver [docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md) y [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
-
-**Vista por sprints (T01–T35, ~14 semanas):** [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md).
+| Alcance | Fases | Definición |
+|---------|-------|------------|
+| **MVP (producto mínimo viable)** | **0–3** | Usuario real usando el sistema en cada hito: fundación → catálogo/inventario/web → ventas/compras → CRM/WhatsApp. |
+| **Post‑MVP planificado** | **4–7** | Contabilidad, RRHH, app Expo, reportes avanzados y estabilización. |
+| **Condicional** | **8** | Offline-first **solo** con **`docs/ADR-002-offline-strategy.md`** aprobado antes de código. |
 
 ---
 
-## FASE 0: FUNDACIÓN (Semana 1–2)
-| Ticket | Tarea                                           | Horas | Prioridad | Estado (marzo 2026) |
-|--------|-------------------------------------------------|-------|-----------|---------------------|
-| T0.1.1 | Crear repo GitHub + ramas main y develop        | 1h    | Alta      | **Hecho** |
-| T0.1.2 | Crear proyecto en backend cloud (Supabase)      | 1h    | Alta      | **En progreso** (proyecto + keys en `.env`) |
-| T0.1.3 | Definir stack tecnológico (ADR-001)             | 3h    | Alta      | **Hecho** |
-| T0.1.4 | Configurar variables de entorno base            | 1h    | Alta      | **En progreso** (plantillas + `.env` locales; falta rellenar secretos) |
-| T0.1.5 | Analizar estructura del Excel exportado del SAE | 2h    | Alta      | **En progreso** |
-| T0.1.6 | Documentar columnas en EXCEL_ANALYSIS.md        | 1h    | Alta      | **En progreso** (ver [docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md)) |
-| T0.1.7 | Completar CURSOR_CONTEXT.md con stack definido  | 1h    | Alta      | **Hecho** |
+## FASE 0 — Fundación
 
-**Scaffold de código (Fase 0):** en la raíz del repo existen `apps/android/` (placeholder producto Kotlin), `apps/mobile/` (**legado** hasta retirada), `tools/worker/` (FastAPI stub **opcional**), `tools/scraper/`, `scripts/sae/`, `supabase/`, `.github/workflows/ci.yml`. La integración SAE prevista es por **scripts** Python hacia Supabase; no implica tablas completas ni producto en producción.
+| Campo | Valor |
+|-------|--------|
+| **Período** | 2 semanas |
+| **Stack** | GitHub, Python 3.12, FastAPI, Supabase (Postgres + Auth), Alembic, Render (objetivo de deploy), GitHub Actions |
+| **Frontend** | Sin aplicación Next.js de producto: la web ERP empieza en Fase 1. Prueba de login solo contra API o página mínima de smoke si hace falta para validar JWT |
+| **Hito** | Cualquier desarrollador clona el repo, copia `.env.example` → `.env`, levanta API y ve **`GET /health`** OK con DB; **ADR-001** cerrado en repo |
 
----
+| ID | Tarea | Horas | Prioridad |
+|----|-------|-------|-----------|
+| T0.1 | Repo GitHub, ramas `main` / `develop`, plantilla PR | 2 | Alta |
+| T0.2 | Estructura `app/`, `tests/`, `alembic/`, `docs/`, `.env.example` | 4 | Alta |
+| T0.3 | Proyecto Supabase: Postgres + Auth, `DATABASE_URL` documentada | 3 | Alta |
+| T0.4 | Alembic inicial + primera migración (metadatos / tabla smoke) | 4 | Alta |
+| T0.5 | FastAPI `main.py`, `GET /health` con consulta real a DB | 4 | Alta |
+| T0.6 | Integración Supabase Auth: login email/contraseña, JWT en cliente de prueba | 8 | Alta |
+| T0.7 | Módulo `auth`: validación JWT + lectura rol RBAC mínimo | 8 | Alta |
+| T0.8 | GitHub Actions: lint + `pytest` (aunque sea un test smoke) | 4 | Alta |
+| T0.9 | **`docs/ADR-001-architecture-stack.md`** revisado y marcado Aceptado | 4 | Alta |
+| T0.10 | Documentación: cómo levantar local y variables obligatorias | 2 | Media |
 
-## FASE 1: APP SATÉLITE — MVP CAMPO (Mes 1–3)
-
-### Sprint 1 — Modelar datos e importación (Semana 3–4)
-| Ticket | Tarea                                           | Horas | Prioridad |
-|--------|-------------------------------------------------|-------|-----------|
-| T1.1.1 | Tablas: productos, perfiles, tiendas, zonas     | 3h    | Alta      |
-| T1.1.2 | Trigger updated_at en todas las tablas          | 1h    | Alta      |
-| T1.1.3 | Políticas de seguridad por rol                  | 3h    | Alta      |
-| T1.1.4 | Auth: login por email y contraseña              | 1h    | Alta      |
-| T1.1.5 | Módulo importación Excel → backend              | 5h    | Alta      |
-| T1.1.6 | Validación y limpieza de datos al importar      | 3h    | Alta      |
-| T1.1.7 | Tabla import_log                                | 1h    | Alta      |
-
-### Sprint 2 — Login y catálogo (Semana 5–6)
-| Ticket | Tarea                            | Horas | Prioridad |
-|--------|----------------------------------|-------|-----------|
-| T1.2.1 | Pantalla de login + lectura rol  | 3h    | Alta      |
-| T1.2.2 | Navegación condicional por rol   | 2h    | Alta      |
-| T1.2.3 | Catálogo de productos + búsqueda | 4h    | Alta      |
-| T1.2.4 | Pantalla de detalle de producto  | 2h    | Media     |
-
-### Sprint 3 — Recepción y traslados (Semana 7–8)
-| Ticket | Tarea                                       | Horas | Prioridad |
-|--------|---------------------------------------------|-------|-----------|
-| T1.3.1 | Tablas: recepciones, traslados, stock_zona  | 3h    | Alta      |
-| T1.3.2 | Pantalla recepción de mercancía             | 4h    | Alta      |
-| T1.3.3 | Pantalla traslados entre zonas              | 4h    | Alta      |
-| T1.3.4 | Vista encargado: aprobar / rechazar         | 3h    | Alta      |
-
-### Sprint 4 — Misiones de conteo (Semana 9–10)
-| Ticket | Tarea                                    | Horas | Prioridad |
-|--------|------------------------------------------|-------|-----------|
-| T1.4.1 | Tablas: misiones_conteo, conteo_detalle  | 2h    | Alta      |
-| T1.4.2 | Vista admin: crear misión                | 3h    | Alta      |
-| T1.4.3 | Vista empleado: ejecutar misión asignada | 5h    | Alta      |
-| T1.4.4 | Vista admin: descuadres por misión       | 3h    | Alta      |
-
-### Sprint 5 — Arqueo de caja (Semana 11–12)
-| Ticket | Tarea                                        | Horas | Prioridad |
-|--------|----------------------------------------------|-------|-----------|
-| T1.5.1 | Tabla arqueos_caja                           | 2h    | Alta      |
-| T1.5.2 | Pantalla arqueo: billetes, monedas, vouchers | 4h    | Alta      |
-| T1.5.3 | Cálculo automático y diferencia vs sistema   | 2h    | Alta      |
-| T1.5.4 | Histórico de arqueos                         | 2h    | Media     |
+**Hito (usuario real):** el desarrollador (tú o un par) **usa el entorno local un día completo** sin bloqueos documentados.
 
 ---
 
-## FASE 2: ERP BÁSICO — MVP BACK-OFFICE (Mes 4–7)
-| Ticket | Tarea                                          | Horas | Prioridad |
-|--------|------------------------------------------------|-------|-----------|
-| T2.1.x | Catálogos: productos, proveedores, clientes    | 30h   | Alta      |
-| T2.2.x | Compras: OC, recepción, pagos                  | 25h   | Alta      |
-| T2.3.x | Ventas: cotizaciones, pedidos, facturación     | 25h   | Alta      |
-| T2.4.x | Inventario: stock en tiempo real, trazabilidad | 20h   | Alta      |
+## FASE 1 — Catálogos + Inventario + Web básica
+
+| Campo | Valor |
+|-------|--------|
+| **Período** | 2 meses |
+| **Stack backend** | FastAPI, SQLAlchemy, Alembic, pytest, LISTEN/NOTIFY (si aplica en esta fase solo para prueba) |
+| **Stack frontend** | **Next.js 15** App Router, TypeScript, en `apps/web/` |
+| **Módulos backend** | `auth`, `catalog`, `inventory` completos con tests en lógica crítica |
+| **Hito** | **Primer usuario real del negocio** opera catálogo, stock y traslados desde la web |
+
+| ID | Tarea | Horas | Prioridad |
+|----|-------|-------|-----------|
+| T1.1 | Modelos y migraciones: productos, ubicaciones, zonas, stock | 16 | Alta |
+| T1.2 | `catalog`: CRUD productos, listas de precio mínimas, terceros | 24 | Alta |
+| T1.3 | `inventory`: stock por ubicación, movimientos, traslados, reservas básicas | 32 | Alta |
+| T1.4 | Tests: reserva de stock, traslado, reglas de cantidad | 16 | Alta |
+| T1.5 | Next.js: login, sesión con JWT, layout autenticado | 20 | Alta |
+| T1.6 | Next.js: catálogo de productos, formularios alta/edición | 24 | Alta |
+| T1.7 | Next.js: inventario (consulta, movimiento, traslado entre zonas) | 28 | Alta |
+| T1.8 | Panel de roles (asignación visual de rol por usuario en UI mínima) | 12 | Alta |
+| T1.9 | Deploy Render: API + web; variables y secretos | 8 | Alta |
+
+**Hito:** usuario real ejecuta **al menos una semana** de operación sin Excel paralelo para esas funciones.
 
 ---
 
-## FASE 3: ERP COMPLETO (Mes 8–10)
+## FASE 2 — Ventas + Compras
 
-En GitHub, milestones de sprint: **`Fase 3 · S1` … `Fase 3 · S4`** (alineados a `T3.{stream}.*` y a `[E*-S15-*]` … `[E*-S20-*]` en import).
+| Campo | Valor |
+|-------|--------|
+| **Período** | 3 meses |
+| **Stack** | Mismo backend; Next.js para flujos OV/OC |
+| **Módulos backend** | `sales`, `purchases` con tests |
+| **Hito** | **Ciclo completo compra‑venta** en producción con datos reales |
 
-### Sprint 1 — Contabilidad (Mes 8)
-| Ticket | Tarea                                 | Horas | Prioridad |
-|--------|---------------------------------------|-------|-----------|
-| T3.1.x | Contabilidad: asientos, P&L, cierres  | 30h   | Alta      |
+| ID | Tarea | Horas | Prioridad |
+|----|-------|-------|-----------|
+| T2.1 | `purchases`: OC, estados, recepciones, devoluciones proveedor | 40 | Alta |
+| T2.2 | `sales`: cotizaciones, OV, picking/packing básico, facturación básica | 48 | Alta |
+| T2.3 | Integración stock: reservas al confirmar OV, liberación al cancelar | 24 | Alta |
+| T2.4 | Tests: OC → recepción; OV → factura; idempotencia en confirmación | 24 | Alta |
+| T2.5 | Next.js: flujos OC, recepción, cotización, OV, listados | 48 | Alta |
+| T2.6 | Devoluciones cliente/proveedor en UI mínima viable | 20 | Media |
+| T2.7 | Workers: NOTificación post‑venta/compra si aplica (LISTEN/NOTIFY) | 12 | Media |
 
-### Sprint 2 — RRHH (Mes 9)
-| Ticket | Tarea                                 | Horas | Prioridad |
-|--------|---------------------------------------|-------|-----------|
-| T3.2.x | RRHH: empleados, turnos, nómina       | 20h   | Alta      |
-
-### Sprint 3 — Reportes gerenciales (Mes 10, bloque 1)
-| Ticket | Tarea                                 | Horas | Prioridad |
-|--------|---------------------------------------|-------|-----------|
-| T3.3.x | Reportes gerenciales avanzados        | 15h   | Media     |
-
-### Sprint 4 — Auditoría y trazabilidad (Mes 10, bloque 2 / cierre)
-| Ticket | Tarea                                 | Horas | Prioridad |
-|--------|---------------------------------------|-------|-----------|
-| T3.4.x | Auditoría y trazabilidad completa     | 10h   | Media     |
+**Hito:** usuario real cierra **mes contable operativo** con compras y ventas entrando solo por el sistema.
 
 ---
 
-## FASE 4: CRM (Mes 11–12)
+## FASE 3 — CRM + WhatsApp
 
-En GitHub, milestones de sprint: **`Fase 4 · S1` … `Fase 4 · S5`** (`T4.{stream}.*`; épicas E con sprint **21–24** → S1–S4; **S5** prioriza tickets `T4.5.*` o rollup de fase).
+| Campo | Valor |
+|-------|--------|
+| **Período** | 2 meses |
+| **Stack** | `crm` + WhatsApp Cloud API; worker para Whisper; LISTEN/NOTIFY |
+| **Módulos backend** | `crm` completo con tests |
+| **Hito** | **Equipo comercial** gestiona clientes y conversaciones **en producción** |
 
-### Sprint 1 — Comunicación interna
-| Ticket | Tarea                                       | Horas | Prioridad |
-|--------|---------------------------------------------|-------|-----------|
-| T4.1.x | Comunicación interna entre usuarios         | 15h   | Media     |
+| ID | Tarea | Horas | Prioridad |
+|----|-------|-------|-----------|
+| T3.1 | Webhook WhatsApp, validación Meta, almacenamiento mensajes | 20 | Alta |
+| T3.2 | Inbox, casos, pipeline de ventas, historial por cliente | 32 | Alta |
+| T3.3 | Worker: transcripción audio (Whisper), `NOTIFY` a CRM | 24 | Alta |
+| T3.4 | Pedido desde chat → `sales` vía **servicios Python** (no HTTP interno) | 24 | Alta |
+| T3.5 | Next.js: bandeja CRM, pipeline, ficha cliente | 32 | Alta |
+| T3.6 | Tests: creación de caso, vinculación a cliente, reglas de acceso RBAC | 16 | Alta |
 
-### Sprint 2 — Transcripción y audio
-| Ticket | Tarea                                       | Horas | Prioridad |
-|--------|---------------------------------------------|-------|-----------|
-| T4.2.x | Transcripción de audio a texto              | 12h   | Media     |
-
-### Sprint 3 — Casos y tickets
-| Ticket | Tarea                                       | Horas | Prioridad |
-|--------|---------------------------------------------|-------|-----------|
-| T4.3.x | Gestión de casos y tickets                  | 15h   | Media     |
-
-### Sprint 4 — Pipeline de ventas
-| Ticket | Tarea                                       | Horas | Prioridad |
-|--------|---------------------------------------------|-------|-----------|
-| T4.4.x | Pipeline de ventas: leads → cierre          | 20h   | Media     |
-
-### Sprint 5 — Historial por cliente
-| Ticket | Tarea                                       | Horas | Prioridad |
-|--------|---------------------------------------------|-------|-----------|
-| T4.5.x | Historial completo por cliente              | 10h   | Media     |
+**Hito:** al menos **un vendedor real** usa CRM diario una semana.
 
 ---
 
-## FASE 5: OFFLINE-FIRST (Mes 13–14)
-| Ticket | Tarea                                          | Horas | Prioridad |
-|--------|------------------------------------------------|-------|-----------|
-| T5.1.1 | Base de datos local en el dispositivo          | 4h    | Alta      |
-| T5.1.2 | Modelos locales espejo de tablas críticas      | 6h    | Alta      |
-| T5.1.3 | UI siempre lee local, nunca directo al backend | 8h    | Alta      |
-| T5.2.1 | Sync descarga: backend → local                 | 6h    | Alta      |
-| T5.2.2 | Sync subida: local → backend con pending_sync  | 8h    | Alta      |
-| T5.2.3 | Indicador de conexión y estado de sync         | 3h    | Media     |
-| T5.2.4 | Resolución de conflictos vía updated_at        | 5h    | Media     |
+## FASE 4 — Contabilidad (post‑MVP)
+
+| Campo | Valor |
+|-------|--------|
+| **Período** | 2 meses |
+| **Stack** | Módulo `accounting`; asientos automáticos desde ventas/compras |
+| **Frontend** | Next.js: plan de cuentas, libro, estados financieros |
+| **Hito** | Contabilidad **generada automáticamente** desde operaciones; primer cierre revisado con contador |
+
+| ID | Tarea | Horas | Prioridad |
+|----|-------|-------|-----------|
+| T4.1 | Plan de cuentas, asientos manuales/automáticos | 40 | Alta |
+| T4.2 | P&L, balance, flujo de caja | 32 | Alta |
+| T4.3 | Caja/tesorería, conciliación básica | 24 | Alta |
+| T4.4 | Impuestos/retenciones según normativa local (parametrizable) | 32 | Alta |
+| T4.5 | Tests: asiento desde OV/OC; cuadre de balance | 24 | Alta |
+| T4.6 | Next.js: reportes contables y exportaciones | 24 | Alta |
+
+**Hito:** **usuario real (contador o responsable)** valida números contra expectativa del negocio.
+
+---
+
+## FASE 5 — RRHH + Nómina (post‑MVP)
+
+| Campo | Valor |
+|-------|--------|
+| **Período** | 2 meses |
+| **Stack** | Módulo `hr` |
+| **Frontend** | Next.js: empleados, ausencias, nómina |
+| **Hito** | **Primer ciclo de nómina** pagado desde el sistema |
+
+| ID | Tarea | Horas | Prioridad |
+|----|-------|-------|-----------|
+| T5.1 | Maestro empleados, organigrama básico | 16 | Alta |
+| T5.2 | Turnos, horas, ausencias, vacaciones, incapacidades | 32 | Alta |
+| T5.3 | Cálculo nómina: base, deducciones, bonos, horas extra | 40 | Alta |
+| T5.4 | Archivos banco / exportación pagos | 16 | Alta |
+| T5.5 | Tests: cálculo nómina casos borde | 24 | Alta |
+| T5.6 | Next.js: flujos RRHH y aprobaciones | 24 | Alta |
+
+**Hito:** **empleados reales** reciben pago trazable desde el sistema.
+
+---
+
+## FASE 6 — App móvil Expo (post‑MVP)
+
+| Campo | Valor |
+|-------|--------|
+| **Período** | 2 meses |
+| **Stack** | **Expo** + React Native + TypeScript; consumo **`/api/v1`** |
+| **Frontend** | App Expo en `apps/mobile/` o `apps/expo/` (definir carpeta al iniciar) |
+| **Hito** | **Empleados de campo** operan desde el teléfono sin papel |
+
+| ID | Tarea | Horas | Prioridad |
+|----|-------|-------|-----------|
+| T6.1 | Proyecto Expo, auth JWT compartido con Supabase | 16 | Alta |
+| T6.2 | Pantallas: traslados, arqueo de caja, recepciones | 32 | Alta |
+| T6.3 | Misiones de conteo, consulta stock | 24 | Alta |
+| T6.4 | Manejo de errores red, UX offline degradado (sin sync completo) | 16 | Media |
+| T6.5 | Tests E2E móviles mínimos o contrato API | 16 | Media |
+
+**Hito:** al menos **dos usuarios de campo** usan la app en producción una semana.
+
+---
+
+## FASE 7 — Reportes avanzados + Pulido + Producción estable (post‑MVP)
+
+| Campo | Valor |
+|-------|--------|
+| **Período** | 2 meses |
+| **Stack** | `reports` (solo lectura), workers maduros, índices PostgreSQL |
+| **Frontend** | Next.js: dashboards, KPIs, export Excel/PDF |
+| **Hito** | Sistema **estable** sin intervención manual diaria en deploy |
+
+| ID | Tarea | Horas | Prioridad |
+|----|-------|-------|-----------|
+| T7.1 | `reports`: KPIs por área, exports | 32 | Alta |
+| T7.2 | Optimización queries: índices, EXPLAIN, paginación | 24 | Alta |
+| T7.3 | Workers: notificaciones email/push, reportes pesados | 24 | Alta |
+| T7.4 | Observabilidad: logs estructurados, alertas | 16 | Alta |
+| T7.5 | Runbook operación (backup, rollback, incidentes) | 12 | Alta |
+
+**Hito:** **dueño o gerente** usa dashboards semanalmente para decisiones.
+
+---
+
+## FASE 8 — Offline-first (condicional)
+
+| Campo | Valor |
+|-------|--------|
+| **Período** | 3+ meses |
+| **Prerequisito** | **`docs/ADR-002-offline-strategy.md` aprobado**. Sin ADR, **cero código** de sync offline. |
+| **Stack candidato** | SQLite en cliente Expo + sincronización con PostgreSQL vía cola; detalle solo en ADR-002 |
+| **Hito** | App **funciona sin conexión** en el alcance definido por ADR-002 y **sincroniza sin pérdida ni duplicación** al recuperar red |
+
+| ID | Tarea | Horas | Prioridad |
+|----|-------|-------|-----------|
+| T8.1 | Redactar y aprobar **ADR-002** | 16 | Alta |
+| T8.2 | Implementar scope ADR (lectura primero; escritura después si ADR lo permite) | 120+ | Alta |
+| T8.3 | Pruebas de conflictos y regresión | 40 | Alta |
+
+**Advertencia:** sincronización bidireccional con resolución de conflictos es de las tareas más difíciles del proyecto. Subestimarla es el fallo típico.
+
+---
+
+## Fuera del MVP pero en roadmap
+
+| Capacidad | Fase |
+|-----------|------|
+| Contabilidad completa | 4 |
+| RRHH y nómina | 5 |
+| App Expo | 6 |
+| Reportes gerenciales avanzados | 7 |
+| Offline-first | 8 |
+
+---
+
+## Reglas que no se negocian
+
+- **Microservicios**: no.  
+- **HTTP entre módulos del monolito**: no.  
+- **GraphQL**: no en roadmap.  
+- **Offline-first antes de Fase 8**: no.  
+- **Múltiples BD en MVP**: no.

@@ -6,16 +6,21 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 
 ## 0. Arquitectura y stack técnico
 
-- **Estilo**: monolito modular o servicios separados (API ERP, CRM, workers); definir límites por módulo.
-- **Comunicación**: API REST o GraphQL entre módulos y hacia clientes (POS, e-commerce, app); autenticación (JWT, OAuth, API keys).
-- **Persistencia**: una o más bases de datos; réplicas o caché para lecturas pesadas (reportes, dashboards) si aplica.
-- **Colas / workers**: flujos asíncronos para notificaciones, generación de reportes, envío a facturación electrónica, inventario_restauracion, integraciones externas; reintentos y dead-letter.
+⚠️ Arquitectura definida en docs/ADR-001-architecture-stack.md.
+Las decisiones de esta sección están cerradas. No abrir opciones sin un nuevo ADR.
+
+- **Estilo**: **Monolito modular**. Decisión cerrada en ADR-001. No hay microservicios.
+- **Comunicación**: **API REST versionada bajo /api/v1**. GraphQL no está en el roadmap. Autenticación: **Supabase Auth + JWT**; autorización **RBAC** en backend.
+- **Persistencia**: **Una base de datos principal: PostgreSQL en Supabase**. Sin múltiples BD en MVP. Migraciones: **Alembic**.
+- **Colas / workers**: **Eventos internos: PostgreSQL LISTEN/NOTIFY en MVP**. Sin Redis ni colas externas hasta que el volumen de mensajes lo justifique con datos reales de producción. Workers en `app/modules/workers/` (proceso separado en deploy).
 
 ---
 
 ## 1. ERP — Módulos principales
 
 ### 1.1 Catálogos / Maestros
+**Fase roadmap:** 1 (MVP).
+
 - **Productos**
     - SKU, nombre, descripción, categoría/familia, subcategoría.
     - Unidad de medida (venta y compra), conversiones.
@@ -38,6 +43,8 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 - **Numeración y secuencias**: generación única de números para OC, OV, factura, pedido, caso, ajuste; reglas por tipo, año y/o sucursal; manejo de concurrencia (secuencias atómicas o bloqueo optimista).
 
 ### 1.2 Compras
+**Fase roadmap:** 2 (MVP).
+
 - Órdenes de compra (OC): encabezado y líneas por producto, cantidad, precio, proveedor, fecha esperada.
 - Estados de compra: borrador, enviada, parcialmente recibida, recibida, facturada, cerrada, cancelada.
 - Ingreso de facturas de proveedor: vincular a OC, cargar factura (PDF/XML), registrar precios y cambios.
@@ -46,6 +53,8 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 - Historial de compras por proveedor y por producto (para CRM y reportes).
 
 ### 1.3 Ventas
+**Fase roadmap:** 2 (MVP).
+
 - **Cotizaciones**: crear cotización → vigencia → aprobación → convertir a pedido/OV; historial y seguimiento en CRM.
 - Órdenes de venta (OV): orígenes — punto de venta (POS), mayorista, electrónica (e-commerce), CRM (pedido desde chat).
 - Pedidos: conversión pedido → OV; estados (borrador, confirmado, facturado, preparando, enviado, entregado, cancelado).
@@ -56,6 +65,8 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 - Condiciones de pago: contado, crédito, plazos; vencimientos y recordatorios.
 
 ### 1.4 Inventario
+**Fase roadmap:** 1 (MVP).
+
 - Stock por producto y por ubicación; stock disponible vs reservado vs en tránsito.
 - Traslados entre ubicaciones: solicitud, aprobación, ejecución; estados.
 - Estados de inventario: disponible, bloqueado, en cuarentena, dañado, etc.
@@ -65,6 +76,8 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 - Inventario_restauracion (disparado desde CRM): contar zona → confirmar cantidad → orden de compra → autorización encargado.
 
 ### 1.5 Contabilidad
+**Fase roadmap:** 4 (post‑MVP).
+
 - Plan de cuentas y cuentas contables.
 - Asientos contables: manuales y automáticos (desde facturación, compras, nómina).
 - Integración con facturación: ventas y compras generan asientos (o interfaz con sistema contable externo).
@@ -73,12 +86,16 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 - Impuestos: IVA y retenciones por país; reportes fiscales.
 
 ### 1.6 RRHH
+**Fase roadmap:** 5 (post‑MVP).
+
 - Gestión de empleados: datos personales, puesto, departamento, jefe, fecha de ingreso.
 - Nóminas: cálculo de sueldos, deducciones, bonos; generación de pagos y archivos para bancos.
 - Ausencias: vacaciones, permisos, incapacidades; aprobaciones y saldos.
 - Control de horas o por proyectos (opcional): registro de tiempo, asignación a órdenes o proyectos.
 
 ### 1.7 CRM (módulo del ERP)
+**Fase roadmap:** 3 (MVP).
+
 - **Comunicación y mensajería**
     - Recibir mensajes: audio, video, texto, imagen.
     - Traducir audio a texto (transcripción).
@@ -110,6 +127,8 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
     - Por asignado, por fecha, por canal.
 
 ### 1.8 Dashboards y reportes
+**Fase roadmap:** 7 (post‑MVP) para dashboards gerenciales y exports avanzados; reportes operativos mínimos pueden aparecer antes según ROADMAP.
+
 - Resumen de métricas: ventas (por día/semana/mes, por canal), compras, stock (valorizado, alertas), finanzas (caja, cuentas por cobrar/pagar).
 - Reportes por período: ventas, compras, inventario, finanzas; filtros por fecha, cliente, producto, ubicación, vendedor.
 - Exportar: Excel, PDF.
@@ -119,35 +138,26 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 
 ## 2. Requisitos no funcionales / transversales
 
-- **Rendimiento**: respuestas rápidas; tiempo real o cuasi tiempo real para stock, estados de pedido y alertas.
-- **Alimentación del ERP**: datos entran desde POS, electrónica, mayorista, compras, inventario y desde el CRM (pedidos, casos).
-- **Validación**
-    - Compras: facturas, cantidades, precios, estados; duplicados y conciliación con OC.
-    - Órdenes de venta: stock disponible, datos de cliente, método de pago, límites de crédito.
-    - Traslados: origen/destino válidos, cantidades, disponibilidad.
-    - Inventarios: ajustes y auditorías con trazabilidad y aprobación según rol.
-- **Seguridad y roles**
-    - Perfiles: compras, ventas, inventario, contabilidad, RRHH, CRM, admin.
-    - Permisos: aprobar OC, autorizar ajustes, ver reportes financieros, gestionar nóminas, ver todos los clientes, etc.
-    - Auditoría: quién aprobó o modificó qué y cuándo (movimientos críticos).
-- **Multiempresa / multisucursal** (opcional): empresas o sucursales con inventario y/o contabilidad separados.
-- **Consistencia e idempotencia**
-    - Idempotencia: mismo pedido o pago recibido dos veces (doble clic, reconexión) no duplica OV ni movimientos; uso de idempotency keys o identificadores únicos de negocio.
-    - Reserva de stock: al confirmar pedido, reservar (disponible → reservado); liberar si cancelación o vencimiento; tiempo de vida de la reserva.
-    - Transacciones: operaciones atómicas donde aplique (crear OV + reservar stock + asiento); consistencia eventual aceptada donde sea explícito (ej. historial CRM alimentado por ERP).
-- **Resiliencia**
-    - Reconexión: reintentos y mensaje claro al usuario si falla crear pedido o consultar stock.
-    - POS o app en campo: si hay uso offline, definir qué se puede hacer sin red y cómo se sincroniza después (colas locales, resolución de conflictos).
-    - Timeouts y circuit breaker en llamadas a facturación electrónica y pasarelas de pago.
+| Requisito | Alcance | Detalle |
+|-----------|---------|---------|
+| **Rendimiento** (API < objetivo acordado en listados críticos) | MVP | Stock y pedidos usables en horario laboral; optimización fuerte en Fase 7. |
+| **Alimentación del ERP** (fuentes de datos) | MVP | Datos desde web Next.js, luego Expo; CRM alimenta pedidos/casos al mismo monolito. |
+| **Validación** de compras/ventas/inventario | MVP | Reglas en `service`; duplicados, conciliación OC, límites de crédito, traslados válidos. |
+| **Seguridad y roles** (RBAC + auditoría) | MVP | Perfiles por área; auditoría en movimientos críticos. |
+| **Multiempresa / multisucursal** | MVP | Modelado tenant desde Fase 1 si el negocio lo requiere; si no, una empresa y sucursal por defecto hasta ampliar. |
+| **Consistencia e idempotencia** | MVP | Transacciones atómicas; idempotency keys en confirmaciones críticas. |
+| **Resiliencia** (red, reintentos UX) | MVP | Mensajes claros; reintentos en cliente sin duplicar servidor. |
+| **Integraciones externas** (facturación electrónica, pasarelas) | Post‑MVP / por fase | Timeouts y límites; no bloquear Fase 1–2 si no están listas. |
+| **Offline-first** | Post‑MVP (Fase 8) | Solo tras `docs/ADR-002-offline-strategy.md`; sync bidireccional es complejidad máxima. |
 
 ---
 
 ## 3. Integración CRM ↔ ERP
 
-- **APIs internas**: ERP expone endpoints para CRM (consulta stock, crear OV, registrar devolución); CRM consume y notifica (pedido confirmado, caso cerrado).
-- **APIs externas**: POS y canal electrónica llaman al ERP; facturación electrónica (SAT u otro); pasarelas de pago.
-- **Eventos / webhooks**: "pedido confirmado", "factura emitida", "stock bajo" para que otros sistemas o el CRM reaccionen sin acoplamiento rígido.
-- **Versionado de API**: v1/v2 o política de deprecación para no romper POS ni e-commerce.
+- **Dentro del monolito**: CRM y ERP comparten **PostgreSQL** y **servicios Python** (`service.py` llamando a otro servicio). **No** hay HTTP entre módulos.
+- **Hacia fuera**: clientes (Next.js, Expo, integraciones futuras) usan **`/api/v1`** únicamente.
+- **Eventos asíncronos**: **`NOTIFY`** / workers según ADR-001; webhooks a terceros solo donde exista integración real (p. ej. WhatsApp).
+- **Versionado**: **`/api/v1`** estable; **`/api/v2`** solo por breaking changes documentados.
 - Flujos concretos:
     - CRM consulta **stock** en el ERP; si "quedó bajo" dispara **inventario_restauracion**.
     - Pedido confirmado en CRM → crea o actualiza **orden de venta** en ERP.
@@ -159,8 +169,8 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 ### 3.1 Eventos de dominio y flujos asíncronos
 
 - **Eventos clave**: `PedidoConfirmado`, `PagoRecibido`, `StockPorDebajoDelMinimo`, `FacturaEmitida`, `OVCreada`, `DevolucionSolicitada`, etc.
-- **Consumidores**: CRM (actualizar estado, notificar), notificaciones (email/push), reportes, integraciones externas (facturación, envíos).
-- **Colas y workers**: procesamiento asíncrono con reintentos; dead-letter para fallos persistentes; criterio de reprocesar o escalar.
+- **Consumidores**: handlers en **workers** vía **LISTEN/NOTIFY**; notificaciones y reportes pesados no bloquean HTTP.
+- **Reintentos**: política en worker; si un evento se pierde por caída del proceso, la siguiente versión puede añadir tabla de compensación (ADR futuro), no improvisación en producción.
 
 ---
 
