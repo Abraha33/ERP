@@ -1,36 +1,94 @@
-# CURSOR CONTEXT — ERP SATELITE
+# CURSOR CONTEXT — ERP/CRM (producción) — Fuente única de verdad
 
-## Proyecto
-ERP+CRM construido por un solo founder (~25h/semana) en 14 meses. **Cliente de producto:** app Android (**Kotlin + Jetpack Compose**); backend **Supabase** (Postgres, Auth, RLS, Realtime, RPC).
+Este archivo define el contexto operativo del repo para desarrollo con Cursor/IA. Si hay contradicción con otro documento, **este archivo y el ADR-001 mandan**.
 
-**Stack de fundación:** [ADR-001](./ADR/ADR-001-stack-tecnologico.md) — **ACEPTADA** (revisión **2026-04-08**: Kotlin + Room + WorkManager para offline en Fase 5).
+## Arquitectura oficial
 
-## Stack
-- **Frontend:** **Kotlin**, **Jetpack Compose**, **Material 3**; módulo en `apps/android/` (inicializar Gradle cuando arranque desarrollo).
-- **Persistencia local:** **Room** (cache y, en Fase 5, offline); **WorkManager** para sync en background.
-- **BaaS:** **Supabase** (Postgres, Auth, Storage, **RLS**, **Realtime**, **RPC**, Edge Functions).
-- **App → datos:** **Supabase Kotlin** con **RLS**; lógica transaccional en **RPC** cuando aplique.
-- **Integración SAE:** scripts Python en **`scripts/sae/`** (CSV/XLS ↔ Supabase); **Playwright** opcional en `tools/scraper/`.
-- **Worker HTTP (opcional):** **FastAPI** en `tools/worker/` (Python 3.12).
-- **Offline (Fase 5):** **Room** + sync documentada; columna `sync_status` en Postgres según [docs/reference/schema-conventions.md](./docs/reference/schema-conventions.md).
-- **CI/CD:** GitHub Actions; builds Android con Gradle cuando exista el proyecto.
+- **Arquitectura**: **monolito modular headless**.
+- **API**: REST versionada bajo **`/api/v1`**.
+- **Backend principal**: **FastAPI (Python 3.12+)**.
+- **DB principal**: **PostgreSQL en Supabase** (única BD en MVP).
+- **Frontend prioritario (MVP)**: **Web ERP**.
+- **Móvil**: postergado; solo entra por casos concretos con ADR propio.
 
-**Variables de entorno:** [.env.example](./.env.example) en la raíz; nunca commitear `.env` ni `.env.local`.
+Referencia: [ADR-001](./docs/ADR-001-architecture-stack.md).
 
-## Milestone activo (documentación)
-- **M0 — Workflow & Foundation:** [docs/milestones/M0-workflow-foundation.md](./docs/milestones/M0-workflow-foundation.md) (seguimiento W01–W08). Tras cerrar M0 → **Sprint 1 / Fase 1** en curso.
-- **Último cierre documentado en este archivo:** revisión stack Android + ADR-001 (2026-04-08).
+## Stack (decisiones cerradas)
 
-## Estructura (monorepo)
-- `apps/android/` — app Kotlin (placeholder `.gitkeep` hasta crear proyecto).
-- `supabase/migrations/` — única fuente de verdad DDL/RLS aplicada con CLI.
-- `scripts/` — automatización tablero, SAE (`scripts/sae/`), etc.
-- `tools/worker/`, `tools/scraper/` — FastAPI y Playwright opcionales.
-- `worker/` — reservado (`.gitkeep`); ver README si se unifica con `tools/worker/`.
+- **Backend**: FastAPI + Pydantic; ejecución en contenedor (Docker) para dev/staging/prod.
+- **DB**: Supabase Postgres + Supabase Auth; RLS en tablas expuestas.
+- **Frontend Web**: **React + TypeScript + Vite** (ERP web). (No se negocia en MVP: el primer cliente es web.)
+- **Testing**: `pytest` obligatorio en lógica crítica (unit + integration).
+- **CI**: GitHub Actions (tests + verificación de migraciones).
+- **CD**:
+  - DB/Edge Functions: workflow Supabase en `main`.
+  - Backend FastAPI: despliegue de contenedor en Render desde `main`.
 
-## Reglas Cursor
-- Ver `.cursor/rules/project.mdc` (`alwaysApply: true`) + 8 recetas de comando en `.cursor/rules/*.mdc`.
-- Commits: `feat|fix|db|chore|docs: … (#issue)` según convención del equipo.
+## Auth, autorización y multi-tenant
 
-## Roles de desarrollo (GitHub)
-Labels `role/*` por ticket. Ramas permanentes: `main`, `develop`. Features: `feature/<issue>-<descripcion>`.
+- **Auth**: Supabase Auth emite JWT; FastAPI valida JWT (JWKS) y resuelve sesión.
+- **Autorización**: RBAC por roles de negocio (admin > encargado > empleado) + permisos por módulo.
+- **Tenant**: siempre filtrar por `empresa_id` / `sucursal_id`; **prohibido hardcodear UUIDs**.
+- **Defensa en profundidad**: backend aplica RBAC + BD aplica RLS.
+
+## Estructura de carpetas (objetivo)
+
+Fuente: ADR-001. Estructura esperada para backend:
+
+- `app/core/`: configuración, DB, seguridad, errores, logging.
+- `app/modules/<dominio>/`: módulo por dominio (API, dominio, repos, schemas).
+- `tests/unit/`, `tests/integration/`.
+- `supabase/migrations/`: única fuente de verdad de DDL/RLS.
+- `docs/`: ADRs y documentación operativa.
+
+Frontend web (cuando se inicie):
+
+- `apps/web/`: React + TS + Vite.
+
+## Convenciones de nombres
+
+- **Python**: paquetes en minúsculas; módulos en snake_case; clases en PascalCase.
+- **API**:
+  - path: `/api/v1/...`
+  - recursos en plural.
+- **SQL**:
+  - tablas en snake_case plural,
+  - policies RLS: `p_<tabla>_<accion>_<rol>`.
+
+## Estrategia de errores (API)
+
+- Respuesta de error consistente en JSON con:
+  - `code` (interno),
+  - `message` (humano),
+  - `details` (opcional),
+  - `request_id`.
+- No filtrar stacktraces en prod.
+- Logs estructurados incluyen `request_id` para trazabilidad.
+
+## Arquitectura por módulos (reglas de acoplamiento)
+
+- Un módulo no “llama por HTTP” a otro módulo del mismo monolito.
+- Integración entre módulos:
+  - por **interfaces** (servicios/repos) y eventos de dominio in-process,
+  - no por imports cruzados arbitrarios.
+- CRM es **módulo**, no “app aparte”. No se permiten duplicaciones de “clientes/ventas” en tablas paralelas.
+
+## CI/CD (repositorio)
+
+- `pull_request` y `push` en `main/develop`:
+  - ejecutar tests,
+  - validar migraciones aplican sobre Postgres limpio (schema check).
+- `push` en `main` sobre `supabase/**`:
+  - `supabase db push`,
+  - `supabase functions deploy` (si aplica).
+
+## Política de ramas
+
+- Ramas permanentes: `main`, `develop`.
+- Features: `feature/<issue>-<descripcion>`.
+- Prohibido push directo a `main`.
+
+## Offline (enfoque realista)
+
+- Offline-first **no es requisito del MVP**.
+- Si entra, entra **acotado a 1–2 flujos**, con ADR propio (conflictos, idempotencia, UX).
