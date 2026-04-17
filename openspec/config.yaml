@@ -1,0 +1,64 @@
+# Spec-Driven Development — ERP Satélite (initialized 2026-04-10)
+schema: spec-driven
+
+context: |
+  Tech stack: Supabase (Postgres, Auth, Storage, Edge Functions, Realtime); Android Kotlin+Compose target under apps/android (stub); legacy Expo in apps/mobile; Python 3.12 (FastAPI tools/worker, Playwright tools/scraper); SQL migrations in supabase/migrations/.
+  Architecture: Modular monolith; RLS on client tables; Edge Functions as BFF; offline-first roadmap (Room + WorkManager).
+  Testing: No unified test script; CI runs apps/mobile typecheck (tsc), Python compileall, and Postgres migration apply.
+  Style: .cursor/rules/project.mdc and ADR/docs; SQL snake_case; branches feature/<issue>-<description>.
+
+strict_tdd: false
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected modules/packages
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group tasks by phase (infrastructure, implementation, testing)
+    - Use hierarchical numbering (1.1, 1.2, etc.)
+    - Keep tasks small enough to complete in one session
+  apply:
+    - Follow existing code patterns and conventions
+    - Load relevant coding skills for the project stack
+  verify:
+    - Run tests if test infrastructure exists
+    - Compare implementation against every spec scenario
+  archive:
+    - Warn before merging destructive deltas (large removals)
+
+testing:
+  strict_tdd_mode: disabled
+  detected: "2026-04-10"
+  runner:
+    framework: none
+    command: "—"
+  layers:
+    unit:
+      available: false
+      tool: "—"
+    integration:
+      available: false
+      tool: "—"
+    e2e:
+      available: false
+      tool: "—"
+      note: "Playwright listed in tools/scraper — not wired as CI E2E"
+  coverage:
+    available: false
+    command: "—"
+  quality:
+    typecheck:
+      available: true
+      command: "cd apps/mobile && npm run typecheck"
+    linter:
+      available: false
+      command: "—"
+    formatter:
+      available: true
+      command: "Prettier in apps/mobile (no root format script)"

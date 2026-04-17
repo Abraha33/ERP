@@ -6,6 +6,7 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 
 ## 0. Arquitectura y stack técnico
 
+<<<<<<< HEAD
 ⚠️ Arquitectura definida en docs/ADR-001-architecture-stack.md.
 Las decisiones de esta sección están cerradas. No abrir opciones sin un nuevo ADR.
 
@@ -13,6 +14,17 @@ Las decisiones de esta sección están cerradas. No abrir opciones sin un nuevo 
 - **Comunicación**: **API REST versionada bajo /api/v1**. GraphQL no está en el roadmap. Autenticación: **Supabase Auth + JWT**; autorización **RBAC** en backend.
 - **Persistencia**: **Una base de datos principal: PostgreSQL en Supabase**. Sin múltiples BD en MVP. Migraciones: **Alembic**.
 - **Colas / workers**: **Eventos internos: PostgreSQL LISTEN/NOTIFY en MVP**. Sin Redis ni colas externas hasta que el volumen de mensajes lo justifique con datos reales de producción. Workers en `app/modules/workers/` (proceso separado en deploy).
+=======
+- **Arquitectura (decisión cerrada)**: **monolito modular headless**.
+- **Backend principal**: **FastAPI (Python)**.
+- **API**: **REST versionada** bajo **`/api/v1`**.
+- **Comunicación interna (entre módulos)**: **llamadas internas en Python** (no HTTP entre módulos).
+- **Persistencia (MVP)**: **una sola BD transaccional**: PostgreSQL (Supabase).
+- **Auth**: Supabase Auth (JWT) validado en backend; **RBAC** por roles de negocio.
+- **Asíncrono (MVP)**: eventos in-process + tabla `jobs/outbox` en Postgres + worker (sin “plataforma de colas” externa).
+
+Referencia: [ADR-001](../ADR-001-architecture-stack.md).
+>>>>>>> b1e27937a474d59bbee23e8725a2c7d32c104b1c
 
 ---
 
@@ -138,6 +150,7 @@ Las decisiones de esta sección están cerradas. No abrir opciones sin un nuevo 
 
 ## 2. Requisitos no funcionales / transversales
 
+<<<<<<< HEAD
 | Requisito | Alcance | Detalle |
 |-----------|---------|---------|
 | **Rendimiento** (API < objetivo acordado en listados críticos) | MVP | Stock y pedidos usables en horario laboral; optimización fuerte en Fase 7. |
@@ -149,15 +162,45 @@ Las decisiones de esta sección están cerradas. No abrir opciones sin un nuevo 
 | **Resiliencia** (red, reintentos UX) | MVP | Mensajes claros; reintentos en cliente sin duplicar servidor. |
 | **Integraciones externas** (facturación electrónica, pasarelas) | Post‑MVP / por fase | Timeouts y límites; no bloquear Fase 1–2 si no están listas. |
 | **Offline-first** | Post‑MVP (Fase 8) | Solo tras `docs/ADR-002-offline-strategy.md`; sync bidireccional es complejidad máxima. |
+=======
+- **Rendimiento**: respuestas rápidas; tiempo real o cuasi tiempo real para stock, estados de pedido y alertas.
+- **Alimentación del ERP**: datos entran desde POS, electrónica, mayorista, compras, inventario y desde el CRM (pedidos, casos).
+- **Validación**
+    - Compras: facturas, cantidades, precios, estados; duplicados y conciliación con OC.
+    - Órdenes de venta: stock disponible, datos de cliente, método de pago, límites de crédito.
+    - Traslados: origen/destino válidos, cantidades, disponibilidad.
+    - Inventarios: ajustes y auditorías con trazabilidad y aprobación según rol.
+- **Seguridad y roles**
+    - Perfiles: compras, ventas, inventario, contabilidad, RRHH, CRM, admin.
+    - Permisos: aprobar OC, autorizar ajustes, ver reportes financieros, gestionar nóminas, ver todos los clientes, etc.
+    - Auditoría: quién aprobó o modificó qué y cuándo (movimientos críticos).
+- **Multiempresa / multisucursal** (opcional): empresas o sucursales con inventario y/o contabilidad separados.
+- **Consistencia e idempotencia**
+    - Idempotencia: mismo pedido o pago recibido dos veces (doble clic, reconexión) no duplica OV ni movimientos; uso de idempotency keys o identificadores únicos de negocio.
+    - Reserva de stock: al confirmar pedido, reservar (disponible → reservado); liberar si cancelación o vencimiento; tiempo de vida de la reserva.
+    - Transacciones: operaciones atómicas donde aplique (crear OV + reservar stock + asiento); consistencia eventual aceptada donde sea explícito (ej. historial CRM alimentado por ERP).
+- **Resiliencia**
+    - Reconexión: reintentos y mensaje claro al usuario si falla crear pedido o consultar stock.
+    - Offline: **no es requisito del MVP**. Si entra, entra **acotado a 1–2 flujos** con estrategia de conflictos explícita (ADR específico).
+    - Timeouts y circuit breaker en llamadas a facturación electrónica y pasarelas de pago.
+>>>>>>> b1e27937a474d59bbee23e8725a2c7d32c104b1c
 
 ---
 
 ## 3. Integración CRM ↔ ERP
 
+<<<<<<< HEAD
 - **Dentro del monolito**: CRM y ERP comparten **PostgreSQL** y **servicios Python** (`service.py` llamando a otro servicio). **No** hay HTTP entre módulos.
 - **Hacia fuera**: clientes (Next.js, Expo, integraciones futuras) usan **`/api/v1`** únicamente.
 - **Eventos asíncronos**: **`NOTIFY`** / workers según ADR-001; webhooks a terceros solo donde exista integración real (p. ej. WhatsApp).
 - **Versionado**: **`/api/v1`** estable; **`/api/v2`** solo por breaking changes documentados.
+=======
+- **Principio**: ERP y CRM comparten proceso y BD transaccional, pero mantienen **límites por dominio** (módulos) para evitar caos.
+- **Integración interna (ERP↔CRM dentro del monolito)**: no hay “API entre módulos”. Hay **servicios internos** y **eventos de dominio in-process**.
+- **Integración externa**: clientes (Web ERP, POS, e-commerce, móvil) consumen **`/api/v1`**.
+- **Eventos/webhooks**: solo cuando haya un consumidor externo real. Dentro del monolito, eventos son in-process; para async se usa `jobs/outbox`.
+- **Versionado de API**: `/api/v1` no se rompe; cambios incompatibles van a `/api/v2` con deprecación.
+>>>>>>> b1e27937a474d59bbee23e8725a2c7d32c104b1c
 - Flujos concretos:
     - CRM consulta **stock** en el ERP; si "quedó bajo" dispara **inventario_restauracion**.
     - Pedido confirmado en CRM → crea o actualiza **orden de venta** en ERP.
@@ -169,8 +212,13 @@ Las decisiones de esta sección están cerradas. No abrir opciones sin un nuevo 
 ### 3.1 Eventos de dominio y flujos asíncronos
 
 - **Eventos clave**: `PedidoConfirmado`, `PagoRecibido`, `StockPorDebajoDelMinimo`, `FacturaEmitida`, `OVCreada`, `DevolucionSolicitada`, etc.
+<<<<<<< HEAD
 - **Consumidores**: handlers en **workers** vía **LISTEN/NOTIFY**; notificaciones y reportes pesados no bloquean HTTP.
 - **Reintentos**: política en worker; si un evento se pierde por caída del proceso, la siguiente versión puede añadir tabla de compensación (ADR futuro), no improvisación en producción.
+=======
+- **Consumidores**: handlers in-process (actualizar estados, disparar validaciones); y procesos async vía `jobs/outbox` (notificaciones, reportes, integraciones).
+- **Worker**: consume `jobs/outbox` desde Postgres con reintentos; dead-letter simple (estado + razón) para fallos persistentes.
+>>>>>>> b1e27937a474d59bbee23e8725a2c7d32c104b1c
 
 ---
 
