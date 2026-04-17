@@ -348,6 +348,10 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 | 5 | T0.1.5–T0.1.6 | [docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md) + [docs/reference/SAE_DATA_MAPPING.md](./docs/reference/SAE_DATA_MAPPING.md) al tener export del SAE. | **En progreso** |
 | 6 | T0.1.7 | [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) alineado con ADR (ya referenciado). | Hecho |
 
+### Variables de entorno (`.env.example`)
+
+En la raíz del repo, **[`.env.example`](./.env.example)** lista los **nombres canónicos** de variables (Supabase URL/keys, Postgres opcional, SAE, scraper, worker, pruebas RLS, etc.) con valores de ejemplo **no secretos**. Para trabajar en local: copia el archivo a **`.env`** (`Copy-Item .env.example .env` en PowerShell o `cp .env.example .env` en Git Bash), rellena solo lo que necesites y **no subas** `.env` ni `.env.local` al remoto. Lo mínimo habitual para cliente Supabase es **`SUPABASE_URL`** + **`SUPABASE_ANON_KEY`**; el **`SUPABASE_SERVICE_ROLE_KEY`** y las URLs de Postgres directo son solo para scripts de confianza o CI, nunca para la app Android de producto. Los secretos de GitHub Actions (`SUPABASE_DB_URL`, `SUPABASE_ACCESS_TOKEN`, `PROJECTS_TOKEN`, etc.) se configuran en el repositorio y se documentan en [docs/reference/SUPABASE_CLI_VERSIONING.md](./docs/reference/SUPABASE_CLI_VERSIONING.md).
+
 ### CI — validar migraciones SQL
 
 En cada push/PR a `main` o `develop`, el job **`db_migrations`** en [.github/workflows/ci.yml](./.github/workflows/ci.yml) levanta **Postgres 16**, aplica `supabase/ci/0000_local_pg_supabase_stubs.sql` (simula `auth.users`, `auth.uid()`, rol `authenticated`) y luego todos los `.sql` de `supabase/migrations/` en orden. Si algo falla, el workflow falla. El artefacto **`postgres-schema`** contiene un `pg_dump --schema-only` para revisar el esquema resultante (pestaña *Actions* → run → *Artifacts*).
@@ -435,3 +439,16 @@ Detalle tabla por tabla: **[docs/reference/STACK_POR_FASE.md](./docs/reference/S
 - [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) — Contexto para el asistente IA
 - [.github/workflows/daily-progress.yml](./.github/workflows/daily-progress.yml) — Automatizacion push/PR/schedule
 - [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md) — Formato `[T##]` y `[E##-S##-##]` en titulos; orden en el Project
+
+## Documentación complementaria
+
+- Arquitectura: [`docs/ADR-001-architecture-stack.md`](./docs/ADR-001-architecture-stack.md)
+- Offline: [`docs/ADR-002-offline-strategy.md`](./docs/ADR-002-offline-strategy.md)
+- Módulos: [`docs/reference/modules.md`](./docs/reference/modules.md)
+- Modelo de datos: [`docs/domain/DATA_MODEL.md`](./docs/domain/DATA_MODEL.md)
+- Flujos: [`docs/domain/WORKFLOWS.md`](./docs/domain/WORKFLOWS.md)
+- RBAC: [`docs/security/RBAC.md`](./docs/security/RBAC.md)
+- API: [`docs/security/API_CONTRACTS.md`](./docs/security/API_CONTRACTS.md)
+- Integraciones: [`docs/backend/INTEGRATIONS.md`](./docs/backend/INTEGRATIONS.md)
+- Preguntas abiertas: [`docs/project/OPEN_QUESTIONS.md`](./docs/project/OPEN_QUESTIONS.md)
+- Contexto IA: [`docs/ai/CURSOR_CONTEXT.md`](./docs/ai/CURSOR_CONTEXT.md)
