@@ -5789,8 +5789,13 @@ ALTER TABLE ONLY "public"."categoriasproducto"
 
 
 
-ALTER TABLE ONLY "public"."clientes"
-    ADD CONSTRAINT "clientes_pkey" PRIMARY KEY ("id_tercero");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."clientes"
+        ADD CONSTRAINT "clientes_pkey" PRIMARY KEY ("id_tercero");
+EXCEPTION WHEN duplicate_table OR others THEN
+    -- PK already exists from stub migration
+    NULL;
+END $$;
 
 
 
@@ -5824,8 +5829,13 @@ ALTER TABLE ONLY "public"."cubiculosfila"
 
 
 
-ALTER TABLE ONLY "public"."empresas"
-    ADD CONSTRAINT "empresas_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."empresas"
+        ADD CONSTRAINT "empresas_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN
+    -- PK already exists from stub migration
+    NULL;
+END $$;
 
 
 
@@ -5994,8 +6004,13 @@ ALTER TABLE ONLY "public"."productos_erp"
 
 
 
-ALTER TABLE ONLY "public"."productos"
-    ADD CONSTRAINT "productos_pkey" PRIMARY KEY ("id_producto");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."productos"
+        ADD CONSTRAINT "productos_pkey" PRIMARY KEY ("id_producto");
+EXCEPTION WHEN duplicate_table OR others THEN
+    -- PK already exists from stub migration
+    NULL;
+END $$;
 
 
 
