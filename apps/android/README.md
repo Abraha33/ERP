@@ -1,30 +1,8 @@
-# apps/android — App Android (Fase 5)
+# apps/android — App Android Nativa
 
-> **Estado:** scaffold reservado — aún no inicializado.
+**Stack:** Kotlin + Jetpack Compose + Material 3 + Room + WorkManager  
+**Estado:** Placeholder — desarrollo inicia en Fase 5 (Mes 13–14), solo si hay caso de negocio  
+**API:** Consume `/api/v1` del backend FastAPI con Bearer JWT de Supabase Auth  
+**No usar:** PostgREST ni `anon key` en el APK para tablas de negocio ERP  
 
-Este directorio contendrá la app Android del ERP (campo: recepción, traslados, conteos, arqueo), construida con **Kotlin + Jetpack Compose**.
-
-## Stack planeado
-
-| Capa | Tecnología |
-|------|-----------|
-| Lenguaje | Kotlin 1.9+ |
-| UI | Jetpack Compose |
-| BD local | Room (SQLite) — Fase 5 offline-first |
-| Sync | WorkManager + `sync_status` column |
-| Red | Retrofit / Ktor → `/api/v1` (FastAPI) |
-| Auth | Supabase Auth (`supabase-kt`) |
-| Build | Gradle (Kotlin DSL) |
-
-## Inicialización (cuando entre en scope — Fase 5)
-
-1. Abrir Android Studio → "New Project" → "Empty Compose Activity"
-2. Apuntar al directorio `apps/android/`
-3. Configurar `local.properties` con SDK path (no commitear)
-4. Añadir dependencias Supabase en `build.gradle.kts`
-
-## Referencias
-
-- [ADR-001](../../docs/adr/ADR-001-stack-tecnologico.md) — decisiones de stack global
-- [ROADMAP.md](../../ROADMAP.md) — Fase 5 tickets T5.x
-- [STACK_POR_FASE.md](../../docs/reference/STACK_POR_FASE.md) — Fase 5 offline-first
+Ver [ADR-001](../../docs/adr/ADR-001-stack-tecnologico.md) y [ROADMAP.md](../../ROADMAP.md).
