@@ -1,6 +1,0 @@
-{
-  "name": "Mis ítems · foco",
-  "layout": "table",
-  "filter": "assignee:@me",
-  "visible_fields": [268023224, 268023225, 268023226, 268093013, 268091666, 268091704, 268023228, 268023233]
-}
