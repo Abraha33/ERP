@@ -4,8 +4,8 @@
 
 ## Fase y milestone
 
-- **M0 (Workflow & Foundation):** en ejecución — [milestones/M0-workflow-foundation.md](./milestones/M0-workflow-foundation.md). Al cerrar W01–W08 → **M0 cerrado**, **S1 / Fase 1** pendiente de arranque formal en tablero.
-- **Stack cliente:** Kotlin + Compose + Room (offline Fase 5) — [ADR-001](../ADR/ADR-001-stack-tecnologico.md).
+- **M0 (Workflow & Foundation):** en ejecución — [milestones/M0-workflow-foundation.md](../docs/process/WORKFLOW.md). Al cerrar W01–W08 → **M0 cerrado**, **S1 / Fase 1** pendiente de arranque formal en tablero.
+- **Stack cliente:** Kotlin + Compose + Room (offline Fase 5) — [ADR-001](./adr/ADR-001-stack-tecnologico.md).
 
 `Actualizado: 2026-04-08`
 
