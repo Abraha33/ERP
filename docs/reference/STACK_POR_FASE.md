@@ -2,7 +2,7 @@
 
 Este documento **descompone el stack por etapa** del roadmap (14 meses): qué tecnologías entran en juego en cada fase, qué se **añade** respecto a la anterior y qué queda **pendiente de decidir** fuera de [ADR-001](../adr/ADR-001-stack-tecnologico.md).
 
-**Línea base aceptada** (ADR-001 + revisión **2026-04-08**; detalle en [CURSOR_CONTEXT.md](../../CURSOR_CONTEXT.md)):
+**Línea base aceptada** (ADR-001 + revisión **2026-04-08**; detalle en [.cursor/context/CONTEXT.md](../../.cursor/context/CONTEXT.md)):
 
 - Cliente: **Kotlin** + **Jetpack Compose** (Android), persistencia local con **Room** cuando aplique; sync en background con **WorkManager** (Fase 5).
 - Acceso a datos: **Supabase Kotlin** (`supabase-kt` u oficial equivalente) con **RLS**; sin capa API propia intermedia para el CRUD habitual.
@@ -10,7 +10,7 @@ Este documento **descompone el stack por etapa** del roadmap (14 meses): qué te
 - **Tiempo casi real:** **Supabase Realtime** para escenarios como **inventario** y **traslados**.
 - **Operaciones complejas y transaccionales:** **Supabase RPC** (SQL), p. ej. **abrir/cerrar turno de caja**.
 - **Integración SAE:** **scripts Python** (CLI) en `scripts/sae/`: **CSV/XLS** ↔ Supabase; **Playwright** opcional en `tools/scraper/`.
-- **Worker HTTP / jobs largos:** **FastAPI** (`tools/worker/`) y **Edge Functions** como opciones (ver ADR-001).
+- **Worker HTTP / jobs largos:** **FastAPI** (`backend/app/modules/workers/`) y **Edge Functions** como opciones (ver ADR-001).
 - Offline (Fase 5): **Room** (SQLite) + sync bidireccional y columna `sync_status` (ver [schema-conventions.md](./schema-conventions.md)).
 - CI/CD: **GitHub Actions**; builds Android con Gradle cuando el módulo `apps/android/` esté inicializado.
 
@@ -129,7 +129,7 @@ Objetivo: la app de campo **funciona sin internet** y sincroniza con el cloud si
 
 1. **Al planificar un sprint:** revisa la fase del milestone y limita nuevas dependencias a lo listado (o actualiza este doc + ADR).
 2. **Al cerrar ADR-001:** copia la “decisión final” al README y marca aquí las celdas “A definir” con la opción elegida.
-3. **Con Cursor / IA:** enlaza [CURSOR_CONTEXT.md](../../CURSOR_CONTEXT.md) + **esta página** para no mezclar tecnologías de fases futuras en código actual.
+3. **Con Cursor / IA:** enlaza [.cursor/context/CONTEXT.md](../../.cursor/context/CONTEXT.md) + **esta página** para no mezclar tecnologías de fases futuras en código actual.
 
 ---
 
