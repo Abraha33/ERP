@@ -56,6 +56,22 @@ create table if not exists public.profiles (
   sync_status text not null default 'SYNCED'
 );
 
+-- Si una migración anterior creó la tabla sin columnas W04, completar
+alter table public.profiles
+  add column if not exists updated_at timestamptz not null default now();
+
+alter table public.profiles
+  add column if not exists deleted_at timestamptz;
+
+alter table public.profiles
+  add column if not exists sync_status text not null default 'SYNCED';
+
+-- Columnas faltantes (por migración previa que usó CREATE TABLE IF NOT EXISTS sin ALTER)
+alter table public.profiles add column if not exists supervisor_id uuid references public.profiles (id);
+alter table public.profiles add column if not exists full_name text;
+
+
+-- Constraints (AFTER adding columns to avoid "column does not exist" errors)
 -- Check app_role (project.mdc)
 do $$
 begin
@@ -72,21 +88,6 @@ begin
 exception
   when duplicate_object then null;
 end $$;
-
--- Si una migración anterior creó la tabla sin columnas W04, completar
-alter table public.profiles
-  add column if not exists updated_at timestamptz not null default now();
-
-alter table public.profiles
-  add column if not exists deleted_at timestamptz;
-
-alter table public.profiles
-  add column if not exists sync_status text not null default 'SYNCED';
-
--- Columnas faltantes (por migración previa que usó CREATE TABLE IF NOT EXISTS sin ALTER)
-alter table public.profiles add column if not exists supervisor_id uuid references public.profiles (id);
-alter table public.profiles add column if not exists full_name text;
-
 -- Índices
 create index if not exists idx_profiles_empresa on public.profiles (empresa_id);
 
