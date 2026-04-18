@@ -1,0 +1,4 @@
+-- Migration stub: version 20260418050900 (fix_trigger_sucursales_empresaid_column)
+-- This migration was applied directly to the Supabase cloud database.
+-- This file exists to satisfy Supabase Preview version tracking.
+-- No SQL to apply — already executed in production.
