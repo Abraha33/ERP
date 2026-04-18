@@ -36,32 +36,35 @@ jobs:
         with:
           version: latest
 
-      - name: Verify & normalize DB URL
+      - name: Normalize & verify DB URL
+        id: normalize
         run: |
-          if [ -z "${SUPABASE_DB_URL}" ]; then
-            echo "Missing secret SUPABASE_DB_URL"
+          RAW="${SUPABASE_DB_URL}"
+          if [ -z "$RAW" ]; then
+            echo "Missing secret SUPABASE_DB_URL in environment SUPABASE_DEPLOY"
             exit 1
           fi
-            # Parse and normalize the DB URL using Python
-          DB_URL=$(python3 - <<'PYEOF_INLINE'
-import sys, re, os
-url = os.environ.get("SUPABASE_DB_URL", "").strip()
-after_scheme = url.split("://", 1)[1] if "://" in url else url
-userinfo, host_part = after_scheme.rsplit("@", 1)
-if ":" not in userinfo:
-    m = re.search(r"\[([^\]]+)\]", userinfo)
-    password = m.group(1) if m else userinfo.strip("[]")
-else:
-    user, password = userinfo.split(":", 1)
-    password = password.strip("[]")
-print(f"postgresql://postgres:{password}@{host_part}", end="")
-PYEOF_INLINE
-          )
-          echo "DB_URL_NORMALIZED=$DB_URL" >> "$GITHUB_ENV"
-          echo "URL format: $(echo "$DB_URL" | sed 's|:[^:@]*@|:***@|')"
+          # Use awk to parse scheme://userinfo@host and strip brackets from password
+          NORMALIZED=$(echo "$RAW" | awk -F'@' '{
+            userinfo=substr($1, index($1,"://")+3)
+            host=$2
+            if (index(userinfo,":") > 0) {
+              split(userinfo, parts, ":")
+              user=parts[1]
+              pass=parts[2]
+            } else {
+              user=userinfo
+              pass=""
+            }
+            gsub(/^\[|\]$/, "", pass)
+            # Always use postgres as user
+            printf "postgresql://postgres:%s@%s", pass, host
+          }')
+          echo "SUPABASE_DB_URL_CLEAN=$NORMALIZED" >> "$GITHUB_ENV"
+          echo "URL: $(echo "$NORMALIZED" | sed 's|:[^:@]*@|:***@|')"
 
       - name: Push migrations to Supabase
-        run: supabase db push --db-url "${DB_URL_NORMALIZED}" --include-all --yes
+        run: supabase db push --db-url "${SUPABASE_DB_URL_CLEAN}" --include-all --yes
 
   functions_deploy:
     if: github.event_name == 'push' || inputs.deploy_functions == 'true'
