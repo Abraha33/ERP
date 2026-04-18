@@ -22,8 +22,8 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.PROJECTS_TOKEN || github.token }}
       OWNER: Abraha33
-      REPO: erp-satelite
-      REPO_FULL: Abraha33/erp-satelite
+      REPO: ERP
+      REPO_FULL: Abraha33/ERP
       PROJECT_ID: PVT_kwHOCgQ2Ec4BSVkL
       STATUS_FIELD_ID: PVTSSF_lAHOCgQ2Ec4BSVkLzg_5tbo
       STATUS_BACKLOG_ID: 7e4bdf49
