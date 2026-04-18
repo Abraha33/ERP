@@ -27,7 +27,7 @@ Las siguientes decisiones están **cerradas** y deben reflejarse en código y mi
 | **Migraciones** | **Única fuente de verdad:** `supabase/migrations/`. Flujo: **`supabase migration new <nombre>`** → editar SQL → **`supabase db push`**. **No** alterar el esquema de producción desde el dashboard de Supabase salvo emergencia documentada. Validación en CI cuando aplique el job que aplica migraciones sobre Postgres. |
 | **Integración SAE / Excel** | Scripts **Python** en **`scripts/sae/`** (CSV/XLS ↔ Supabase). |
 | **Scraper opcional** | **Playwright** (Python 3.12) en **`tools/scraper/`**. |
-| **Worker HTTP / jobs** | **`backend/app/modules/workers/`** (in-process, job_consumer). Sin proceso HTTP separado hasta que un ticket lo justifique. `backend/app/modules/workers/` eliminado. |
+| **Worker HTTP / jobs** | **`erp-api/app/modules/workers/`** (in-process, job_consumer). Sin proceso HTTP separado hasta que un ticket lo justifique. `erp-api/app/modules/workers/` eliminado. |
 | **Cliente móvil legado** | La carpeta **`apps/mobile/`** (stack JS/Expo) es **legado** y **no** es objetivo de producto; no proponerla como stack de producción. |
 | **CI/CD** | **GitHub Actions**; build Android con **Gradle** cuando exista el proyecto en `apps/android/`. |
 
@@ -68,7 +68,7 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 | **BFF / agregación** | **FastAPI** para la app móvil; **Edge Functions** opcional para web u orquestación corta | Duplicar reglas en cliente móvil | Un contrato REST para Android; Edge solo si aporta sin divergencia de reglas |
 | **Integración SAE / Excel** | **Scripts Python** (CLI) en `scripts/sae/` | Edge Functions para ETL pesado | Archivos grandes; limpieza compleja; sin servidor persistente |
 | **Scraper legacy SAE** | **Playwright** (Python 3.12) en `tools/scraper/` | Puppeteer (Node) | Alineado a scripts Python existentes |
-| **Worker / jobs** | **`backend/app/modules/workers/`** (in-process) | Proceso HTTP separado | Simplicidad: un solo proceso hasta que un ticket justifique separarlo |
+| **Worker / jobs** | **`erp-api/app/modules/workers/`** (in-process) | Proceso HTTP separado | Simplicidad: un solo proceso hasta que un ticket justifique separarlo |
 | **Web admin (futuro)** | **Next.js / React** (Fase 2+) | Angular | Ecosistema Supabase JS; mismo backend |
 | **CI/CD** | **GitHub Actions** + **Gradle** (build Android cuando exista `apps/android/`) | GitLab CI | Repo en GitHub; sin Expo EAS para el producto móvil |
 | **Migraciones DB** | **Supabase CLI** — SQL versionado en `supabase/migrations/`; `supabase migration new` + `supabase db push` | Prisma como fuente de schema | Una sola fuente de verdad en el monorepo; coincide con `project.mdc` |
@@ -112,7 +112,7 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 | **RPC (SQL functions)** | Operaciones atómicas multi-tabla invocadas desde **FastAPI** o jobs de confianza | Recepción + stock + log |
 | **Edge Functions (TS/Deno)** | Webhooks cortos; BFF web si un ticket lo define | `get_mobile_dashboard` |
 | **Scripts Python (CLI)** | Import/export Excel SAE; ETL batch | `scripts/sae/` |
-| **FastAPI worker (opcional)** | Job HTTP persistente; dependencias pesadas | Worker en `backend/app/modules/workers/` |
+| **FastAPI worker (opcional)** | Job HTTP persistente; dependencias pesadas | Worker en `erp-api/app/modules/workers/` |
 
 ### 3.4 Integración SAE
 
@@ -257,7 +257,7 @@ Room como fuente primaria en campo, WorkManager sync bidireccional, conflictos e
 - **`updated_at`** con trigger en tablas de negocio según migraciones del repo.  
 - **TypeScript strict** en Edge Functions; **Kotlin** en Android; **Python 3.12** en scripts/worker.  
 - **RLS obligatorio** en tablas expuestas a PostgREST u otros consumidores con credenciales distintas a la app móvil vía `/api/v1`.  
-- **Monorepo:** `apps/android/`, `backend/`, `supabase/` (migraciones como única fuente DDL), `scripts/` (incl. `scripts/sae/`), `backend/app/modules/workers/` y `tools/scraper/` opcionales, `docs/` (incl. `docs/adr/`).  
+- **Monorepo:** `apps/android/`, `erp-api/`, `supabase/` (migraciones como única fuente DDL), `scripts/` (incl. `scripts/sae/`), `erp-api/app/modules/workers/` y `tools/scraper/` opcionales, `docs/` (incl. `docs/adr/`).  
 
 ---
 

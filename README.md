@@ -305,7 +305,7 @@ ERP/                              # Raíz del monorepo
 ├── README.md
 ├── ROADMAP.md
 │
-├── backend/                      # FastAPI monolito — API /api/v1
+├── erp-api/                      # FastAPI monolito — API /api/v1
 │   ├── app/
 │   │   ├── core/                 #   config, db, errors, middleware, security (JWT, RBAC)
 │   │   └── modules/              #   auth, catalog, inventory, purchases, sales, workers

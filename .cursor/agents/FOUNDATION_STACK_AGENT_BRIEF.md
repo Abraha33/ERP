@@ -45,7 +45,7 @@ Para cada fila, el agente debe **proponer opción principal + alternativa + ries
 
 ## 4. Decisión de fundación (referencia)
 
-El stack de fundación está **aceptado** en [ADR-001](../adr/ADR-001-stack-tecnologico.md) (revisión 2026-04-18). Resumen: **FastAPI** (`/api/v1`) + **Supabase** (Postgres/Auth/RLS); **Kotlin + Compose + Room** en Android consumiendo la API; scripts Python SAE; worker opcional en `backend/app/modules/workers/`; **Playwright** opcional en `tools/scraper/`; **GitHub Actions**; offline Fase 5 con **Room** + **WorkManager**.
+El stack de fundación está **aceptado** en [ADR-001](../adr/ADR-001-stack-tecnologico.md) (revisión 2026-04-18). Resumen: **FastAPI** (`/api/v1`) + **Supabase** (Postgres/Auth/RLS); **Kotlin + Compose + Room** en Android consumiendo la API; scripts Python SAE; worker opcional en `erp-api/app/modules/workers/`; **Playwright** opcional en `tools/scraper/`; **GitHub Actions**; offline Fase 5 con **Room** + **WorkManager**.
 
 Si en el futuro se reabre el debate, usar el **entregable** de la sección 5 y actualizar en bloque: `ADR-001`, `README` §10–11, `STACK_POR_FASE`, `CONTEXT`, `.env.example`.
 

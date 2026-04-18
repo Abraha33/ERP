@@ -10,7 +10,7 @@ Este documento **descompone el stack por etapa** del roadmap (14 meses): qué te
 - **Tiempo casi real:** **Supabase Realtime** para escenarios como **inventario** y **traslados**.
 - **Operaciones complejas y transaccionales:** **Supabase RPC** (SQL), p. ej. **abrir/cerrar turno de caja**.
 - **Integración SAE:** **scripts Python** (CLI) en `scripts/sae/`: **CSV/XLS** ↔ Supabase; **Playwright** opcional en `tools/scraper/`.
-- **Worker HTTP / jobs largos:** módulo workers en `backend/app/modules/workers/` y **Edge Functions** como opciones (ver ADR-001).
+- **Worker HTTP / jobs largos:** módulo workers en `erp-api/app/modules/workers/` y **Edge Functions** como opciones (ver ADR-001).
 - Offline (Fase 5): **Room** (SQLite) + sync bidireccional y columna `sync_status` (ver [schema-conventions.md](./schema-conventions.md)).
 - CI/CD: **GitHub Actions**; builds Android con Gradle cuando el módulo `apps/android/` esté inicializado.
 
@@ -40,7 +40,7 @@ Cambios de stack global → actualizar ADR-001 y este archivo en el mismo commit
 | Decisiones | Markdown, **ADR-001** | Stack global **aceptado**; variables en `.env.example`. |
 | Datos fuente | Excel/CSV del SAE, documentación en `EXCEL_ANALYSIS` | Carga hacia Supabase vía **scripts Python** (no API propia obligatoria). |
 
-**Estado fundación:** proyecto **Supabase**, **`.env` / entornos locales** (Android, `backend/app/modules/workers/`) y **[EXCEL_ANALYSIS.md](../legacy/EXCEL_ANALYSIS.md)** — **en progreso**; ADR y `.env.example` en raíz.
+**Estado fundación:** proyecto **Supabase**, **`.env` / entornos locales** (Android, `erp-api/app/modules/workers/`) y **[EXCEL_ANALYSIS.md](../legacy/EXCEL_ANALYSIS.md)** — **en progreso**; ADR y `.env.example` en raíz.
 
 **Nuevo respecto a “nada”:** solo tooling y documentación.
 

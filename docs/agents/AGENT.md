@@ -283,7 +283,7 @@ Todos heredan la **misma persona** (§1-12) y el marco ADR-001 + CONTEXT.
 
 **Ámbito:** FastAPI / Python, módulos de dominio.
 
-- Módulos bajo `backend/app/modules/**` (ERP y **CRM** en el mismo patrón): `router.py`, `service.py`, `repository.py`, `schemas.py`, `models.py`.
+- Módulos bajo `erp-api/app/modules/**` (ERP y **CRM** en el mismo patrón): `router.py`, `service.py`, `repository.py`, `schemas.py`, `models.py`.
 - Endpoints REST bajo `/api/v1`; reglas en `service.py` sin SQL mezclado salvo orquestación vía repositorio.
 - Transacciones cortas; `SELECT ... FOR UPDATE` donde aplique.
 - Tests de reglas y flujos críticos.
@@ -294,7 +294,7 @@ Dudas de arquitectura global → escalar con criterio de **§5** y **§10**.
 
 **Ámbito:** migraciones, RLS, datos.
 
-- Esquema en `supabase/migrations/` y Alembic en `backend/` según ADR.
+- Esquema en `supabase/migrations/` y Alembic en `erp-api/` según ADR.
 - Índices, `EXPLAIN`, políticas RLS alineadas a RBAC y multi-tenant.
 - Idempotencia y consistencia (stock, OV/OC, pagos).
 
