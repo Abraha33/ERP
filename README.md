@@ -292,7 +292,7 @@ La **base** del stack está cerrada (ADR-001). Pendientes típicos por etapa: BI
 ```
 ERP/                              # Raíz del monorepo
 ├── .cursor/                      # Contexto y herramientas IA (Cursor, Perplexity)
-│   ├── context/                  #   AGENTS.md, CONTEXT.md, DECISIONS.md
+│   ├── context/                  #   CONTEXT.md, DECISIONS.md (local Cursor)
 │   ├── agents/                   #   Prompts por agente (cursor, perplexity, supabase, testing)
 │   ├── rules/                    #   cursor-rules-M0.md
 │   ├── skills/                   #   supabase/, supabase-postgres-best-practices/
@@ -315,6 +315,7 @@ ERP/                              # Raíz del monorepo
 │
 ├── docs/
 │   ├── adr/                      #   ADR-001-stack-tecnologico.md
+│   ├── agents/                   #   AGENT.md — persona + erp-delegator + mini-agentes (único doc)
 │   ├── backend/                  #   INVENTARIO_*.md, estado-bd, migration-strategy, modules
 │   ├── examples/                 #   Ejemplos de issues, migrations, tests
 │   ├── legacy/                   #   Tickets y análisis archivados
