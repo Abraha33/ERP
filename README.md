@@ -3,7 +3,7 @@
 Sistema empresarial completo (ERP + CRM) construido por un solo founder en 14 meses.
 Stack: **FastAPI** (`/api/v1`) + **Supabase** (Postgres, RLS, Auth) + **Web ERP** (React/TS) + **Android nativo** (**Kotlin**, **Compose**, **Room** en `apps/android/`, cliente de **`/api/v1`**) + **scripts Python** (`scripts/sae/`) + **Playwright** opcional en `tools/scraper/`; **FastAPI** en `tools/worker/` solo si un job lo requiere; offline **Room + WorkManager** en Fase 5. Detalle: [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md). Variables: [`.env.example`](./.env.example).
 
-**Plan maestro del producto** (fases 0–5: fundación, App Satélite, ERP básico, ERP completo, CRM, offline): **[ROADMAP.md](./ROADMAP.md)**. **Vista por sprints** (T01–T35, arranque): [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md).
+**Plan maestro del producto** (fases 0–5: fundación, App Satélite, ERP básico, ERP completo, CRM, offline): **[ROADMAP.md](./ROADMAP.md)**. **Vista por sprints** (T01–T35, arranque): [docs/planning/ROADMAP_SPRINTS.md](./docs/planning/ROADMAP_SPRINTS.md).
 
 **Fundación (operativo):** proyecto **Supabase**, **`.env` / entornos locales** y **[docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md)** — **en progreso** (tabla en [§16](#16-setup-inicial-y-scripts)).
 
@@ -58,7 +58,7 @@ El tablero esta en: [github.com/users/Abraha33/projects/11](https://github.com/u
 
 **Status update:** en el proyecto hay un campo de texto **Status update** por tarjeta (bloqueo, avance). Activalo como columna en tablas **Equipo** / **Mis ítems** si no lo ves: menu **View** → campos visibles.
 
-**Modo solo dev (ultra-lean):** detalle completo en [docs/GITHUB_PROJECTS.md](./docs/GITHUB_PROJECTS.md). **Workflows del Project (7):** [docs/GITHUB_PROJECT_WORKFLOWS.md](./docs/GITHUB_PROJECT_WORKFLOWS.md). Estado: `python scripts/project_workflows_status.py --from-num 2 --to-num 7`.
+**Modo solo dev (ultra-lean):** detalle completo en [docs/reference/GITHUB_PROJECTS.md](./docs/reference/GITHUB_PROJECTS.md). **Workflows del Project (7):** [docs/GITHUB_PROJECT_WORKFLOWS.md](./docs/GITHUB_PROJECT_WORKFLOWS.md). Estado: `python scripts/github/project_workflows_status.py --from-num 2 --to-num 7`.
 
 ### Workflows del Project (7 automatizaciones)
 
@@ -76,7 +76,7 @@ No hay API para activarlos; se configuran en [Project → Workflows](https://git
 
 ### Columnas del Kanban (Status)
 
-Orden: **Icebox** (nevera / algún día) → **Backlog** → **Ready** → **In progress** → **In review** → **Done**. Detalle en [docs/GITHUB_PROJECTS.md](./docs/GITHUB_PROJECTS.md).
+Orden: **Icebox** (nevera / algún día) → **Backlog** → **Ready** → **In progress** → **In review** → **Done**. Detalle en [docs/reference/GITHUB_PROJECTS.md](./docs/reference/GITHUB_PROJECTS.md).
 
 | Columna | Significado |
 |---------|-------------|
@@ -157,7 +157,7 @@ En GitHub, **fork** es una **copia del repo** bajo otra cuenta (contribuciones e
 
 ### 3.3 Roles de desarrollo
 
-Eres **un solo dev**; los **roles** (`role/frontend`, `role/database`, …) son *sombreros* para enfocar el dia. No confundir con **roles de producto** en [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) (administrador / encargado / empleado): esos son RBAC en la app.
+Eres **un solo dev**; los **roles** (`role/frontend`, `role/database`, …) son *sombreros* para enfocar el dia. No confundir con **roles de producto** en [.cursor/context/CONTEXT.md](./.cursor/context/CONTEXT.md) (administrador / encargado / empleado): esos son RBAC en la app.
 
 **Rutina diaria (tablero):**
 
@@ -209,7 +209,7 @@ En **GitHub Projects** usa el campo **Status**: **Icebox** → **Backlog** → *
 
 ## 5. Sistema de Milestones
 
-Hitos alineados al plan maestro [ROADMAP.md](./ROADMAP.md) y a la vista sprint [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md): **un milestone por fase** (rollup) y **un milestone por sprint** dentro de cada fase **1–5** (issues `T{phase}.{sprint}.*`). La **Fase 1** es **App Satélite** (MVP de operaciones de campo).
+Hitos alineados al plan maestro [ROADMAP.md](./ROADMAP.md) y a la vista sprint [docs/planning/ROADMAP_SPRINTS.md](./docs/planning/ROADMAP_SPRINTS.md): **un milestone por fase** (rollup) y **un milestone por sprint** dentro de cada fase **1–5** (issues `T{phase}.{sprint}.*`). La **Fase 1** es **App Satélite** (MVP de operaciones de campo).
 
 | Fase | Milestone rollup (opcional en filtros) | Sprints (`Tb.c.*` → **Sb**) |
 |------|----------------------------------------|-----------------------------|
@@ -230,7 +230,7 @@ Los nombres exactos en GitHub los define `scripts/roadmap_milestones.py` (`ensur
 
 ## 6. Como leer un Issue
 
-- **ID de ticket (obligatorio en roadmap/SCRUM):** formato estandar en [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md): **`[T##]`** alineado con [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md) (ej. `[T01] Definicion del stack`); tickets **`T0.1.*` / `T1.*.*`** con el plan maestro en [ROADMAP.md](./ROADMAP.md). También **`[E##-S##-##]`** para CSV SCRUM (ej. `[E05-S10-07] Document deployment`). No mezclar `T01:` sin corchetes con `[E5-S10-07]` sin ceros.
+- **ID de ticket (obligatorio en roadmap/SCRUM):** formato estandar en [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md): **`[T##]`** alineado con [docs/planning/ROADMAP_SPRINTS.md](./docs/planning/ROADMAP_SPRINTS.md) (ej. `[T01] Definicion del stack`); tickets **`T0.1.*` / `T1.*.*`** con el plan maestro en [ROADMAP.md](./ROADMAP.md). También **`[E##-S##-##]`** para CSV SCRUM (ej. `[E05-S10-07] Document deployment`). No mezclar `T01:` sin corchetes con `[E5-S10-07]` sin ceros.
 - **Prefijo tematico (otros issues):** `[Setup]`, `[DB]`, `[Scraper]`, etc. Evita titulos solo tipo `T3.1.1: Provider factory` como titulo principal; el ID puede ir en el cuerpo.
 - **Orden en el Project:** **View** → **Sort** → **Title** → **Ascending** para recorrer T01→T99 y E01-S01-01→… en orden.
 - **Cuerpo:** descripcion, criterios de aceptacion, enlace a milestone o fase.
@@ -243,7 +243,7 @@ Los nombres exactos en GitHub los define `scripts/roadmap_milestones.py` (`ensur
 
 1. **Inicio de sprint:** Elegir 5-7 items del Backlog y pasarlos a **Ready** (cada uno con `role/*` asignado).
 2. **Cada dia:** Elige **rol** del dia → filtra el Project por `label:role/...` → **1** item en **In progress**; base Git **`develop`** (ver [§3.2](#32-ramas-git-solo-main-y-develop)); hasta **In review** antes de coger otro.
-3. **Fin de semana:** Revisar **Done**, actualizar [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) con sprint activo y ultimo issue cerrado.
+3. **Fin de semana:** Revisar **Done**, actualizar [.cursor/context/CONTEXT.md](./.cursor/context/CONTEXT.md) con sprint activo y ultimo issue cerrado.
 
 ---
 
@@ -290,25 +290,59 @@ La **base** del stack está cerrada (ADR-001). Pendientes típicos por etapa: BI
 ## 13. Estructura de carpetas
 
 ```
-ERP1/                     # Raiz del monorepo (ver README.md aqui)
-├── setup-erp-project.sh   # Setup Project 11 (repo, Status, Status update, vincula issues)
-└── erp-satelite/          # Repo Git: solo ramas permanentes main + develop (ver README §3.2)
-    ├── ADR/               # Architecture Decision Records
-    ├── docs/               # STACK_POR_FASE, ROADMAP_SPRINTS, SECURITY_POLICIES, EXCEL_ANALYSIS…
-    ├── supabase/migrations/ # Borradores SQL (RLS); aplicar con CLI Supabase cuando toque
-    ├── apps/android/       # Kotlin + Compose (producto); apps/mobile/ = legado hasta retirada
-    ├── tools/worker/       # FastAPI (jobs pesados); uvicorn desde tools/worker/
-    ├── tools/scraper/      # Playwright + Python; pip install -r tools/scraper/requirements.txt && playwright install
-    ├── scripts/            # Python, PowerShell, JSON, GraphQL (tablero, vistas, migraciones)
-    ├── .github/workflows/  # ci.yml (incl. job db_migrations), daily-progress.yml
-    ├── supabase/
-    │   ├── ci/               # Stubs solo CI (simula auth Supabase en Postgres vanilla)
-    │   └── migrations/     # SQL versionado; CI las aplica en Postgres 16
-    ├── scripts/ci/         # apply_supabase_migrations.sh
-    ├── README.md
-    ├── ROADMAP.md
-    ├── CURSOR_CONTEXT.md
-    └── .env.example
+ERP/                              # Raíz del monorepo
+├── .cursor/                      # Contexto y herramientas IA (Cursor, Perplexity)
+│   ├── context/                  #   AGENTS.md, CONTEXT.md, DECISIONS.md
+│   ├── agents/                   #   Prompts por agente (cursor, perplexity, supabase, testing)
+│   ├── rules/                    #   cursor-rules-M0.md
+│   ├── skills/                   #   supabase/, supabase-postgres-best-practices/
+│   └── skills-lock.json
+├── .github/
+│   ├── ISSUE_TEMPLATE/           #   Plantillas por rol (backend, database, frontend…)
+│   └── workflows/                #   ci.yml, daily-progress.yml, supabase-deploy.yml
+├── .env.example
+├── .gitignore
+├── README.md
+├── ROADMAP.md
+│
+├── backend/                      # FastAPI monolito — API /api/v1
+│   ├── app/
+│   │   ├── core/                 #   config, db, errors, middleware, security (JWT, RBAC)
+│   │   └── modules/              #   auth, catalog, inventory, purchases, sales, workers
+│   ├── tests/                    #   unit/, integration/
+│   ├── Dockerfile
+│   └── requirements*.txt
+│
+├── docs/
+│   ├── adr/                      #   ADR-001-stack-tecnologico.md
+│   ├── backend/                  #   INVENTARIO_*.md, estado-bd, migration-strategy, modules
+│   ├── examples/                 #   Ejemplos de issues, migrations, tests
+│   ├── legacy/                   #   Tickets y análisis archivados
+│   ├── openspec/                 #   Specs OpenAPI (Fase 1+)
+│   ├── planning/                 #   ROADMAP_PRODUCTO_14_MESES.md, ROADMAP_SPRINTS.md
+│   ├── process/                  #   WORKFLOW, tickets, branches, estimation, session-context
+│   └── reference/                #   SAE mapping, security, stack por fase, GITHUB_PROJECTS…
+│
+├── scripts/
+│   ├── github/                   #   30 scripts Python/PS1 de automatización GitHub/Project
+│   ├── graphql/                  #   Queries GraphQL del proyecto
+│   ├── config/                   #   JSON patches de vistas y campos
+│   ├── ci/                       #   apply_supabase_migrations.sh
+│   ├── introspection/            #   SQL diagnóstico BD
+│   ├── issues/                   #   T01–T06 bodies
+│   ├── rls-diagnostics/          #   TypeScript RLS health checks
+│   ├── sae/                      #   README scraper SAE
+│   └── setup-erp-project.sh     #   Setup inicial del Project 11
+│
+├── supabase/                     # Supabase local
+│   ├── migrations/               #   SQL versionado — ÚNICA fuente de verdad de schema
+│   ├── seeds/                    #   Seeds dev (RLS policies, triggers, datos iniciales)
+│   ├── ci/                       #   Stubs Postgres para CI
+│   ├── policies/                 #   (reservado)
+│   └── config.toml
+│
+└── tools/
+    └── scraper/                  #   Playwright + Python 3.12 (scraper SAE opcional)
 ```
 
 ---
@@ -346,7 +380,7 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 | 3 | T0.1.3 | Revisar [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md) (stack aceptado). | Hecho |
 | 4 | T0.1.4 | `cp .env.example .env` (o equivalente en Windows) y rellenar **sin** subir `.env`. | **En progreso** |
 | 5 | T0.1.5–T0.1.6 | [docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md) + [docs/reference/SAE_DATA_MAPPING.md](./docs/reference/SAE_DATA_MAPPING.md) al tener export del SAE. | **En progreso** |
-| 6 | T0.1.7 | [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) alineado con ADR (ya referenciado). | Hecho |
+| 6 | T0.1.7 | [.cursor/context/CONTEXT.md](./.cursor/context/CONTEXT.md) alineado con ADR (ya referenciado). | Hecho |
 
 ### Variables de entorno (`.env.example`)
 
@@ -361,7 +395,7 @@ Local (con Docker): `docker run -d --name pg-ci -e POSTGRES_PASSWORD=postgres -e
 ### Setup del proyecto (desde raiz ERP1)
 
 ```bash
-bash setup-erp-project.sh
+bash scripts/setup-erp-project.sh
 ```
 
 El script (en la raiz del monorepo, fuera de `erp-satelite`) configura: repo (descripcion, topics), vincula issues al Project 11, crea opciones Status (Icebox…Done), crea campo **Status update**, setea Status=Backlog en todos los items. Requiere `gh` autenticado. Tras ejecutar: activar workflows 2–7 en el navegador ([Workflows](https://github.com/users/Abraha33/projects/11/workflows)).
@@ -424,11 +458,11 @@ Detalle tabla por tabla: **[docs/reference/STACK_POR_FASE.md](./docs/reference/S
 ## Documentacion
 
 - [ROADMAP.md](./ROADMAP.md) — Plan maestro por fases (0–5) y tickets T0.x–T5.x
-- [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md) — Vista por sprints T01–T35 (arranque)
+- [docs/planning/ROADMAP_SPRINTS.md](./docs/planning/ROADMAP_SPRINTS.md) — Vista por sprints T01–T35
 - [docs/Esqueleto.md](./docs/Esqueleto.md) — Alcance funcional ERP + CRM
 - [docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md) — Stack tecnológico por fase (Satélite, ERP, CRM, offline)
-- [docs/GITHUB_PROJECTS.md](./docs/GITHUB_PROJECTS.md) — Tablero ultra-lean (solo dev), vistas, pack experto, scripts
-- [docs/GITHUB_PROJECT_WORKFLOWS.md](./docs/GITHUB_PROJECT_WORKFLOWS.md) — Workflows del Project (activar 2–7)
+- [docs/reference/GITHUB_PROJECTS.md](./docs/reference/GITHUB_PROJECTS.md) — Tablero ultra-lean (solo dev), vistas, pack experto, scripts
+- [docs/reference/GITHUB_PROJECTS.md](./docs/reference/GITHUB_PROJECTS.md) — Workflows del Project incluidostivar 2–7)
 - [docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md) — Estructura del Excel del SAE
 - [docs/reference/SAE_DATA_MAPPING.md](./docs/reference/SAE_DATA_MAPPING.md) — Mapeo SAE/export → tablas ERP (compras, traslados, productos, terceros)
 - [docs/SUPABASE_CLI_VERSIONING.md](./docs/SUPABASE_CLI_VERSIONING.md) — Flujo versionado para migraciones SQL, RLS/policies y Edge Functions
@@ -436,6 +470,6 @@ Detalle tabla por tabla: **[docs/reference/STACK_POR_FASE.md](./docs/reference/S
 - [docs/SUPABASE_AUTH_USER_PROFILES.md](./docs/SUPABASE_AUTH_USER_PROFILES.md) — Invite Auth + `user_profiles.empresa_id` (trigger / metadata)
 - [docs/SECURITY_POLICIES.md](./docs/SECURITY_POLICIES.md) — Políticas declarativas admin/encargado/empleado; borrador RLS en `supabase/migrations/`
 - [docs/sql/seed_business_tables_rls_dev.sql](./docs/sql/seed_business_tables_rls_dev.sql) — Seed dev masivo (productos, terceros, compras/OC/traslados) para probar RLS
-- [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) — Contexto para el asistente IA
+- [.cursor/context/CONTEXT.md](./.cursor/context/CONTEXT.md) — Contexto para el asistente IA
 - [.github/workflows/daily-progress.yml](./.github/workflows/daily-progress.yml) — Automatizacion push/PR/schedule
 - [docs/TICKET_ID_CONVENTION.md](./docs/TICKET_ID_CONVENTION.md) — Formato `[T##]` y `[E##-S##-##]` en titulos; orden en el Project
