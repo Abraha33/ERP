@@ -25,9 +25,9 @@ build/
 # IDEs & local tooling
 .idea/
 .vscode/
-# .cursor/ tracked intentionally (agent context, rules, skills)
 .cursor/local/
 .cursor/cache/
+.cursor/tmp/
 .trae/
 .windsurf/
 .snapshots/
