@@ -1,8 +1,8 @@
 -- =============================================================================
--- PREAMBLE: drop tables created by earlier migrations that conflict with
--- the real schema from this Supabase dump. These tables have different column
--- names / PKs (SAE-style) that cannot be altered from their ERP-style names.
--- CASCADE drops dependent objects (FKs, policies, indexes) automatically.
+-- PREAMBLE: drop tables with conflicting schemas (SAE dump vs ERP-designed).
+-- All 9 conflicting tables are dropped with CASCADE before real_schema_pull
+-- recreates them with the authoritative SAE column names.
+-- Tables preserved: profiles, inventario_existencias, ubicaciones, ordenes_venta_*
 -- =============================================================================
 DROP TABLE IF EXISTS public.compras_detalle CASCADE;
 DROP TABLE IF EXISTS public.compras_encabezado CASCADE;
@@ -11,6 +11,8 @@ DROP TABLE IF EXISTS public.traslados_encabezado CASCADE;
 DROP TABLE IF EXISTS public.proveedores CASCADE;
 DROP TABLE IF EXISTS public.clientes CASCADE;
 DROP TABLE IF EXISTS public.productos CASCADE;
+DROP TABLE IF EXISTS public.empresas CASCADE;
+DROP TABLE IF EXISTS public.sucursales CASCADE;
 
 
 
