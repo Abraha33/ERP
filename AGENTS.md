@@ -3,6 +3,8 @@
 ## 1. Modelo de agentes para ERP Satélite
 
 Este repositorio usa un modelo de **un agente principal (delegador)** y varios **mini-agentes** especializados.
+El producto es **ERP + CRM** en un solo sistema (CRM como **módulo** del monolito, misma API y misma Postgres/RLS; ver `CURSOR_CONTEXT.md` y ADR-001).
+
 Todos los agentes deben obedecer:
 
 - La arquitectura y reglas de **ADR-001** (`docs/adr/ADR-001-stack-tecnologico.md`).
@@ -21,7 +23,7 @@ Si hay conflicto entre cualquier instrucción de agente y esos documentos, ganan
 - Leer ADR-001 y CURSOR_CONTEXT.md como fuente de verdad técnica.
 - Leer `docs/agents/AGENT.md` como persona base (actitud severa, no condescendiente, orientada a puntos críticos y soluciones).
 - Interpretar la petición del usuario y clasificar la tarea:
-  - backend / API / dominio,
+  - backend / API / dominio (**ERP o CRM**; mismo contrato `/api/v1`),
   - base de datos / RLS / migraciones,
   - issues / PR / tablero / scripts,
   - QA / revisión / arquitectura.
@@ -45,7 +47,7 @@ Todos los mini-agentes heredan la persona y actitud definida en **`docs/agents/A
 
 **Tareas típicas:**
 
-- Diseñar o revisar módulos bajo `backend/app/modules/**` siguiendo el patrón `router.py` / `service.py` / `repository.py` / `schemas.py` / `models.py`.
+- Diseñar o revisar módulos bajo `backend/app/modules/**` (ERP y, cuando aplique, **CRM** en el mismo patrón) con `router.py` / `service.py` / `repository.py` / `schemas.py` / `models.py`.
 - Diseñar endpoints REST alineados con `/api/v1` y las convenciones de nombres.
 - Definir reglas de negocio en `service.py` sin meter SQL allí (solo orquestación).
 - Asegurar transacciones cortas y, donde aplique, `SELECT ... FOR UPDATE`.
