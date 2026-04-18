@@ -12,6 +12,22 @@
 -- service_role bypass RLS (Supabase) para operaciones administrativas.
 -- =============================================================================
 
+-- Supabase roles: ensure they exist for CI/vanilla Postgres compatibility
+do $$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'anon') then
+    create role anon nologin noinherit;
+  end if;
+  if not exists (select 1 from pg_roles where rolname = 'authenticated') then
+    create role authenticated nologin noinherit;
+  end if;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then
+    create role service_role nologin noinherit bypassrls;
+  end if;
+end
+$$;
+
+
 create extension if not exists pgcrypto;
 
 -- Función global de updated_at (compartida con otras tablas)
