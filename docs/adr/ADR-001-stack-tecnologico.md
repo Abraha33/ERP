@@ -3,13 +3,13 @@
 **Proyecto:** ERP Satélite  
 **Decisor:** Abraha33  
 **Fecha original:** 2026-04-07  
-**Última revisión:** 2026-04-18 — **W02**: móvil de producto = **Android Studio + Kotlin + Compose**; dominio ERP desde la app vía **REST `/api/v1`** (FastAPI) con **JWT de Supabase Auth** — **sin** PostgREST ni `anon key` en el APK para tablas de negocio (alineado a monolito headless y `CURSOR_CONTEXT.md`).  
+**Última revisión:** 2026-04-18 — **W02 / repo-cleanup**: móvil de producto = **Android Studio + Kotlin + Compose**; dominio ERP desde la app vía **REST `/api/v1`** (FastAPI) con **JWT de Supabase Auth** — **sin** PostgREST ni `anon key` en el APK para tablas de negocio (alineado a monolito headless y `.cursor/context/CONTEXT.md`).  
 **Revisión previa:** 2026-04-10 — **W01** (issue **#269**): alinear ADR con README, ROADMAP y CURSOR_CONTEXT.  
 **Estado:** ACEPTADO  
 
 El desglose **por fase** del producto sigue en [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md). Este ADR es la **fuente de verdad** del stack global del monorepo.
 
-> **Nota de ruta:** el archivo canónico es este: [`docs/adr/ADR-001-stack-tecnologico.md`](./ADR-001-stack-tecnologico.md) (enlaces desde [README.md](../../README.md) y [CURSOR_CONTEXT.md](../../CURSOR_CONTEXT.md)). Si en un issue se cita `ADR-001-architecture-stack.md` o `ADR/ADR-001-stack-tecnologico.md`, usar este mismo documento.
+> **Nota de ruta:** el archivo canónico es este: [`docs/adr/ADR-001-stack-tecnologico.md`](./ADR-001-stack-tecnologico.md) (enlaces desde [README.md](../../README.md) y [.cursor/context/CONTEXT.md](../../.cursor/context/CONTEXT.md)). Si en un issue se cita `ADR-001-architecture-stack.md` o `ADR/ADR-001-stack-tecnologico.md`, usar este mismo documento.
 
 ---
 
@@ -27,7 +27,7 @@ Las siguientes decisiones están **cerradas** y deben reflejarse en código y mi
 | **Migraciones** | **Única fuente de verdad:** `supabase/migrations/`. Flujo: **`supabase migration new <nombre>`** → editar SQL → **`supabase db push`**. **No** alterar el esquema de producción desde el dashboard de Supabase salvo emergencia documentada. Validación en CI cuando aplique el job que aplica migraciones sobre Postgres. |
 | **Integración SAE / Excel** | Scripts **Python** en **`scripts/sae/`** (CSV/XLS ↔ Supabase). |
 | **Scraper opcional** | **Playwright** (Python 3.12) en **`tools/scraper/`**. |
-| **Worker HTTP opcional** | **FastAPI** (Python 3.12) en **`tools/worker/`** solo si un flujo lo requiere. |
+| **Worker HTTP / jobs** | **`backend/app/modules/workers/`** (in-process, job_consumer). Sin proceso HTTP separado hasta que un ticket lo justifique. `backend/app/modules/workers/` eliminado. |
 | **Cliente móvil legado** | La carpeta **`apps/mobile/`** (stack JS/Expo) es **legado** y **no** es objetivo de producto; no proponerla como stack de producción. |
 | **CI/CD** | **GitHub Actions**; build Android con **Gradle** cuando exista el proyecto en `apps/android/`. |
 
@@ -68,7 +68,7 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 | **BFF / agregación** | **FastAPI** para la app móvil; **Edge Functions** opcional para web u orquestación corta | Duplicar reglas en cliente móvil | Un contrato REST para Android; Edge solo si aporta sin divergencia de reglas |
 | **Integración SAE / Excel** | **Scripts Python** (CLI) en `scripts/sae/` | Edge Functions para ETL pesado | Archivos grandes; limpieza compleja; sin servidor persistente |
 | **Scraper legacy SAE** | **Playwright** (Python 3.12) en `tools/scraper/` | Puppeteer (Node) | Alineado a scripts Python existentes |
-| **Worker HTTP (opcional)** | **FastAPI** (Python 3.12) en `tools/worker/` | NestJS | Solo si un flujo requiere servidor HTTP persistente |
+| **Worker / jobs** | **`backend/app/modules/workers/`** (in-process) | Proceso HTTP separado | Simplicidad: un solo proceso hasta que un ticket justifique separarlo |
 | **Web admin (futuro)** | **Next.js / React** (Fase 2+) | Angular | Ecosistema Supabase JS; mismo backend |
 | **CI/CD** | **GitHub Actions** + **Gradle** (build Android cuando exista `apps/android/`) | GitLab CI | Repo en GitHub; sin Expo EAS para el producto móvil |
 | **Migraciones DB** | **Supabase CLI** — SQL versionado en `supabase/migrations/`; `supabase migration new` + `supabase db push` | Prisma como fuente de schema | Una sola fuente de verdad en el monorepo; coincide con `project.mdc` |
@@ -112,7 +112,7 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 | **RPC (SQL functions)** | Operaciones atómicas multi-tabla invocadas desde **FastAPI** o jobs de confianza | Recepción + stock + log |
 | **Edge Functions (TS/Deno)** | Webhooks cortos; BFF web si un ticket lo define | `get_mobile_dashboard` |
 | **Scripts Python (CLI)** | Import/export Excel SAE; ETL batch | `scripts/sae/` |
-| **FastAPI worker (opcional)** | Job HTTP persistente; dependencias pesadas | Worker en `tools/worker/` |
+| **FastAPI worker (opcional)** | Job HTTP persistente; dependencias pesadas | Worker en `backend/app/modules/workers/` |
 
 ### 3.4 Integración SAE
 
@@ -176,7 +176,7 @@ Alineado a [ROADMAP.md](../../ROADMAP.md): Fase 0 fundación → Fase 1 App Sat�
 | T0.3 | RLS con políticas mínimas por rol |
 | T0.4 | `.env.example` con nombres canónicos |
 | T0.5 | Análisis Excel SAE → [`EXCEL_ANALYSIS.md`](../legacy/EXCEL_ANALYSIS.md) |
-| T0.6 | ADR-001 + [`CURSOR_CONTEXT.md`](../../CURSOR_CONTEXT.md) alineados |
+| T0.6 | ADR-001 + [`.cursor/context/CONTEXT.md`](../../.cursor/context/CONTEXT.md) alineados |
 
 ### Fase 1 — App Satélite MVP (meses 1–3)
 
@@ -257,7 +257,7 @@ Room como fuente primaria en campo, WorkManager sync bidireccional, conflictos e
 - **`updated_at`** con trigger en tablas de negocio según migraciones del repo.  
 - **TypeScript strict** en Edge Functions; **Kotlin** en Android; **Python 3.12** en scripts/worker.  
 - **RLS obligatorio** en tablas expuestas a PostgREST u otros consumidores con credenciales distintas a la app móvil vía `/api/v1`.  
-- **Monorepo:** `apps/android/`, `backend/`, `supabase/` (migraciones como única fuente DDL), `scripts/` (incl. `scripts/sae/`), `tools/worker/` y `tools/scraper/` opcionales, `docs/` (incl. `docs/adr/`).  
+- **Monorepo:** `apps/android/`, `backend/`, `supabase/` (migraciones como única fuente DDL), `scripts/` (incl. `scripts/sae/`), `backend/app/modules/workers/` y `tools/scraper/` opcionales, `docs/` (incl. `docs/adr/`).  
 
 ---
 
@@ -286,7 +286,7 @@ Room como fuente primaria en campo, WorkManager sync bidireccional, conflictos e
 ## Checklist post-ADR
 
 1. [x] [`.env.example`](../../.env.example) en raíz.  
-2. [x] [CURSOR_CONTEXT.md](../../CURSOR_CONTEXT.md) alineado (revisar tras cada cierre de fase).  
+2. [x] [.cursor/context/CONTEXT.md](../../.cursor/context/CONTEXT.md) alineado (revisar tras cada cierre de fase).  
 3. [x] [README.md](../../README.md) y [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md) coherentes con este ADR.  
 4. [x] Revisión W01 (2026-04-10): decisiones explícitas y stack **Kotlin + Compose + Material 3 + Room + WorkManager** reflejados aquí y en `.cursor/rules/project.mdc`.  
 5. [x] Revisión W02 (2026-04-18): móvil por **`/api/v1`** + Android Studio; sin PostgREST en APK para dominio ERP.  
