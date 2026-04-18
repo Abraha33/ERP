@@ -5739,13 +5739,19 @@ CREATE OR REPLACE VIEW "public"."vstocksucursal" WITH ("security_invoker"='true'
 ALTER VIEW "public"."vstocksucursal" OWNER TO "postgres";
 
 
-ALTER TABLE ONLY "public"."arqueos_caja"
-    ADD CONSTRAINT "arqueos_caja_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."arqueos_caja"
+        ADD CONSTRAINT "arqueos_caja_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."arqueos_efectivo_detalle"
-    ADD CONSTRAINT "arqueos_efectivo_detalle_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."arqueos_efectivo_detalle"
+        ADD CONSTRAINT "arqueos_efectivo_detalle_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -5754,23 +5760,35 @@ ALTER TABLE ONLY "public"."arqueos_otros_medios"
 
 
 
-ALTER TABLE ONLY "public"."arqueos_otros_medios"
-    ADD CONSTRAINT "arqueos_otros_medios_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."arqueos_otros_medios"
+        ADD CONSTRAINT "arqueos_otros_medios_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."audit_log"
-    ADD CONSTRAINT "audit_log_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."audit_log"
+        ADD CONSTRAINT "audit_log_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."bodegas"
-    ADD CONSTRAINT "bodegas_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."bodegas"
+        ADD CONSTRAINT "bodegas_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."cajas"
-    ADD CONSTRAINT "cajas_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."cajas"
+        ADD CONSTRAINT "cajas_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -5779,13 +5797,19 @@ ALTER TABLE ONLY "public"."cajas"
 
 
 
-ALTER TABLE ONLY "public"."categorias_producto"
-    ADD CONSTRAINT "categorias_producto_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."categorias_producto"
+        ADD CONSTRAINT "categorias_producto_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."categoriasproducto"
-    ADD CONSTRAINT "categoriasproducto_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."categoriasproducto"
+        ADD CONSTRAINT "categoriasproducto_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -5799,13 +5823,19 @@ END $$;
 
 
 
-ALTER TABLE ONLY "public"."compras_detalle"
-    ADD CONSTRAINT "compras_detalle_pkey" PRIMARY KEY ("id_compra_linea");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."compras_detalle"
+        ADD CONSTRAINT "compras_detalle_pkey" PRIMARY KEY ("id_compra_linea");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."compras_encabezado"
-    ADD CONSTRAINT "compras_encabezado_pkey" PRIMARY KEY ("id_compra");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."compras_encabezado"
+        ADD CONSTRAINT "compras_encabezado_pkey" PRIMARY KEY ("id_compra");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -5814,18 +5844,27 @@ ALTER TABLE ONLY "public"."config_app_empresas"
 
 
 
-ALTER TABLE ONLY "public"."config_app_empresas"
-    ADD CONSTRAINT "config_app_empresas_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."config_app_empresas"
+        ADD CONSTRAINT "config_app_empresas_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."config_tipos_voucher"
-    ADD CONSTRAINT "config_tipos_voucher_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."config_tipos_voucher"
+        ADD CONSTRAINT "config_tipos_voucher_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."cubiculosfila"
-    ADD CONSTRAINT "cubiculosfila_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."cubiculosfila"
+        ADD CONSTRAINT "cubiculosfila_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -5839,48 +5878,75 @@ END $$;
 
 
 
-ALTER TABLE ONLY "public"."estanterias"
-    ADD CONSTRAINT "estanterias_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."estanterias"
+        ADD CONSTRAINT "estanterias_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."facturasVentaLineas"
-    ADD CONSTRAINT "facturasVentaLineas_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."facturasVentaLineas"
+        ADD CONSTRAINT "facturasVentaLineas_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."facturasVenta"
-    ADD CONSTRAINT "facturasVenta_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."facturasVenta"
+        ADD CONSTRAINT "facturasVenta_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."facturascompra"
-    ADD CONSTRAINT "facturascompra_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."facturascompra"
+        ADD CONSTRAINT "facturascompra_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."facturascompradetalle"
-    ADD CONSTRAINT "facturascompradetalle_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."facturascompradetalle"
+        ADD CONSTRAINT "facturascompradetalle_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."filasestanteria"
-    ADD CONSTRAINT "filasestanteria_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."filasestanteria"
+        ADD CONSTRAINT "filasestanteria_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."import_errors"
-    ADD CONSTRAINT "import_errors_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."import_errors"
+        ADD CONSTRAINT "import_errors_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."import_log"
-    ADD CONSTRAINT "import_log_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."import_log"
+        ADD CONSTRAINT "import_log_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."jornadas"
-    ADD CONSTRAINT "jornadas_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."jornadas"
+        ADD CONSTRAINT "jornadas_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -5889,118 +5955,187 @@ ALTER TABLE ONLY "public"."jornadas"
 
 
 
-ALTER TABLE ONLY "public"."listasprecios"
-    ADD CONSTRAINT "listasprecios_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."listasprecios"
+        ADD CONSTRAINT "listasprecios_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."listaspreciosdetalle"
-    ADD CONSTRAINT "listaspreciosdetalle_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."listaspreciosdetalle"
+        ADD CONSTRAINT "listaspreciosdetalle_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."marcas"
-    ADD CONSTRAINT "marcas_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."marcas"
+        ADD CONSTRAINT "marcas_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."misiones_conteo_detalle"
-    ADD CONSTRAINT "misiones_conteo_detalle_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."misiones_conteo_detalle"
+        ADD CONSTRAINT "misiones_conteo_detalle_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."misiones_conteo"
-    ADD CONSTRAINT "misiones_conteo_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."misiones_conteo"
+        ADD CONSTRAINT "misiones_conteo_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."movimientos_caja"
-    ADD CONSTRAINT "movimientos_caja_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."movimientos_caja"
+        ADD CONSTRAINT "movimientos_caja_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."movimientosinventario"
-    ADD CONSTRAINT "movimientosinventario_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."movimientosinventario"
+        ADD CONSTRAINT "movimientosinventario_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."notificaciones_usuario"
-    ADD CONSTRAINT "notificaciones_usuario_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."notificaciones_usuario"
+        ADD CONSTRAINT "notificaciones_usuario_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."novedades_inventario"
-    ADD CONSTRAINT "novedades_inventario_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."novedades_inventario"
+        ADD CONSTRAINT "novedades_inventario_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."oc_recepcion_anomalias"
-    ADD CONSTRAINT "oc_recepcion_anomalias_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."oc_recepcion_anomalias"
+        ADD CONSTRAINT "oc_recepcion_anomalias_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."oc_recepcion_conteo"
-    ADD CONSTRAINT "oc_recepcion_conteo_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."oc_recepcion_conteo"
+        ADD CONSTRAINT "oc_recepcion_conteo_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."oc_recepcion_fotos"
-    ADD CONSTRAINT "oc_recepcion_fotos_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."oc_recepcion_fotos"
+        ADD CONSTRAINT "oc_recepcion_fotos_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."oc_recepciones"
-    ADD CONSTRAINT "oc_recepciones_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."oc_recepciones"
+        ADD CONSTRAINT "oc_recepciones_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."ordenesVenta"
-    ADD CONSTRAINT "ordenesVenta_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."ordenesVenta"
+        ADD CONSTRAINT "ordenesVenta_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."ordenes_compra_detalle"
-    ADD CONSTRAINT "ordenes_compra_detalle_pkey" PRIMARY KEY ("id_oc_linea");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."ordenes_compra_detalle"
+        ADD CONSTRAINT "ordenes_compra_detalle_pkey" PRIMARY KEY ("id_oc_linea");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."ordenes_compra_encabezado"
-    ADD CONSTRAINT "ordenes_compra_encabezado_pkey" PRIMARY KEY ("id_orden_compra");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."ordenes_compra_encabezado"
+        ADD CONSTRAINT "ordenes_compra_encabezado_pkey" PRIMARY KEY ("id_orden_compra");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."ordenescompra"
-    ADD CONSTRAINT "ordenescompra_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."ordenescompra"
+        ADD CONSTRAINT "ordenescompra_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."ordenescompradetalle"
-    ADD CONSTRAINT "ordenescompradetalle_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."ordenescompradetalle"
+        ADD CONSTRAINT "ordenescompradetalle_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."pagos_compras"
-    ADD CONSTRAINT "pagos_compras_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."pagos_compras"
+        ADD CONSTRAINT "pagos_compras_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."pedidosVentaLineas"
-    ADD CONSTRAINT "pedidosVentaLineas_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."pedidosVentaLineas"
+        ADD CONSTRAINT "pedidosVentaLineas_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."pedidosVenta"
-    ADD CONSTRAINT "pedidosVenta_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."pedidosVenta"
+        ADD CONSTRAINT "pedidosVenta_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."producto_codigos_externos"
-    ADD CONSTRAINT "producto_codigos_externos_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."producto_codigos_externos"
+        ADD CONSTRAINT "producto_codigos_externos_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."productos_erp"
-    ADD CONSTRAINT "productos_erp_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."productos_erp"
+        ADD CONSTRAINT "productos_erp_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -6014,38 +6149,59 @@ END $$;
 
 
 
-ALTER TABLE ONLY "public"."productounidades"
-    ADD CONSTRAINT "productounidades_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."productounidades"
+        ADD CONSTRAINT "productounidades_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."proveedores_contactos"
-    ADD CONSTRAINT "proveedores_contactos_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."proveedores_contactos"
+        ADD CONSTRAINT "proveedores_contactos_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."proveedores_documentos"
-    ADD CONSTRAINT "proveedores_documentos_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."proveedores_documentos"
+        ADD CONSTRAINT "proveedores_documentos_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."proveedores_evaluaciones"
-    ADD CONSTRAINT "proveedores_evaluaciones_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."proveedores_evaluaciones"
+        ADD CONSTRAINT "proveedores_evaluaciones_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."proveedores"
-    ADD CONSTRAINT "proveedores_pkey" PRIMARY KEY ("id_tercero");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."proveedores"
+        ADD CONSTRAINT "proveedores_pkey" PRIMARY KEY ("id_tercero");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."recepcionescompra"
-    ADD CONSTRAINT "recepcionescompra_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."recepcionescompra"
+        ADD CONSTRAINT "recepcionescompra_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."recepcionescompradetalle"
-    ADD CONSTRAINT "recepcionescompradetalle_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."recepcionescompradetalle"
+        ADD CONSTRAINT "recepcionescompradetalle_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -6054,8 +6210,11 @@ ALTER TABLE ONLY "public"."role_permissions"
 
 
 
-ALTER TABLE ONLY "public"."role_permissions"
-    ADD CONSTRAINT "role_permissions_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."role_permissions"
+        ADD CONSTRAINT "role_permissions_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -6064,78 +6223,123 @@ ALTER TABLE ONLY "public"."roles"
 
 
 
-ALTER TABLE ONLY "public"."roles"
-    ADD CONSTRAINT "roles_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."roles"
+        ADD CONSTRAINT "roles_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."stockubicacion"
-    ADD CONSTRAINT "stockubicacion_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."stockubicacion"
+        ADD CONSTRAINT "stockubicacion_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."sucursales"
-    ADD CONSTRAINT "sucursales_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."sucursales"
+        ADD CONSTRAINT "sucursales_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."sugerencias_pedido"
-    ADD CONSTRAINT "sugerencias_pedido_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."sugerencias_pedido"
+        ADD CONSTRAINT "sugerencias_pedido_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."tareas_detalle_traslado"
-    ADD CONSTRAINT "tareas_detalle_traslado_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."tareas_detalle_traslado"
+        ADD CONSTRAINT "tareas_detalle_traslado_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."tareas"
-    ADD CONSTRAINT "tareas_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."tareas"
+        ADD CONSTRAINT "tareas_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."tareas_turno"
-    ADD CONSTRAINT "tareas_turno_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."tareas_turno"
+        ADD CONSTRAINT "tareas_turno_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."tipos_tarea"
-    ADD CONSTRAINT "tipos_tarea_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."tipos_tarea"
+        ADD CONSTRAINT "tipos_tarea_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."tipos_tarea_turno"
-    ADD CONSTRAINT "tipos_tarea_turno_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."tipos_tarea_turno"
+        ADD CONSTRAINT "tipos_tarea_turno_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."traslados_detalle"
-    ADD CONSTRAINT "traslados_detalle_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."traslados_detalle"
+        ADD CONSTRAINT "traslados_detalle_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."traslados_encabezado"
-    ADD CONSTRAINT "traslados_encabezado_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."traslados_encabezado"
+        ADD CONSTRAINT "traslados_encabezado_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."turnos_caja"
-    ADD CONSTRAINT "turnos_caja_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."turnos_caja"
+        ADD CONSTRAINT "turnos_caja_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."turnos"
-    ADD CONSTRAINT "turnos_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."turnos"
+        ADD CONSTRAINT "turnos_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."unidadesmedida"
-    ADD CONSTRAINT "unidadesmedida_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."unidadesmedida"
+        ADD CONSTRAINT "unidadesmedida_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
-ALTER TABLE ONLY "public"."user_profiles"
-    ADD CONSTRAINT "user_profiles_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."user_profiles"
+        ADD CONSTRAINT "user_profiles_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -6144,8 +6348,11 @@ ALTER TABLE ONLY "public"."user_profiles"
 
 
 
-ALTER TABLE ONLY "public"."user_roles"
-    ADD CONSTRAINT "user_roles_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."user_roles"
+        ADD CONSTRAINT "user_roles_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -6154,8 +6361,11 @@ ALTER TABLE ONLY "public"."user_roles"
 
 
 
-ALTER TABLE ONLY "public"."user_sucursales"
-    ADD CONSTRAINT "user_sucursales_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."user_sucursales"
+        ADD CONSTRAINT "user_sucursales_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
@@ -6164,8 +6374,11 @@ ALTER TABLE ONLY "public"."user_sucursales"
 
 
 
-ALTER TABLE ONLY "public"."zonasbodega"
-    ADD CONSTRAINT "zonasbodega_pkey" PRIMARY KEY ("id");
+DO $$ BEGIN
+    ALTER TABLE ONLY "public"."zonasbodega"
+        ADD CONSTRAINT "zonasbodega_pkey" PRIMARY KEY ("id");
+EXCEPTION WHEN duplicate_table OR others THEN NULL;
+END $$;
 
 
 
