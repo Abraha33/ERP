@@ -1,0 +1,4 @@
+-- Migration stub: version 20260418173613 (fix_rls_missing_policies_corrected)
+-- This migration was applied directly to the Supabase cloud database.
+-- This file exists to satisfy Supabase Preview version tracking.
+-- No SQL to apply — already executed in production.
