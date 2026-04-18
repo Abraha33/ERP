@@ -64,5 +64,24 @@ create policy p_profiles_select_own on public.profiles
 create policy p_empresas_select_member on public.empresas
   for select using (id = public.current_empresa_id());
 
-create policy p_sucursales_select_member on public.sucursales
-  for select using (empresa_id = public.current_empresa_id());
+-- sucursales policy: use empresaid (SAE schema) or empresa_id depending on which column exists
+DO $$
+BEGIN
+  -- Drop old policies (both naming conventions)
+  DROP POLICY IF EXISTS p_sucursales_select_member ON public.sucursales;
+  -- Try empresaid first (real_schema_pull SAE schema)
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'sucursales' AND column_name = 'empresaid'
+  ) THEN
+    EXECUTE 'CREATE POLICY p_sucursales_select_member ON public.sucursales
+      FOR SELECT USING (empresaid = public.current_empresa_id())';
+  ELSIF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'sucursales' AND column_name = 'empresa_id'
+  ) THEN
+    EXECUTE 'CREATE POLICY p_sucursales_select_member ON public.sucursales
+      FOR SELECT USING (empresa_id = public.current_empresa_id())';
+  END IF;
+END
+$$;
