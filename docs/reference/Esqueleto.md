@@ -14,7 +14,7 @@ Sistema integrado: ERP como núcleo operativo y de datos; CRM como módulo de re
 - **Auth**: Supabase Auth (JWT) validado en backend; **RBAC** por roles de negocio.
 - **Asíncrono (MVP)**: eventos in-process + tabla `jobs/outbox` en Postgres + worker (sin “plataforma de colas” externa).
 
-Referencia: [ADR-001](../ADR-001-architecture-stack.md).
+Referencia: [ADR-001](../adr/ADR-001-stack-tecnologico.md).
 
 ---
 

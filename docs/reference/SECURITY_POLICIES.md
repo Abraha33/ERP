@@ -2,7 +2,7 @@
 
 **Propósito:** describir la intención de autorización por **rol de aplicación** y tabla, **sin SQL**. Sirve de fuente para generar **RLS en Postgres/Supabase** (ver migración borrador en `supabase/migrations/`).
 
-**Relacionado:** [SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md) (campos de negocio), [ADR-001](../../ADR/ADR-001-stack-tecnologico.md) (Supabase + RLS).
+**Relacionado:** [SAE_DATA_MAPPING.md](./SAE_DATA_MAPPING.md) (campos de negocio), [ADR-001](../adr/ADR-001-stack-tecnologico.md) (Supabase + RLS + FastAPI).
 
 ---
 

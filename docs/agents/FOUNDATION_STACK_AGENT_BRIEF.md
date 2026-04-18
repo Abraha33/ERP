@@ -1,6 +1,6 @@
 # Brief: fundación ERP Satélite — contexto para definir el tech stack
 
-**Propósito:** documento **único y explícito** para pegar en otro agente y **revisar o reabrir** el debate del stack de fundación si hace falta. La decisión vigente está en **[ADR-001](../../ADR/ADR-001-stack-tecnologico.md)** (**ACEPTADA**, revisión 2026-04-08).
+**Propósito:** documento **único y explícito** para pegar en otro agente y **revisar o reabrir** el debate del stack de fundación si hace falta. La decisión vigente está en **[ADR-001](../adr/ADR-001-stack-tecnologico.md)** (**ACEPTADA**, revisión 2026-04-18).
 
 **Alcance:** Fase 0 + línea base que soporta Fase 1 (App Satélite MVP). No sustituye al ADR ni a [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md); sirve como **guion de trabajo** y checklist de capas.
 
@@ -20,7 +20,7 @@
 |-------------|---------|
 | Ramas Git | Solo **`main`** y **`develop`** permanentes en remoto; integración en `develop`. Ver [README §3.2](../../README.md#32-ramas-git-solo-main-y-develop). |
 | Secretos | Nunca commitear `.env`; usar `.env.example` como plantilla. |
-| Documentación de decisiones | Decisiones de arquitectura relevantes → `ADR/` (hoy el contenedor es **ADR-001**). |
+| Documentación de decisiones | Decisiones de arquitectura relevantes → `docs/adr/` (hoy **ADR-001**). |
 | Tablero | Project 11, convención de issues y milestones en [README](../../README.md) y [GITHUB_PROJECTS.md](../process/GITHUB_PROJECTS.md). |
 | Offline “de verdad” | Requisito fuerte en **Fase 5**; antes de eso el stack puede preparar API/Postgres pero **no obliga** a meter BD local en el cliente desde el día 1. |
 
@@ -32,7 +32,7 @@ Para cada fila, el agente debe **proponer opción principal + alternativa + ries
 
 | # | Capa | Preguntas mínimas |
 |---|------|-------------------|
-| A | **Cliente Android** | **Cerrado:** Kotlin + Compose + Supabase Kotlin. ¿Web complementaria en el roadmap? (TBD por ticket; no bloquea Fase 1.) |
+| A | **Cliente Android** | **Cerrado:** Kotlin + Compose + Room; dominio ERP vía **`/api/v1`** (FastAPI) + JWT Supabase. ¿Web complementaria en el roadmap? (TBD por ticket; no bloquea Fase 1.) |
 | B | **Backend / BaaS** | ¿Supabase vs Firebase vs API propia (FastAPI/Nest) vs híbrido? ¿Quién define Auth y RLS? |
 | C | **Base de datos cloud** | Postgres “de verdad” vs otros; migraciones; entorno local de desarrollo. |
 | D | **Auth y roles** | Modelo (email, magic link, SSO futuro); claims vs tablas de roles; encaje con RLS. |
@@ -45,7 +45,7 @@ Para cada fila, el agente debe **proponer opción principal + alternativa + ries
 
 ## 4. Decisión de fundación (referencia)
 
-El stack de fundación está **aceptado** en [ADR-001](../../ADR/ADR-001-stack-tecnologico.md) (revisión 2026-04-08). Resumen: **Kotlin + Compose + Room + Supabase Kotlin**; scripts Python SAE; **FastAPI** opcional en `tools/worker/`; **Playwright** opcional en `tools/scraper/`; **GitHub Actions**; offline Fase 5 con **Room** + **WorkManager**.
+El stack de fundación está **aceptado** en [ADR-001](../adr/ADR-001-stack-tecnologico.md) (revisión 2026-04-18). Resumen: **FastAPI** (`/api/v1`) + **Supabase** (Postgres/Auth/RLS); **Kotlin + Compose + Room** en Android consumiendo la API; scripts Python SAE; **FastAPI** opcional en `tools/worker/`; **Playwright** opcional en `tools/scraper/`; **GitHub Actions**; offline Fase 5 con **Room** + **WorkManager**.
 
 Si en el futuro se reabre el debate, usar el **entregable** de la sección 5 y actualizar en bloque: `ADR-001`, `README` §10–11, `STACK_POR_FASE`, `CURSOR_CONTEXT`, `.env.example`.
 
@@ -59,7 +59,7 @@ Pedir explícitamente una salida con esta estructura:
 2. **Tabla decisión** (capas A–H con opción elegida y una alternativa).
 3. **Riesgos y mitigaciones** (top 5).
 4. **Plan de verificación** (comandos o pasos para comprobar que el stack “arranca”: repo, build app, conexión a backend de prueba).
-5. **Borrador de texto** listo para pegar en `ADR/ADR-001-stack-tecnologico.md` (secciones: contexto, opciones, decisión final, consecuencias).
+5. **Borrador de texto** listo para pegar en `docs/adr/ADR-001-stack-tecnologico.md` (secciones: contexto, opciones, decisión final, consecuencias).
 6. **Lista de variables de entorno** mínimas para `.env.example` (nombres solamente, sin secretos).
 
 ---
@@ -94,7 +94,7 @@ Alineación con `ERP1/ROADMAP.md` (granular):
 | [README.md](../../README.md) | Reglas de trabajo, milestones, tablero, ramas. |
 | [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md) | Stack por fase del producto. |
 | [CURSOR_CONTEXT.md](../../CURSOR_CONTEXT.md) | Defaults para asistentes en Cursor. |
-| [ADR-001](../../ADR/ADR-001-stack-tecnologico.md) | Donde debe quedar la decisión formal. |
+| [ADR-001](../adr/ADR-001-stack-tecnologico.md) | Donde debe quedar la decisión formal. |
 | [EXCEL_ANALYSIS.md](../legacy/EXCEL_ANALYSIS.md) | Análisis export SAE (puede ir en paralelo). |
 | [Esqueleto.md](../reference/Esqueleto.md) | Alcance funcional alto nivel. |
 

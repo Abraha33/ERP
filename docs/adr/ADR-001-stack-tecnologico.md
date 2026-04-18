@@ -3,12 +3,13 @@
 **Proyecto:** ERP Satélite  
 **Decisor:** Abraha33  
 **Fecha original:** 2026-04-07  
-**Última revisión:** 2026-04-10 — **W01** (issue **#269**): alinear ADR con stack real documentado en `.cursor/rules/project.mdc`, README, ROADMAP y CURSOR_CONTEXT.  
+**Última revisión:** 2026-04-18 — **W02**: móvil de producto = **Android Studio + Kotlin + Compose**; dominio ERP desde la app vía **REST `/api/v1`** (FastAPI) con **JWT de Supabase Auth** — **sin** PostgREST ni `anon key` en el APK para tablas de negocio (alineado a monolito headless y `CURSOR_CONTEXT.md`).  
+**Revisión previa:** 2026-04-10 — **W01** (issue **#269**): alinear ADR con README, ROADMAP y CURSOR_CONTEXT.  
 **Estado:** ACEPTADO  
 
-El desglose **por fase** del producto sigue en [docs/reference/STACK_POR_FASE.md](../docs/reference/STACK_POR_FASE.md). Este ADR es la **fuente de verdad** del stack global del monorepo.
+El desglose **por fase** del producto sigue en [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md). Este ADR es la **fuente de verdad** del stack global del monorepo.
 
-> **Nota de ruta:** en el repositorio el archivo canónico es `ADR/ADR-001-stack-tecnologico.md` (enlaces desde [README.md](../README.md) y [CURSOR_CONTEXT.md](../CURSOR_CONTEXT.md)). Si en el issue se cita `ADR-ADR-001.md`, usar este mismo documento.
+> **Nota de ruta:** el archivo canónico es este: [`docs/adr/ADR-001-stack-tecnologico.md`](./ADR-001-stack-tecnologico.md) (enlaces desde [README.md](../../README.md) y [CURSOR_CONTEXT.md](../../CURSOR_CONTEXT.md)). Si en un issue se cita `ADR-001-architecture-stack.md` o `ADR/ADR-001-stack-tecnologico.md`, usar este mismo documento.
 
 ---
 
@@ -18,11 +19,11 @@ Las siguientes decisiones están **cerradas** y deben reflejarse en código y mi
 
 | Ámbito | Decisión |
 |--------|----------|
-| **Stack móvil (producto)** | **Android nativo:** **Kotlin** + **Jetpack Compose** + **Material 3**. Alcance **solo Android** (sin iOS). Carpeta de producto: **`apps/android/`**. |
-| **Persistencia local** | **Room** (SQLite) como capa local oficial: caché y modelos locales desde fases tempranas; en **Fase 5** (roadmap) lectura **offline-first** desde Room y sync con Supabase. **WorkManager** para trabajo en segundo plano (sync, reintentos). |
-| **Cliente de red (app)** | **Supabase Kotlin** (`supabase-kt` o SDK oficial). La app consume Postgres vía Supabase con **RLS**; no usar Prisma/Drizzle en el APK. **No exponer `service_role` en el APK.** |
-| **Backend / BaaS** | **Supabase:** **PostgreSQL**, **Auth**, **Storage**, **Edge Functions**, **Realtime**, **RPC**. Monolito modular lógico centrado en Supabase (sin microservicios propios por defecto). |
-| **Base de datos (cloud)** | **PostgreSQL** gestionado por Supabase. **RLS obligatoria** en todas las tablas expuestas a PostgREST. Roles de aplicación: **admin > encargado > empleado** (`app_role` en `profiles`). Funciones de sesión de referencia: `public.current_empresa_id()`, `public.current_sucursal_id()`, `public.app_role()`. Convenciones de columnas: [docs/reference/schema-conventions.md](../docs/reference/schema-conventions.md). |
+| **Stack móvil (producto)** | **Android nativo** en **Android Studio:** **Kotlin** + **Jetpack Compose** + **Material 3**. Alcance **solo Android** (sin iOS). Carpeta de producto: **`apps/android/`**. **Expo / React Native** no son stack de producto (solo legado en `apps/mobile/` hasta retirada). |
+| **Persistencia local** | **Room** (SQLite) como capa local oficial: caché y modelos locales desde fases tempranas; en **Fase 5** (roadmap) lectura **offline-first** desde Room y sync hacia servidor vía **`/api/v1`** (detalle en tickets / ADR offline cuando exista). **WorkManager** para trabajo en segundo plano (sync, reintentos). |
+| **Cliente de red (app móvil producto)** | **HTTP a `/api/v1`** (p. ej. **Retrofit** o **Ktor**) contra **FastAPI**; **Bearer JWT** de **Supabase Auth** validado en backend. **Sin** PostgREST, Realtime ni `anon key` en el APK para dominio ERP. **No exponer `service_role` en el APK.** |
+| **Backend / BaaS** | **FastAPI** expone **`/api/v1`** (negocio, RBAC). **Supabase:** **PostgreSQL**, **Auth** (JWT), **Storage**, **Edge Functions**, **Realtime**, **RPC**. Sin microservicios propios por defecto. |
+| **Base de datos (cloud)** | **PostgreSQL** gestionado por Supabase. **RLS obligatoria** en todas las tablas expuestas a PostgREST (y defensa en profundidad para cualquier otro consumidor). Roles de aplicación: **admin > encargado > empleado** (`app_role` en `profiles`). Funciones de sesión de referencia: `public.current_empresa_id()`, `public.current_sucursal_id()`, `public.app_role()`. Convenciones de columnas: [schema-conventions.md](../reference/schema-conventions.md). |
 | **Migraciones** | **Única fuente de verdad:** `supabase/migrations/`. Flujo: **`supabase migration new <nombre>`** → editar SQL → **`supabase db push`**. **No** alterar el esquema de producción desde el dashboard de Supabase salvo emergencia documentada. Validación en CI cuando aplique el job que aplica migraciones sobre Postgres. |
 | **Integración SAE / Excel** | Scripts **Python** en **`scripts/sae/`** (CSV/XLS ↔ Supabase). |
 | **Scraper opcional** | **Playwright** (Python 3.12) en **`tools/scraper/`**. |
@@ -34,22 +35,22 @@ Las siguientes decisiones están **cerradas** y deben reflejarse en código y mi
 
 ## Resumen ejecutivo
 
-ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 horas/semana) con un horizonte de **14 meses** dividido en **5 fases** (ver [ROADMAP.md](../ROADMAP.md)). La arquitectura adoptada es un **monolito modular centrado en Supabase**, con una **app Android nativa (Kotlin + Compose + Room + WorkManager)** como cliente principal de campo. La decisión prioriza velocidad de iteración, reducción de superficie de mantenimiento y uso intensivo de asistentes IA como copiloto de desarrollo.
+ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 horas/semana) con un horizonte de **14 meses** dividido en **5 fases** (ver [ROADMAP.md](../../ROADMAP.md)). La arquitectura adoptada es un **monolito modular headless** (**FastAPI** + **PostgreSQL en Supabase**), con **web ERP** como primer cliente y una **app Android nativa (Kotlin + Compose + Room + WorkManager)** como cliente de campo **post‑MVP**, integrada por **`/api/v1`**. La decisión prioriza velocidad de iteración, reducción de superficie de mantenimiento y uso intensivo de asistentes IA como copiloto de desarrollo.
 
 ---
 
 ## 1. Arquitectura global
 
-**Estilo:** Monolito modular — un solo backend lógico centrado en Supabase, con módulos por dominio (inventario, misiones, arqueos, ventas, CRM), sin microservicios independientes.
+**Estilo:** Monolito modular **headless** — reglas de negocio y API pública en **FastAPI** (`/api/v1`); **PostgreSQL en Supabase** como fuente de verdad; módulos por dominio (inventario, ventas, CRM, etc.), sin microservicios independientes.
 
 **No se usa:**
 
 - **Kubernetes** — complejidad innecesaria para un solo desarrollador.
 - **Docker obligatorio** — opcional solo para empaquetar workers Python/Playwright en VPS o para `supabase start` en local.
 
-**Patrón BFF (Backend for Frontend):** **Supabase Edge Functions** (TypeScript/Deno) como capa de agregación para la app Android cuando una pantalla requiera ensamblar datos; evita múltiples round-trips desde el cliente.
+**Patrón BFF (Backend for Frontend):** **Supabase Edge Functions** (TypeScript/Deno) solo cuando un ticket justifique agregación o webhooks; la **app Android** obtiene datos de negocio vía **`/api/v1`** (FastAPI), no como cliente PostgREST.
 
-**Patrón datos en app:** antes de Fase 5 la app puede ser **online-first**, usando **Room** donde aporte (caché, lecturas repetidas, preparación del modelo offline). En **Fase 5 (producto)** el patrón objetivo es **offline-first**: la app **lee desde Room** y sincroniza con Supabase en segundo plano mediante **WorkManager**. El diseño de tablas en servidor y `sync_status` ya prepara el contrato (ver [schema-conventions](../docs/reference/schema-conventions.md)).
+**Patrón datos en app:** antes de Fase 5 la app puede ser **online-first**, usando **Room** donde aporte (caché, lecturas repetidas, preparación del modelo offline). En **Fase 5 (producto)** el patrón objetivo es **offline-first**: la app **lee desde Room** y sincroniza con el servidor mediante **WorkManager** y **`/api/v1`**. El diseño de tablas en servidor y `sync_status` ya prepara el contrato (ver [schema-conventions](../reference/schema-conventions.md)).
 
 ---
 
@@ -59,12 +60,12 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 |------|-------------------|------------------------|--------|
 | **App móvil** | Android nativo — **Kotlin + Jetpack Compose + Material 3** | Expo / React Native | Developer orientado a Android; alcance **solo Android** (sin iOS); alineado a `project.mdc` |
 | **DB local** | **Room** (SQLite) | BD local JS de terceros | Oficial en Android con Kotlin; misma pila que el cliente de producto |
-| **Sync background** | **WorkManager** + **Supabase Kotlin** / **Ktor** o **Retrofit** según ticket | Background fetch no nativo | Integración con ciclo de vida y políticas de red Android |
+| **Sync background** | **WorkManager** + **Retrofit** o **Ktor** hacia **`/api/v1`** | Background fetch no nativo | Integración con ciclo de vida y políticas de red Android; dominio centralizado en FastAPI |
 | **DB cloud** | **Supabase PostgreSQL** | Firebase Firestore | Postgres relacional; **RLS** nativo; migraciones versionadas en repo |
 | **Auth** | **Supabase Auth** (email + contraseña MVP) | Firebase Auth | Integrado con RLS y mismo proyecto |
 | **RLS y seguridad** | **Supabase Row Level Security** | Middleware propio en app | Seguridad declarativa en Postgres; políticas `p_<tabla>_<acción>_<rol>` |
-| **Lógica transaccional** | **SQL Functions / RPC** en Supabase | FastAPI como orquestador por defecto | Operaciones atómicas cerca de los datos |
-| **BFF móvil** | **Supabase Edge Functions** (TypeScript/Deno) | FastAPI dedicado | Bajo overhead; sin servidor extra para casos BFF |
+| **Lógica transaccional** | **FastAPI** (`/api/v1`) como capa principal de negocio; **SQL Functions / RPC** en Supabase donde el ticket lo defina | Solo RPC desde cliente móvil | Reglas y RBAC auditables en Python; RPC atómico cerca de los datos cuando aplique |
+| **BFF / agregación** | **FastAPI** para la app móvil; **Edge Functions** opcional para web u orquestación corta | Duplicar reglas en cliente móvil | Un contrato REST para Android; Edge solo si aporta sin divergencia de reglas |
 | **Integración SAE / Excel** | **Scripts Python** (CLI) en `scripts/sae/` | Edge Functions para ETL pesado | Archivos grandes; limpieza compleja; sin servidor persistente |
 | **Scraper legacy SAE** | **Playwright** (Python 3.12) en `tools/scraper/` | Puppeteer (Node) | Alineado a scripts Python existentes |
 | **Worker HTTP (opcional)** | **FastAPI** (Python 3.12) en `tools/worker/` | NestJS | Solo si un flujo requiere servidor HTTP persistente |
@@ -80,14 +81,15 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 
 ### 3.1 App móvil (Android)
 
+- **IDE:** Android Studio  
 - **Lenguaje:** Kotlin  
 - **UI:** Jetpack Compose (**Material 3**)  
 - **Arquitectura:** MVVM + Repository; **no** concentrar lógica de negocio compleja solo en Composables — usar dominio / UseCases / ViewModels  
 - **DB local:** **Room** (SQLite) — caché y preparación offline; en Fase 5 espejo parcial de tablas críticas y fuente de lectura en campo  
-- **Red:** cliente **Supabase Kotlin**; **Ktor** o **Retrofit** si hace falta para Edge Functions o endpoints HTTP concretos  
-- **Auth:** Supabase Auth SDK (Kotlin)  
-- **Sync:** **WorkManager** — workers que procesan filas con `sync_status = PENDING` cuando hay red (contrato alineado con servidor)  
-- **Campos habituales en Room (cuando se modele sync):** `id` (UUID), `created_at`, `updated_at`, `sync_status` (`SYNCED` / `PENDING` / `CONFLICT`) — alinear con [schema-conventions](../docs/reference/schema-conventions.md)  
+- **Red (dominio ERP):** **Retrofit** o **Ktor** contra la **API REST `/api/v1`** del backend FastAPI  
+- **Auth:** flujo **Supabase Auth** (JWT); el token se envía al backend como **Bearer** en las llamadas a `/api/v1`  
+- **Sync:** **WorkManager** — workers que procesan filas con `sync_status = PENDING` cuando hay red (contrato alineado con servidor vía API)  
+- **Campos habituales en Room (cuando se modele sync):** `id` (UUID), `created_at`, `updated_at`, `sync_status` (`SYNCED` / `PENDING` / `CONFLICT`) — alinear con [schema-conventions](../reference/schema-conventions.md)  
 
 **Ubicación en monorepo:** `apps/android/`. La carpeta `apps/mobile/` es **legado** hasta retirada explícita (**prohibido** promoverla como stack de producto; ver `project.mdc`).
 
@@ -106,10 +108,11 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 
 | Mecanismo | Cuándo usarlo | Ejemplo |
 |-----------|---------------|---------|
-| **RPC (SQL functions)** | Operaciones atómicas multi-tabla desde cliente autenticado | Recepción + stock + log |
-| **Edge Functions (TS/Deno)** | BFF: agregar datos para pantallas; webhooks cortos | `get_mobile_dashboard` |
+| **FastAPI (`/api/v1`)** | Reglas de negocio, RBAC, contrato de la app Android y web | CRUD módulos ERP, comandos transaccionales |
+| **RPC (SQL functions)** | Operaciones atómicas multi-tabla invocadas desde **FastAPI** o jobs de confianza | Recepción + stock + log |
+| **Edge Functions (TS/Deno)** | Webhooks cortos; BFF web si un ticket lo define | `get_mobile_dashboard` |
 | **Scripts Python (CLI)** | Import/export Excel SAE; ETL batch | `scripts/sae/` |
-| **FastAPI (opcional)** | Job HTTP persistente; dependencias pesadas | Worker en `tools/worker/` |
+| **FastAPI worker (opcional)** | Job HTTP persistente; dependencias pesadas | Worker en `tools/worker/` |
 
 ### 3.4 Integración SAE
 
@@ -121,16 +124,16 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 
 ### 3.5 Offline y sincronización (énfasis Fase 5)
 
-- **Estrategia objetivo Fase 5:** offline-first — Room como fuente de lectura en campo; Supabase como fuente de verdad  
-- **Escritura:** Room con `sync_status = PENDING` → WorkManager sube con red  
-- **Descarga:** incremental por `updated_at` / cursor de sync (detalle en tickets Fase 5)  
-- **Conflictos:** last-write-wins por `updated_at` salvo ADR específico  
+- **Estrategia objetivo Fase 5:** offline-first — Room como fuente de lectura en campo; **Postgres (Supabase)** como fuente de verdad en servidor; **sincronización vía `/api/v1`** (no PostgREST desde el APK)  
+- **Escritura:** Room con `sync_status = PENDING` → WorkManager sube con red contra FastAPI  
+- **Descarga:** incremental por `updated_at` / cursor expuesto en API (detalle en tickets Fase 5)  
+- **Conflictos:** last-write-wins por `updated_at` salvo ADR / ticket específico  
 - **Idempotencia:** UUID generado en cliente antes de insert remoto cuando aplique  
 
 ### 3.6 Autenticación y roles
 
 - **Auth MVP:** email + contraseña (Supabase Auth)  
-- **Sesión:** JWT gestionado por el SDK; sin exponer `service_role` en el APK  
+- **Sesión:** JWT presentado a **FastAPI** en cada request a `/api/v1`; sin exponer `service_role` en el APK  
 
 | Rol | Permisos principales (resumen) |
 |-----|--------------------------------|
@@ -152,9 +155,9 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 
 ## 4. Variables de entorno
 
-**Lista canónica y nombres exactos:** [`.env.example`](../.env.example) en la raíz del monorepo (Supabase, `DATABASE_URL`, rutas SAE, Playwright, worker opcional, CRM placeholder, `ERP_ENVIRONMENT`, CI, `ANDROID_APPLICATION_ID`).
+**Lista canónica y nombres exactos:** [`.env.example`](../../.env.example) en la raíz del monorepo (Supabase, `DATABASE_URL`, rutas SAE, Playwright, worker opcional, CRM placeholder, `ERP_ENVIRONMENT`, CI, `ANDROID_APPLICATION_ID`).
 
-**Cliente Android:** inyectar URL/anon key vía **Gradle** (`local.properties` / **BuildConfig** / variantes), no depender de prefijos de entorno de otros stacks.
+**Cliente Android:** inyectar **URL base de la API** (`/api/v1`) y credenciales de **Supabase Auth** (p. ej. URL del proyecto para el flujo de login) vía **Gradle** (`local.properties` / **BuildConfig** / variantes). **No** empaquetar `anon key` para consultar PostgREST desde el APK; el dominio ERP va por FastAPI.
 
 **No duplicar** el inventario largo aquí: mantener **una** fuente en `.env.example` y actualizar este ADR solo cuando cambie la política de capas.
 
@@ -162,7 +165,7 @@ ERP Satélite es un sistema ERP + CRM construido por un solo desarrollador (~25 
 
 ## 5. Roadmap técnico por fase
 
-Alineado a [ROADMAP.md](../ROADMAP.md): Fase 0 fundación → Fase 1 App Satélite → Fases 2–3 ERP → Fase 4 CRM → Fase 5 offline-first.
+Alineado a [ROADMAP.md](../../ROADMAP.md): Fase 0 fundación → Fase 1 App Satélite → Fases 2–3 ERP → Fase 4 CRM → Fase 5 offline-first.
 
 ### Fase 0 — Fundación (semanas 1–2)
 
@@ -172,8 +175,8 @@ Alineado a [ROADMAP.md](../ROADMAP.md): Fase 0 fundación → Fase 1 App Satéli
 | T0.2 | Schema inicial en `supabase/migrations/` (productos, zonas, perfiles, stock, etc.) |
 | T0.3 | RLS con políticas mínimas por rol |
 | T0.4 | `.env.example` con nombres canónicos |
-| T0.5 | Análisis Excel SAE → [`docs/legacy/EXCEL_ANALYSIS.md`](../docs/legacy/EXCEL_ANALYSIS.md) |
-| T0.6 | ADR-001 + [`CURSOR_CONTEXT.md`](../CURSOR_CONTEXT.md) alineados |
+| T0.5 | Análisis Excel SAE → [`EXCEL_ANALYSIS.md`](../legacy/EXCEL_ANALYSIS.md) |
+| T0.6 | ADR-001 + [`CURSOR_CONTEXT.md`](../../CURSOR_CONTEXT.md) alineados |
 
 ### Fase 1 — App Satélite MVP (meses 1–3)
 
@@ -211,24 +214,28 @@ Room como fuente primaria en campo, WorkManager sync bidireccional, conflictos e
 │                        CLIENTES                             │
 │                                                             │
 │  ┌─────────────────────────┐   ┌──────────────────────────┐ │
-│  │  Android App (Kotlin)   │   │   Web Admin (Next.js)      │ │
-│  │  Jetpack Compose + M3   │   │   Fase 2+                  │ │
-│  │  Room + WorkManager      │   └──────────────┬─────────────┘ │
-│  │  Supabase Kotlin        │                  │             │
+│  │  Android (Kotlin)       │   │  Web ERP (React/Next)    │ │
+│  │  Compose + M3           │   │  Fase 2+                 │ │
+│  │  Room + WorkManager     │   └──────────────┬───────────┘ │
+│  │  HTTP → /api/v1         │                  │ HTTP/JS     │
 │  └────────────┬────────────┘                  │             │
-│               │ SDK Kotlin / HTTP             │ SDK JS      │
 └───────────────┼───────────────────────────────┼─────────────┘
                 │                               │
-┌───────────────▼───────────────────────────────▼─────────────┐
+                └───────────────┬───────────────┘
+                                │
+                    ┌───────────▼───────────┐
+                    │  FastAPI (/api/v1)  │
+                    │  RBAC + dominio     │
+                    └───────────┬───────────┘
+                                │
+┌───────────────────────────────▼─────────────────────────────┐
 │                     SUPABASE                                 │
-│                                                             │
 │  ┌──────────────┐  ┌──────────────┐  ┌───────────────────┐ │
-│  │  Auth        │  │  Edge Fns    │  │  Storage          │ │
-│  │  JWT + RLS   │  │  BFF (TS)    │  │                   │ │
+│  │  Auth (JWT)  │  │  Edge Fns    │  │  Storage          │ │
 │  └──────────────┘  └──────┬───────┘  └───────────────────┘ │
 │                           │                                 │
 │  ┌────────────────────────▼────────────────────────────┐   │
-│  │     PostgreSQL + RLS + Realtime + RPC                 │   │
+│  │     PostgreSQL + RLS + Realtime + RPC               │   │
 │  └─────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
                            │
@@ -236,7 +243,7 @@ Room como fuente primaria en campo, WorkManager sync bidireccional, conflictos e
         │                  │                  │
 ┌───────▼───────┐  ┌───────▼───────┐  ┌──────▼────────┐
 │ Scripts Python│  │  Playwright   │  │  FastAPI      │
-│  SAE import   │  │  scraper SAE  │  │  (opcional)   │
+│  SAE import   │  │  scraper SAE  │  │  worker opt.  │
 └───────────────┘  └───────────────┘  └───────────────┘
 ```
 
@@ -244,13 +251,13 @@ Room como fuente primaria en campo, WorkManager sync bidireccional, conflictos e
 
 ## 7. Reglas operativas
 
-- **Nunca** commitear `.env`; usar [`.env.example`](../.env.example) como plantilla.  
+- **Nunca** commitear `.env`; usar [`.env.example`](../../.env.example) como plantilla.  
 - **Soft delete** (`deleted_at`) en tablas críticas cuando el dominio lo requiera para sync.  
-- **UUIDs** como PK donde se acuerde; convenciones en [schema-conventions](../docs/reference/schema-conventions.md).  
+- **UUIDs** como PK donde se acuerde; convenciones en [schema-conventions](../reference/schema-conventions.md).  
 - **`updated_at`** con trigger en tablas de negocio según migraciones del repo.  
 - **TypeScript strict** en Edge Functions; **Kotlin** en Android; **Python 3.12** en scripts/worker.  
-- **RLS obligatorio** en tablas expuestas al cliente.  
-- **Monorepo:** `apps/android/`, `supabase/` (migraciones como única fuente DDL), `scripts/` (incl. `scripts/sae/`), `tools/worker/` y `tools/scraper/` opcionales, `docs/`, `ADR/`.  
+- **RLS obligatorio** en tablas expuestas a PostgREST u otros consumidores con credenciales distintas a la app móvil vía `/api/v1`.  
+- **Monorepo:** `apps/android/`, `backend/`, `supabase/` (migraciones como única fuente DDL), `scripts/` (incl. `scripts/sae/`), `tools/worker/` y `tools/scraper/` opcionales, `docs/` (incl. `docs/adr/`).  
 
 ---
 
@@ -264,7 +271,7 @@ Room como fuente primaria en campo, WorkManager sync bidireccional, conflictos e
 
 | RPC (Postgres) | Edge Functions | Scripts Python | FastAPI |
 |----------------|----------------|----------------|---------|
-| Transacciones atómicas desde cliente autenticado | BFF, webhooks cortos | CSV/XLS SAE, ETL | Jobs largos, HTTP persistente |
+| Transacciones atómicas invocadas desde backend o contextos de confianza | BFF, webhooks cortos | CSV/XLS SAE, ETL | Dominio `/api/v1`, jobs largos, HTTP persistente (worker opt.) |
 
 ---
 
@@ -278,9 +285,10 @@ Room como fuente primaria en campo, WorkManager sync bidireccional, conflictos e
 
 ## Checklist post-ADR
 
-1. [x] [`.env.example`](../.env.example) en raíz.  
-2. [x] [CURSOR_CONTEXT.md](../CURSOR_CONTEXT.md) alineado (revisar tras cada cierre de fase).  
-3. [x] [README.md](../README.md) y [STACK_POR_FASE.md](../docs/reference/STACK_POR_FASE.md) coherentes con este ADR.  
-4. [x] Revisión W01 (2026-04-10): decisiones explícitas y stack real **Kotlin + Compose + Material 3 + Room + WorkManager + Supabase** reflejados aquí y en `.cursor/rules/project.mdc`.  
-5. [ ] Proyecto Supabase operativo y `.env` local sin secretos en git.  
-6. [ ] Módulo `apps/android/` con Gradle cuando arranque desarrollo de producto.  
+1. [x] [`.env.example`](../../.env.example) en raíz.  
+2. [x] [CURSOR_CONTEXT.md](../../CURSOR_CONTEXT.md) alineado (revisar tras cada cierre de fase).  
+3. [x] [README.md](../../README.md) y [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md) coherentes con este ADR.  
+4. [x] Revisión W01 (2026-04-10): decisiones explícitas y stack **Kotlin + Compose + Material 3 + Room + WorkManager** reflejados aquí y en `.cursor/rules/project.mdc`.  
+5. [x] Revisión W02 (2026-04-18): móvil por **`/api/v1`** + Android Studio; sin PostgREST en APK para dominio ERP.  
+6. [ ] Proyecto Supabase operativo y `.env` local sin secretos en git.  
+7. [ ] Módulo `apps/android/` con Gradle cuando arranque desarrollo de producto.  

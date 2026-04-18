@@ -2,7 +2,7 @@
 
 Este roadmap es para **producción real** con equipo pequeño. No es un listado de deseos: cada fase tiene entregables verificables y un frontend prioritario.
 
-**Arquitectura oficial (cerrada):** ver [ADR-001](./docs/ADR-001-architecture-stack.md).
+**Arquitectura oficial (cerrada):** ver [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md).
 
 ## Resumen de fases (14 meses)
 
@@ -13,7 +13,7 @@ Este roadmap es para **producción real** con equipo pequeño. No es un listado 
 | **2** | ERP básico ampliado (compras/ventas/inventario “bien”) | Mes 5–8 | **Web ERP** | SAE parcialmente reemplazado |
 | **3** | CRM núcleo (sin canales externos complejos) | Mes 9–10 | **Web ERP** | Gestión comercial básica |
 | **4** | Operación y escalado (reportes, auditoría, performance) | Mes 11–12 | **Web ERP** | Estabilidad y control |
-| **5** | Offline acotado / móvil (solo si hay caso de negocio) | Mes 13–14 | **Móvil (si aplica)** | Alcance offline definido y real |
+| **5** | Offline acotado / móvil (solo si hay caso de negocio) | Mes 13–14 | **App Android (Kotlin) si aplica** | Alcance offline definido y real |
 
 > Nota dura: **offline-first generalizado** y “app móvil completa” NO son una fase automática. Entra solo si hay un caso de negocio claro y presupuesto de complejidad (conflictos, UX, soporte).
 
@@ -120,6 +120,7 @@ Alcance permitido:
 
 Entregables mínimos (si esta fase se ejecuta):
 
-- ADR específico de offline (qué módulos, qué garantías, estrategia de conflictos).
+- ADR o tickets específicos de offline (qué módulos, qué garantías, estrategia de conflictos).
+- App de campo: **Android nativo (Kotlin, Android Studio, Compose)** consumiendo **`/api/v1`** (misma política que `CURSOR_CONTEXT` / ADR-001).
 - Sync incremental con idempotencia y trazabilidad.
 - Pruebas de resiliencia (reintentos, reconexión, duplicados).

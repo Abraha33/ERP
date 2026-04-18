@@ -3,7 +3,7 @@
 **Tickets:** T0.1.5 (análisis) · T0.1.6 (columnas).  
 **Estado global:** **En progreso** — plantilla en repo; completar celdas cuando haya export real o datos parciales.
 
-**Stack de importación:** ver [ADR-001](../../ADR/ADR-001-stack-tecnologico.md) (scripts Python / worker opcional) y [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md) Fase 1.
+**Stack de importación:** ver [ADR-001](../adr/ADR-001-stack-tecnologico.md) (scripts Python / worker opcional) y [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md) Fase 1.
 
 **Mapeo detallado SAE → tablas ERP (compras, traslados, productos, clientes, proveedores):** [SAE_DATA_MAPPING.md](../reference/SAE_DATA_MAPPING.md).
 

@@ -1,6 +1,6 @@
 # Decisiones tecnicas pendientes
 
-Documento para registrar decisiones de arquitectura y stack. Las decisiones formales van en [ADR/](./ADR/).
+Documento para registrar decisiones de arquitectura y stack. Las decisiones formales van en [docs/adr/](./docs/adr/).
 
 ## Pendientes
 
@@ -11,5 +11,5 @@ Documento para registrar decisiones de arquitectura y stack. Las decisiones form
 
 ## Cerradas
 
-- Cliente móvil producto: **Kotlin + Jetpack Compose + Room** — [ADR-001-stack-tecnologico.md](./ADR/ADR-001-stack-tecnologico.md)
+- Cliente móvil producto: **Kotlin + Jetpack Compose + Room**, integración dominio por **`/api/v1`** — [ADR-001-stack-tecnologico.md](./docs/adr/ADR-001-stack-tecnologico.md)
 - Backend datos/auth: **Supabase (Postgres + Auth + RLS)** — mismo ADR

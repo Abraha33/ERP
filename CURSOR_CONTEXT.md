@@ -9,9 +9,9 @@ Este archivo define el contexto operativo del repo para desarrollo con Cursor/IA
 - **Backend principal**: **FastAPI (Python 3.12+)**.
 - **DB principal**: **PostgreSQL en Supabase** (única BD en MVP).
 - **Frontend prioritario (MVP)**: **Web ERP**.
-- **Móvil**: postergado; solo entra por casos concretos con ADR propio.
+- **Móvil (post‑MVP)**: **Android nativo** con **Kotlin**, **Jetpack Compose** y **Android Studio**; proyecto en **`apps/android/`**. Integración de dominio vía **`/api/v1`** (FastAPI) con **JWT de Supabase Auth** — no usar PostgREST ni `anon key` en el APK para tablas de negocio. **Expo / `apps/mobile/`** es solo legado hasta retirada.
 
-Referencia: [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md).
+Referencia: [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md) (revisión 2026-04-18: móvil + API).
 
 ## Stack (decisiones cerradas)
 
@@ -44,6 +44,10 @@ Fuente: ADR-001. Estructura esperada para backend:
 Frontend web (cuando se inicie):
 
 - `apps/web/`: React + TS + Vite.
+
+App móvil de producto (cuando entre en roadmap):
+
+- `apps/android/`: módulo Gradle Kotlin + Compose; cliente HTTP de **`/api/v1`**.
 
 ## Convenciones de nombres
 

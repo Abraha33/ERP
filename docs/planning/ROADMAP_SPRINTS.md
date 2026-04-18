@@ -13,7 +13,7 @@ Este archivo es la **descomposición en sprints** para el arranque. El **plan ma
 | Sprint 6 | Traslape Fase 1 (web) / inicio Fase 2 **ERP básico** |
 | Sprint 7 | Adelanto **CRM**; alcance completo de Fase 4 en el plan maestro |
 
-**Stack canónico:** [ADR-001](../../ADR/ADR-001-stack-tecnologico.md). Offline (**Room** + **WorkManager**) según ADR solo en **Fase 5** del producto; hasta entonces la app usa Supabase online salvo nueva decisión en ADR.
+**Stack canónico:** [ADR-001](../adr/ADR-001-stack-tecnologico.md). Offline (**Room** + **WorkManager**) según ADR solo en **Fase 5** del producto; hasta entonces el cliente Android usa **`/api/v1`** (FastAPI) con red, salvo nueva decisión en ADR.
 
 ## SPRINT 1: FUNDACION (Semana 1-2)
 | Ticket | Tarea | Tech | Horas | Prioridad | Estado (marzo 2026) |

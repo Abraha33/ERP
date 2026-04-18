@@ -1,6 +1,6 @@
 # Stack tecnológico por fase del producto
 
-Este documento **descompone el stack por etapa** del roadmap (14 meses): qué tecnologías entran en juego en cada fase, qué se **añade** respecto a la anterior y qué queda **pendiente de decidir** fuera de [ADR-001](../../ADR/ADR-001-stack-tecnologico.md).
+Este documento **descompone el stack por etapa** del roadmap (14 meses): qué tecnologías entran en juego en cada fase, qué se **añade** respecto a la anterior y qué queda **pendiente de decidir** fuera de [ADR-001](../adr/ADR-001-stack-tecnologico.md).
 
 **Línea base aceptada** (ADR-001 + revisión **2026-04-08**; detalle en [CURSOR_CONTEXT.md](../../CURSOR_CONTEXT.md)):
 
@@ -52,9 +52,9 @@ Objetivo: operaciones de campo (recepción, traslados, conteos, arqueo) alimenta
 
 | Capa | Tecnologías | Notas |
 |------|-------------|--------|
-| **App móvil** | Kotlin, Jetpack Compose, Room (cache), Supabase Kotlin | Proyecto en `apps/android/`; emulador o dispositivo físico. |
-| **Backend cloud + contrato de app** | Supabase (Postgres, Auth, RLS, Storage, **Realtime**, **RPC**) | Lectura/escritura desde la app con **SDK** y RLS; reglas transaccionales en **RPC** cuando el flujo lo requiera. |
-| **Jobs / hosting extra** | **Edge Functions** (webhooks, tareas cortas); **FastAPI** solo si un job exige servidor Python persistente | Criterio en [ADR-001](../../ADR/ADR-001-stack-tecnologico.md). |
+| **App móvil** | Kotlin, Jetpack Compose, Room (cache), **Retrofit/Ktor → `/api/v1`** | Proyecto en `apps/android/` (Android Studio); emulador o dispositivo físico. |
+| **Backend cloud + contrato de app** | **FastAPI** (`/api/v1`) + **Supabase** (Postgres, Auth, RLS, Storage, **Realtime**, **RPC**) | La app **no** usa PostgREST para dominio ERP; JWT Supabase hacia FastAPI; RLS sigue en Postgres para otros consumidores. |
+| **Jobs / hosting extra** | **Edge Functions** (webhooks, tareas cortas); **FastAPI** solo si un job exige servidor Python persistente | Criterio en [ADR-001](../adr/ADR-001-stack-tecnologico.md). |
 | **Scraper / UI legacy (opcional)** | Python 3.12, Playwright | `tools/scraper/`; solo cuando el SAE no entregue datos por archivo. |
 | **Importación / exportación SAE** | **Scripts Python** (CSV/XLS ↔ Supabase por API o Postgres directo) | Sin obligación de exponer FastAPI para este flujo; alineado a T1.1.5–T1.1.6. |
 | **Observabilidad mínima** | Logs Supabase, GitHub Actions (CI básico) | Tests smoke según madurez. |
@@ -137,5 +137,5 @@ Objetivo: la app de campo **funciona sin internet** y sincroniza con el cloud si
 
 - [ROADMAP.md](../../ROADMAP.md) — plan maestro: fases 0–5 y tickets T0.x–T5.x.
 - [ROADMAP_SPRINTS.md](../planning/ROADMAP_SPRINTS.md) — vista por sprints T01–T35 (arranque).
-- [ADR-001](../../ADR/ADR-001-stack-tecnologico.md) — decisión única del stack base.
+- [ADR-001](../adr/ADR-001-stack-tecnologico.md) — decisión única del stack base.
 - [docs/Esqueleto.md](./Esqueleto.md) — alcance funcional por módulo.

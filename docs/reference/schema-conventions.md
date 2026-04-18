@@ -217,5 +217,5 @@ CREATE TABLE public.profiles (
 
 - [Esqueleto.md](./Esqueleto.md) — módulos ERP + CRM y flujos de negocio.
 - [SECURITY_POLICIES.md](./SECURITY_POLICIES.md) — políticas RLS (borrador / evolución).
-- [ADR-001](../../ADR/ADR-001-stack-tecnologico.md) — stack y reglas globales.
+- [ADR-001](../adr/ADR-001-stack-tecnologico.md) — stack y reglas globales.
 - `.cursor/rules/project.mdc` — reglas críticas de BD y monorepo.

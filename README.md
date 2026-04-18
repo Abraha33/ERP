@@ -1,7 +1,7 @@
 # ERP Satelite Operativa
 
 Sistema empresarial completo (ERP + CRM) construido por un solo founder en 14 meses.
-Stack: **Kotlin + Jetpack Compose + Room** (Android) + **Supabase** (Postgres, RLS, **Realtime**, **RPC**) + **scripts Python** (`scripts/sae/`, CSV/XLS ↔ Supabase) + **Playwright** opcional en `tools/scraper/`; **FastAPI** en `tools/worker/` solo si un job lo requiere; offline **Room + WorkManager** en Fase 5. Detalle: [ADR-001](./ADR/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md). Variables: [`.env.example`](./.env.example).
+Stack: **FastAPI** (`/api/v1`) + **Supabase** (Postgres, RLS, Auth) + **Web ERP** (React/TS) + **Android nativo** (**Kotlin**, **Compose**, **Room** en `apps/android/`, cliente de **`/api/v1`**) + **scripts Python** (`scripts/sae/`) + **Playwright** opcional en `tools/scraper/`; **FastAPI** en `tools/worker/` solo si un job lo requiere; offline **Room + WorkManager** en Fase 5. Detalle: [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md) y [STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md). Variables: [`.env.example`](./.env.example).
 
 **Plan maestro del producto** (fases 0–5: fundación, App Satélite, ERP básico, ERP completo, CRM, offline): **[ROADMAP.md](./ROADMAP.md)**. **Vista por sprints** (T01–T35, arranque): [docs/ROADMAP_SPRINTS.md](./docs/ROADMAP_SPRINTS.md).
 
@@ -265,13 +265,13 @@ Monolito modular o servicios separados (API ERP, CRM, workers). Ver [docs/Esquel
 
 ## 10. Tech Stack confirmado
 
-Decisión **ACEPTADA** en [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (revisión **2026-04-08**): **Kotlin**, **Jetpack Compose**, **Room**, **Supabase Kotlin** + mismo backend Supabase (Auth, Postgres, RLS, Storage, **Realtime**, **RPC**); integración **SAE** vía **scripts Python**; **FastAPI** en `tools/worker/` **opcional**; **Playwright** en `tools/scraper/` si hace falta UI legacy; **GitHub Actions** + Gradle cuando exista `apps/android/`. Desglose por fase: **[docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md)**. **Conexión real** (proyecto Supabase + `.env` relleno) y **Excel SAE**: **en progreso** — §16.
+Decisión **ACEPTADA** en [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md) (revisión **2026-04-18**): **FastAPI** como API de negocio (`/api/v1`); **Supabase** (Auth JWT, Postgres, RLS, Storage, **Realtime**, **RPC**); **Android** (**Kotlin**, **Compose**, **Room**) vía **`/api/v1`** (no PostgREST en APK para dominio ERP); integración **SAE** vía **scripts Python**; **FastAPI** en `tools/worker/` **opcional**; **Playwright** en `tools/scraper/` si hace falta UI legacy; **GitHub Actions** + Gradle cuando exista `apps/android/`. Desglose por fase: **[docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md)**. **Conexión real** (proyecto Supabase + `.env` relleno) y **Excel SAE**: **en progreso** — §16.
 
 ---
 
 ## 11. Decisiones tecnicas pendientes
 
-La **base** del stack está cerrada (ADR-001). Pendientes típicos por etapa: BI, fiscal electrónico, librería de gráficos, proveedor de transcripción, etc. → ver columnas *A definir* en [STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md) o nuevos ADR cuando entren en alcance. Ver también [ADR/](./ADR/) y `DECISIONS.md` si existe.
+La **base** del stack está cerrada (ADR-001). Pendientes típicos por etapa: BI, fiscal electrónico, librería de gráficos, proveedor de transcripción, etc. → ver columnas *A definir* en [STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md) o nuevos ADR cuando entren en alcance. Ver también [docs/adr/](./docs/adr/) y `DECISIONS.md` si existe.
 
 ---
 
@@ -343,7 +343,7 @@ ERP1/                     # Raiz del monorepo (ver README.md aqui)
 |------|--------|--------|--------|
 | 1 | T0.1.1 | Repo + ramas `main` / `develop` ([§3.2](#32-ramas-git-solo-main-y-develop)). | Hecho |
 | 2 | T0.1.2 | Crear proyecto en [Supabase](https://supabase.com); copiar URL y keys. | **En progreso** |
-| 3 | T0.1.3 | Revisar [ADR-001](./ADR/ADR-001-stack-tecnologico.md) (stack aceptado). | Hecho |
+| 3 | T0.1.3 | Revisar [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md) (stack aceptado). | Hecho |
 | 4 | T0.1.4 | `cp .env.example .env` (o equivalente en Windows) y rellenar **sin** subir `.env`. | **En progreso** |
 | 5 | T0.1.5–T0.1.6 | [docs/legacy/EXCEL_ANALYSIS.md](./docs/legacy/EXCEL_ANALYSIS.md) + [docs/reference/SAE_DATA_MAPPING.md](./docs/reference/SAE_DATA_MAPPING.md) al tener export del SAE. | **En progreso** |
 | 6 | T0.1.7 | [CURSOR_CONTEXT.md](./CURSOR_CONTEXT.md) alineado con ADR (ya referenciado). | Hecho |
@@ -417,7 +417,7 @@ Cada fase del roadmap usa un **subconjunto** del stack total; así evitas adelan
 | **4** CRM | WhatsApp Cloud API, workers, transcripción; inbox en la misma app. |
 | **5** Offline-first | **Room** + **WorkManager**, sync, conflictos; cloud sigue siendo Supabase. |
 
-Detalle tabla por tabla: **[docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md)**. Cierra opciones globales en [ADR-001](./ADR/ADR-001-stack-tecnologico.md).
+Detalle tabla por tabla: **[docs/reference/STACK_POR_FASE.md](./docs/reference/STACK_POR_FASE.md)**. Cierra opciones globales en [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md).
 
 ---
 
