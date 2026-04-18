@@ -25,7 +25,9 @@ build/
 # IDEs & local tooling
 .idea/
 .vscode/
-.cursor/
+# .cursor/ tracked intentionally (agent context, rules, skills)
+.cursor/local/
+.cursor/cache/
 .trae/
 .windsurf/
 .snapshots/
@@ -33,7 +35,7 @@ build/
 .DS_Store
 
 # Expo / Metro (future - Fase 6+)
-erp-satelite/.expo/
-erp-satelite/dist/
-erp-satelite/web-build/
-erp-satelite/.metro-health-check*
+.expo/
+dist/
+web-build/
+.metro-health-check*
