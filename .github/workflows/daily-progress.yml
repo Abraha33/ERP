@@ -265,14 +265,7 @@ jobs:
 
             for issue in $issues; do
               local body
-              body=$(
-                cat <<EOF
-### Progreso diario (push en \`$branch\`)
-
-
-$commit_lines
-EOF
-              )
+              body="### Progreso diario (push en \`$branch\`)\n\n$commit_lines"
 
 
               gh issue comment "$issue" --repo "$REPO_FULL" --body "$body"
@@ -388,20 +381,7 @@ EOF
               fi
 
 
-              body=$(
-                cat <<EOF
-### Resumen diario (ultimas 24h)
-
-
-**Issue:** #$issue_number — $issue_title  
-**Estado actual en Project:** $status_name  
-**Quienes committearon:** $authors
-
-
-**Que cambio:**
-$changed_block
-EOF
-              )
+              body="### Resumen diario (ultimas 24h)\n\n**Issue:** #$issue_number — $issue_title\n**Estado actual en Project:** $status_name\n**Quienes committearon:** $authors\n\n**Que cambio:**\n$changed_block"
 
 
               gh issue comment "$issue_number" --repo "$REPO_FULL" --body "$body"
