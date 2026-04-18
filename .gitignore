@@ -13,12 +13,6 @@ __pycache__/
 *.pyc
 .Python
 
-# Expo / Metro (monorepo)
-apps/mobile/.expo/
-apps/mobile/dist/
-apps/mobile/web-build/
-apps/mobile/.metro-health-check*
-
 # Build outputs
 dist/
 build/
@@ -28,9 +22,18 @@ build/
 .atl/
 .agents/
 
-# IDEs
+# IDEs & local tooling
 .idea/
 .vscode/
+.cursor/
+.trae/
+.windsurf/
+.snapshots/
 *.iml
 .DS_Store
-.windsurf/
+
+# Expo / Metro (future - Fase 6+)
+erp-satelite/.expo/
+erp-satelite/dist/
+erp-satelite/web-build/
+erp-satelite/.metro-health-check*
