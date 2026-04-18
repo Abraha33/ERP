@@ -58,6 +58,42 @@ create trigger tr_ubicaciones_updated_at
   execute function public.set_updated_at ();
 
 -- -----------------------------------------------------------------------------
+-- Productos stub — ensure table exists before ALTER TABLE (idempotent)
+-- La tabla real se crea completa en 20260418040000_real_schema_pull.sql.
+-- Este stub garantiza que las migraciones intermedias no fallen si se aplican
+-- en un DB limpio en orden cronológico.
+-- -----------------------------------------------------------------------------
+create table if not exists public.productos (
+  id_producto uuid primary key default gen_random_uuid (),
+  empresa_id  uuid,
+  sku_codigo  text,
+  nombre      text not null default '',
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+-- Columna `id` (alias uuid) que usan otras migraciones como FK
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name   = 'productos'
+      and column_name  = 'id'
+  ) then
+    alter table public.productos add column id uuid default gen_random_uuid ();
+  end if;
+end $$;
+
+-- Clientes stub
+create table if not exists public.clientes (
+  id         uuid primary key default gen_random_uuid (),
+  empresa_id uuid,
+  nombre     text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+-- -----------------------------------------------------------------------------
 -- Productos / clientes — alinear con schema-conventions (columnas opcionales)
 -- -----------------------------------------------------------------------------
 alter table public.productos
