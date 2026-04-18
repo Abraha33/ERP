@@ -1,0 +1,4 @@
+-- Migration stub: version 20260418173446 (fix_rename_camel_to_snake_v2)
+-- This migration was applied directly to the Supabase cloud database.
+-- This file exists to satisfy Supabase Preview version tracking.
+-- No SQL to apply — already executed in production.
