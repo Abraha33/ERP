@@ -36,16 +36,23 @@ jobs:
         with:
           version: latest
 
-      - name: Verify DB secret
+      - name: Verify & normalize DB URL
         run: |
           if [ -z "${SUPABASE_DB_URL}" ]; then
             echo "Missing secret SUPABASE_DB_URL"
-            echo "Create it in: Settings -> Secrets and variables -> Actions."
             exit 1
           fi
+          # Normalize: ensure format is postgresql://postgres:[password]@host
+          # If URL has no user (postgresql://[password]@host), inject postgres:
+          DB_URL="${SUPABASE_DB_URL}"
+          if echo "$DB_URL" | grep -qE '^postgresql://[^:@/]+@'; then
+            # Has user but no password separator — prepend postgres:
+            DB_URL=$(echo "$DB_URL" | sed 's|postgresql://|postgresql://postgres:|')
+          fi
+          echo "DB_URL_NORMALIZED=$DB_URL" >> "$GITHUB_ENV"
 
       - name: Push migrations to Supabase
-        run: supabase db push --db-url "${SUPABASE_DB_URL}" --include-all --yes
+        run: supabase db push --db-url "${DB_URL_NORMALIZED}" --include-all --yes
 
   functions_deploy:
     if: github.event_name == 'push' || inputs.deploy_functions == 'true'
