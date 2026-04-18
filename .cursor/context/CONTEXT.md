@@ -15,7 +15,7 @@ Referencia: [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md) (revisión 2026-0
 
 ## Stack (decisiones cerradas)
 
-- **Backend**: FastAPI + Pydantic; ejecución en contenedor (Docker) para dev/staging/prod.
+- **Backend**: FastAPI + Pydantic (`backend/`). Módulos: auth, catalog, inventory, purchases, sales, workers (job consumer in-process).
 - **DB**: Supabase Postgres + Supabase Auth; RLS en tablas expuestas.
 - **Frontend Web**: **React + TypeScript + Vite** (ERP web). (No se negocia en MVP: el primer cliente es web.)
 - **Testing**: `pytest` obligatorio en lógica crítica (unit + integration).
