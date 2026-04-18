@@ -1,3 +1,18 @@
+-- Supabase roles: ensure they exist for CI/vanilla Postgres compatibility
+do $$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'anon') then
+    create role anon nologin noinherit;
+  end if;
+  if not exists (select 1 from pg_roles where rolname = 'authenticated') then
+    create role authenticated nologin noinherit;
+  end if;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then
+    create role service_role nologin noinherit bypassrls;
+  end if;
+end
+$$;
+
 -- Migración 0001: profiles, empresa, sucursal base + RLS
 -- Aplicar con: supabase db push
 
