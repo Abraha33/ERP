@@ -26,6 +26,7 @@ jobs:
   db_push:
     if: github.event_name == 'push' || inputs.deploy_db == 'true'
     runs-on: ubuntu-latest
+    environment: SUPABASE_DEPLOY
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
     steps:
@@ -49,6 +50,7 @@ jobs:
   functions_deploy:
     if: github.event_name == 'push' || inputs.deploy_functions == 'true'
     runs-on: ubuntu-latest
+    environment: SUPABASE_DEPLOY
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
@@ -66,7 +68,9 @@ jobs:
             exit 1
           fi
 
-          PROJECT_REF="${SUPABASE_PROJECT_REF:-fwegtmgcuuyjryffkmxb}"
+          # Extract ref from full URL if needed (e.g. https://fwegtmgcuuyjryffkmxb.supabase.co)
+          RAW_REF="${SUPABASE_PROJECT_REF:-fwegtmgcuuyjryffkmxb}"
+          PROJECT_REF=$(echo "$RAW_REF" | sed 's|https\?://||;s|\.supabase\.co.*||')
           echo "PROJECT_REF=${PROJECT_REF}" >> "$GITHUB_ENV"
 
       - name: Deploy all Edge Functions
