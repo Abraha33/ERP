@@ -1,0 +1,4 @@
+-- Migration stub: version 20260417002800 (erp_proveedores_compras_traslados)
+-- This migration was applied directly to the Supabase cloud database.
+-- This file exists to satisfy Supabase Preview version tracking.
+-- No SQL to apply — already executed in production.
