@@ -1,5 +1,0 @@
-# Repositorios donde crear milestones del roadmap y sincronizar issues.
-# Una línea por repo: Owner/nombre. Líneas en blanco o con # se ignoran.
-# Tras añadir un repo aquí, enlázalo al Project 11 (vista web o `gh project link`, ver docs/GITHUB_PROJECTS.md).
-
-Abraha33/erp-satelite
