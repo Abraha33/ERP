@@ -7099,47 +7099,72 @@ CREATE OR REPLACE TRIGGER "trg_user_sucursales_updated_at" BEFORE UPDATE ON "pub
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."arqueos_caja"
     ADD CONSTRAINT "arqueos_caja_cajaid_fkey" FOREIGN KEY ("cajaid") REFERENCES "public"."cajas"("id") ON DELETE SET NULL;
-
-
-
-ALTER TABLE ONLY "public"."arqueos_caja"
-    ADD CONSTRAINT "arqueos_caja_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."arqueos_caja"
-    ADD CONSTRAINT "arqueos_caja_jornadaid_fkey" FOREIGN KEY ("jornadaid") REFERENCES "public"."jornadas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."arqueos_caja"
-    ADD CONSTRAINT "arqueos_caja_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."arqueos_caja"
-    ADD CONSTRAINT "arqueos_caja_turnoid_fkey" FOREIGN KEY ("turnoid") REFERENCES "public"."turnos"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."arqueos_efectivo_detalle"
-    ADD CONSTRAINT "arqueos_efectivo_detalle_arqueoid_fkey" FOREIGN KEY ("arqueoid") REFERENCES "public"."arqueos_caja"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."arqueos_otros_medios"
-    ADD CONSTRAINT "arqueos_otros_medios_arqueoid_fkey" FOREIGN KEY ("arqueoid") REFERENCES "public"."arqueos_caja"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."audit_log"
-    ADD CONSTRAINT "audit_log_empresa_id_fkey" FOREIGN KEY ("empresa_id") REFERENCES "public"."empresas"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."arqueos_caja"
+    ADD CONSTRAINT "arqueos_caja_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."arqueos_caja"
+    ADD CONSTRAINT "arqueos_caja_jornadaid_fkey" FOREIGN KEY ("jornadaid") REFERENCES "public"."jornadas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."arqueos_caja"
+    ADD CONSTRAINT "arqueos_caja_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."arqueos_caja"
+    ADD CONSTRAINT "arqueos_caja_turnoid_fkey" FOREIGN KEY ("turnoid") REFERENCES "public"."turnos"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."arqueos_efectivo_detalle"
+    ADD CONSTRAINT "arqueos_efectivo_detalle_arqueoid_fkey" FOREIGN KEY ("arqueoid") REFERENCES "public"."arqueos_caja"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."arqueos_otros_medios"
+    ADD CONSTRAINT "arqueos_otros_medios_arqueoid_fkey" FOREIGN KEY ("arqueoid") REFERENCES "public"."arqueos_caja"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."audit_log"
+    ADD CONSTRAINT "audit_log_empresa_id_fkey" FOREIGN KEY ("empresa_id") REFERENCES "public"."empresas"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."bodegas"
 ALTER TABLE ONLY "public"."bodegas"
     ADD CONSTRAINT "bodegas_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7149,23 +7174,31 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."bodegas"
+ALTER TABLE ONLY "public"."bodegas"
     ADD CONSTRAINT "bodegas_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."cajas"
     ADD CONSTRAINT "cajas_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."cajas"
-    ADD CONSTRAINT "cajas_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."cajas"
+    ADD CONSTRAINT "cajas_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."categorias_producto"
 ALTER TABLE ONLY "public"."categorias_producto"
     ADD CONSTRAINT "categorias_producto_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7175,6 +7208,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."categoriasproducto"
+ALTER TABLE ONLY "public"."categoriasproducto"
     ADD CONSTRAINT "categoriasproducto_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7183,18 +7217,23 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."categoriasproducto"
+ALTER TABLE ONLY "public"."categoriasproducto"
     ADD CONSTRAINT "categoriasproducto_parentid_fkey" FOREIGN KEY ("parentid") REFERENCES "public"."categoriasproducto"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."compras_detalle"
     ADD CONSTRAINT "compras_detalle_id_compra_fkey" FOREIGN KEY ("id_compra") REFERENCES "public"."compras_encabezado"("id_compra") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."compras_detalle"
 ALTER TABLE ONLY "public"."compras_detalle"
     ADD CONSTRAINT "compras_detalle_id_producto_fkey" FOREIGN KEY ("id_producto") REFERENCES "public"."productos"("id_producto");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7204,23 +7243,31 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."compras_encabezado"
+ALTER TABLE ONLY "public"."compras_encabezado"
     ADD CONSTRAINT "compras_encabezado_id_proveedor_fkey" FOREIGN KEY ("id_proveedor") REFERENCES "public"."proveedores"("id_tercero");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."config_app_empresas"
     ADD CONSTRAINT "config_app_empresas_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."config_tipos_voucher"
-    ADD CONSTRAINT "config_tipos_voucher_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."config_tipos_voucher"
+    ADD CONSTRAINT "config_tipos_voucher_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."cubiculosfila"
 ALTER TABLE ONLY "public"."cubiculosfila"
     ADD CONSTRAINT "cubiculosfila_filaid_fkey" FOREIGN KEY ("filaid") REFERENCES "public"."filasestanteria"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7230,18 +7277,23 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."estanterias"
+ALTER TABLE ONLY "public"."estanterias"
     ADD CONSTRAINT "estanterias_zonaid_fkey" FOREIGN KEY ("zonaid") REFERENCES "public"."zonasbodega"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."facturasVentaLineas"
     ADD CONSTRAINT "facturasVentaLineas_facturaVentaId_fkey" FOREIGN KEY ("facturaVentaId") REFERENCES "public"."facturasVenta"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."facturascompra"
 ALTER TABLE ONLY "public"."facturascompra"
     ADD CONSTRAINT "facturascompra_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7251,6 +7303,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."facturascompra"
+ALTER TABLE ONLY "public"."facturascompra"
     ADD CONSTRAINT "facturascompra_proveedorid_fkey" FOREIGN KEY ("proveedorid") REFERENCES "public"."proveedores"("id_tercero");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7258,6 +7311,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."facturascompra"
 ALTER TABLE ONLY "public"."facturascompra"
     ADD CONSTRAINT "facturascompra_recepcionid_fkey" FOREIGN KEY ("recepcionid") REFERENCES "public"."recepcionescompra"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7267,6 +7321,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."facturascompra"
+ALTER TABLE ONLY "public"."facturascompra"
     ADD CONSTRAINT "facturascompra_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7274,6 +7329,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."facturascompradetalle"
 ALTER TABLE ONLY "public"."facturascompradetalle"
     ADD CONSTRAINT "facturascompradetalle_facturaid_fkey" FOREIGN KEY ("facturaid") REFERENCES "public"."facturascompra"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7283,6 +7339,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."facturascompradetalle"
+ALTER TABLE ONLY "public"."facturascompradetalle"
     ADD CONSTRAINT "facturascompradetalle_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos_erp"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7290,6 +7347,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."facturascompradetalle"
 ALTER TABLE ONLY "public"."facturascompradetalle"
     ADD CONSTRAINT "facturascompradetalle_recepciondetalleid_fkey" FOREIGN KEY ("recepciondetalleid") REFERENCES "public"."recepcionescompradetalle"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7299,6 +7357,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."facturascompradetalle"
+ALTER TABLE ONLY "public"."facturascompradetalle"
     ADD CONSTRAINT "facturascompradetalle_unidadid_fkey" FOREIGN KEY ("unidadid") REFERENCES "public"."unidadesmedida"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7307,33 +7366,47 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."filasestanteria"
+ALTER TABLE ONLY "public"."filasestanteria"
     ADD CONSTRAINT "filasestanteria_estanteriaid_fkey" FOREIGN KEY ("estanteriaid") REFERENCES "public"."estanterias"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."import_errors"
     ADD CONSTRAINT "import_errors_import_id_fkey" FOREIGN KEY ("import_id") REFERENCES "public"."import_log"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."import_log"
-    ADD CONSTRAINT "import_log_empresa_id_fkey" FOREIGN KEY ("empresa_id") REFERENCES "public"."empresas"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."jornadas"
-    ADD CONSTRAINT "jornadas_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."jornadas"
-    ADD CONSTRAINT "jornadas_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."import_log"
+    ADD CONSTRAINT "import_log_empresa_id_fkey" FOREIGN KEY ("empresa_id") REFERENCES "public"."empresas"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."jornadas"
+    ADD CONSTRAINT "jornadas_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."jornadas"
+    ADD CONSTRAINT "jornadas_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."listasprecios"
 ALTER TABLE ONLY "public"."listasprecios"
     ADD CONSTRAINT "listasprecios_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7343,6 +7416,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."listaspreciosdetalle"
+ALTER TABLE ONLY "public"."listaspreciosdetalle"
     ADD CONSTRAINT "listaspreciosdetalle_listaid_fkey" FOREIGN KEY ("listaid") REFERENCES "public"."listasprecios"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7350,6 +7424,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."listaspreciosdetalle"
 ALTER TABLE ONLY "public"."listaspreciosdetalle"
     ADD CONSTRAINT "listaspreciosdetalle_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos_erp"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7359,6 +7434,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."marcas"
+ALTER TABLE ONLY "public"."marcas"
     ADD CONSTRAINT "marcas_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7367,18 +7443,23 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."misiones_conteo_detalle"
+ALTER TABLE ONLY "public"."misiones_conteo_detalle"
     ADD CONSTRAINT "misiones_conteo_detalle_id_producto_fkey" FOREIGN KEY ("id_producto") REFERENCES "public"."productos"("id_producto");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."misiones_conteo_detalle"
     ADD CONSTRAINT "misiones_conteo_detalle_mision_id_fkey" FOREIGN KEY ("mision_id") REFERENCES "public"."misiones_conteo"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."misiones_conteo_detalle"
 ALTER TABLE ONLY "public"."misiones_conteo_detalle"
     ADD CONSTRAINT "misiones_conteo_detalle_unidadid_fkey" FOREIGN KEY ("unidadid") REFERENCES "public"."unidadesmedida"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7388,38 +7469,55 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."misiones_conteo"
+ALTER TABLE ONLY "public"."misiones_conteo"
     ADD CONSTRAINT "misiones_conteo_zonaid_fkey" FOREIGN KEY ("zonaid") REFERENCES "public"."zonasbodega"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."movimientos_caja"
     ADD CONSTRAINT "movimientos_caja_cajaid_fkey" FOREIGN KEY ("cajaid") REFERENCES "public"."cajas"("id") ON DELETE SET NULL;
-
-
-
-ALTER TABLE ONLY "public"."movimientos_caja"
-    ADD CONSTRAINT "movimientos_caja_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."movimientos_caja"
-    ADD CONSTRAINT "movimientos_caja_jornadaid_fkey" FOREIGN KEY ("jornadaid") REFERENCES "public"."jornadas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."movimientos_caja"
-    ADD CONSTRAINT "movimientos_caja_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."movimientos_caja"
-    ADD CONSTRAINT "movimientos_caja_turnoid_fkey" FOREIGN KEY ("turnoid") REFERENCES "public"."turnos"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."movimientos_caja"
+    ADD CONSTRAINT "movimientos_caja_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."movimientos_caja"
+    ADD CONSTRAINT "movimientos_caja_jornadaid_fkey" FOREIGN KEY ("jornadaid") REFERENCES "public"."jornadas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."movimientos_caja"
+    ADD CONSTRAINT "movimientos_caja_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."movimientos_caja"
+    ADD CONSTRAINT "movimientos_caja_turnoid_fkey" FOREIGN KEY ("turnoid") REFERENCES "public"."turnos"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."movimientosinventario"
 ALTER TABLE ONLY "public"."movimientosinventario"
     ADD CONSTRAINT "movimientosinventario_bodegadestinoid_fkey" FOREIGN KEY ("bodegadestinoid") REFERENCES "public"."bodegas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7429,6 +7527,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."movimientosinventario"
+ALTER TABLE ONLY "public"."movimientosinventario"
     ADD CONSTRAINT "movimientosinventario_bodegaorigenid_fkey" FOREIGN KEY ("bodegaorigenid") REFERENCES "public"."bodegas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7436,6 +7535,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."movimientosinventario"
 ALTER TABLE ONLY "public"."movimientosinventario"
     ADD CONSTRAINT "movimientosinventario_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos_erp"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7445,6 +7545,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."movimientosinventario"
+ALTER TABLE ONLY "public"."movimientosinventario"
     ADD CONSTRAINT "movimientosinventario_unidadid_fkey" FOREIGN KEY ("unidadid") REFERENCES "public"."unidadesmedida"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7453,28 +7554,39 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."notificaciones_usuario"
+ALTER TABLE ONLY "public"."notificaciones_usuario"
     ADD CONSTRAINT "notificaciones_usuario_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."novedades_inventario"
     ADD CONSTRAINT "novedades_inventario_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."novedades_inventario"
-    ADD CONSTRAINT "novedades_inventario_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos"("id_producto") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."novedades_inventario"
-    ADD CONSTRAINT "novedades_inventario_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."novedades_inventario"
+    ADD CONSTRAINT "novedades_inventario_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos"("id_producto") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."novedades_inventario"
+    ADD CONSTRAINT "novedades_inventario_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."oc_recepcion_anomalias"
 ALTER TABLE ONLY "public"."oc_recepcion_anomalias"
     ADD CONSTRAINT "oc_recepcion_anomalias_id_producto_fkey" FOREIGN KEY ("id_producto") REFERENCES "public"."productos"("id_producto");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7482,37 +7594,56 @@ END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."oc_recepcion_anomalias"
     ADD CONSTRAINT "oc_recepcion_anomalias_id_recepcion_fkey" FOREIGN KEY ("id_recepcion") REFERENCES "public"."oc_recepciones"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."oc_recepcion_conteo"
-    ADD CONSTRAINT "oc_recepcion_conteo_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos"("id_producto") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."oc_recepcion_conteo"
-    ADD CONSTRAINT "oc_recepcion_conteo_recepcionid_fkey" FOREIGN KEY ("recepcionid") REFERENCES "public"."oc_recepciones"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."oc_recepcion_fotos"
-    ADD CONSTRAINT "oc_recepcion_fotos_id_recepcion_fkey" FOREIGN KEY ("id_recepcion") REFERENCES "public"."oc_recepciones"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."oc_recepciones"
-    ADD CONSTRAINT "oc_recepciones_id_orden_compra_fkey" FOREIGN KEY ("id_orden_compra") REFERENCES "public"."ordenes_compra_encabezado"("id_orden_compra") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."ordenes_compra_detalle"
-    ADD CONSTRAINT "ordenes_compra_detalle_id_orden_compra_fkey" FOREIGN KEY ("id_orden_compra") REFERENCES "public"."ordenes_compra_encabezado"("id_orden_compra") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."oc_recepcion_conteo"
+    ADD CONSTRAINT "oc_recepcion_conteo_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos"("id_producto") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."oc_recepcion_conteo"
+    ADD CONSTRAINT "oc_recepcion_conteo_recepcionid_fkey" FOREIGN KEY ("recepcionid") REFERENCES "public"."oc_recepciones"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."oc_recepcion_fotos"
+    ADD CONSTRAINT "oc_recepcion_fotos_id_recepcion_fkey" FOREIGN KEY ("id_recepcion") REFERENCES "public"."oc_recepciones"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."oc_recepciones"
+    ADD CONSTRAINT "oc_recepciones_id_orden_compra_fkey" FOREIGN KEY ("id_orden_compra") REFERENCES "public"."ordenes_compra_encabezado"("id_orden_compra") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."ordenes_compra_detalle"
+    ADD CONSTRAINT "ordenes_compra_detalle_id_orden_compra_fkey" FOREIGN KEY ("id_orden_compra") REFERENCES "public"."ordenes_compra_encabezado"("id_orden_compra") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."ordenes_compra_detalle"
 ALTER TABLE ONLY "public"."ordenes_compra_detalle"
     ADD CONSTRAINT "ordenes_compra_detalle_id_producto_fkey" FOREIGN KEY ("id_producto") REFERENCES "public"."productos"("id_producto");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7522,6 +7653,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."ordenes_compra_encabezado"
+ALTER TABLE ONLY "public"."ordenes_compra_encabezado"
     ADD CONSTRAINT "ordenes_compra_encabezado_id_proveedor_fkey" FOREIGN KEY ("id_proveedor") REFERENCES "public"."proveedores"("id_tercero");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7529,6 +7661,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."ordenescompra"
 ALTER TABLE ONLY "public"."ordenescompra"
     ADD CONSTRAINT "ordenescompra_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7538,6 +7671,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."ordenescompra"
+ALTER TABLE ONLY "public"."ordenescompra"
     ADD CONSTRAINT "ordenescompra_proveedorid_fkey" FOREIGN KEY ("proveedorid") REFERENCES "public"."proveedores"("id_tercero");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7545,6 +7679,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."ordenescompra"
 ALTER TABLE ONLY "public"."ordenescompra"
     ADD CONSTRAINT "ordenescompra_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7554,6 +7689,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."ordenescompradetalle"
+ALTER TABLE ONLY "public"."ordenescompradetalle"
     ADD CONSTRAINT "ordenescompradetalle_ordenid_fkey" FOREIGN KEY ("ordenid") REFERENCES "public"."ordenescompra"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7561,6 +7697,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."ordenescompradetalle"
 ALTER TABLE ONLY "public"."ordenescompradetalle"
     ADD CONSTRAINT "ordenescompradetalle_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos_erp"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7570,18 +7707,23 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."ordenescompradetalle"
+ALTER TABLE ONLY "public"."ordenescompradetalle"
     ADD CONSTRAINT "ordenescompradetalle_unidadid_fkey" FOREIGN KEY ("unidadid") REFERENCES "public"."unidadesmedida"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."pagos_compras"
     ADD CONSTRAINT "pagos_compras_turno_id_fkey" FOREIGN KEY ("turno_id") REFERENCES "public"."turnos_caja"("id") ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."producto_codigos_externos"
 ALTER TABLE ONLY "public"."producto_codigos_externos"
     ADD CONSTRAINT "producto_codigos_externos_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos_erp"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7591,6 +7733,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."productos_erp"
+ALTER TABLE ONLY "public"."productos_erp"
     ADD CONSTRAINT "productos_erp_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7598,6 +7741,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."productounidades"
 ALTER TABLE ONLY "public"."productounidades"
     ADD CONSTRAINT "productounidades_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos_erp"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7607,6 +7751,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."productounidades"
+ALTER TABLE ONLY "public"."productounidades"
     ADD CONSTRAINT "productounidades_unidadid_fkey" FOREIGN KEY ("unidadid") REFERENCES "public"."unidadesmedida"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7614,6 +7759,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."proveedores_contactos"
 ALTER TABLE ONLY "public"."proveedores_contactos"
     ADD CONSTRAINT "proveedores_contactos_empresa_id_fkey" FOREIGN KEY ("empresa_id") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7623,6 +7769,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."proveedores_contactos"
+ALTER TABLE ONLY "public"."proveedores_contactos"
     ADD CONSTRAINT "proveedores_contactos_proveedorid_fkey" FOREIGN KEY ("proveedorid") REFERENCES "public"."proveedores"("id_tercero");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7630,6 +7777,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."proveedores_documentos"
 ALTER TABLE ONLY "public"."proveedores_documentos"
     ADD CONSTRAINT "proveedores_documentos_empresa_id_fkey" FOREIGN KEY ("empresa_id") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7639,6 +7787,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."proveedores_documentos"
+ALTER TABLE ONLY "public"."proveedores_documentos"
     ADD CONSTRAINT "proveedores_documentos_proveedorid_fkey" FOREIGN KEY ("proveedorid") REFERENCES "public"."proveedores"("id_tercero");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7646,6 +7795,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."proveedores_evaluaciones"
 ALTER TABLE ONLY "public"."proveedores_evaluaciones"
     ADD CONSTRAINT "proveedores_evaluaciones_empresa_id_fkey" FOREIGN KEY ("empresa_id") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7655,6 +7805,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."proveedores_evaluaciones"
+ALTER TABLE ONLY "public"."proveedores_evaluaciones"
     ADD CONSTRAINT "proveedores_evaluaciones_proveedorid_fkey" FOREIGN KEY ("proveedorid") REFERENCES "public"."proveedores"("id_tercero");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7662,6 +7813,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."recepcionescompra"
 ALTER TABLE ONLY "public"."recepcionescompra"
     ADD CONSTRAINT "recepcionescompra_bodegaid_fkey" FOREIGN KEY ("bodegaid") REFERENCES "public"."bodegas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7671,6 +7823,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."recepcionescompra"
+ALTER TABLE ONLY "public"."recepcionescompra"
     ADD CONSTRAINT "recepcionescompra_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7678,6 +7831,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."recepcionescompra"
 ALTER TABLE ONLY "public"."recepcionescompra"
     ADD CONSTRAINT "recepcionescompra_ordenid_fkey" FOREIGN KEY ("ordenid") REFERENCES "public"."ordenescompra"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7687,6 +7841,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."recepcionescompra"
+ALTER TABLE ONLY "public"."recepcionescompra"
     ADD CONSTRAINT "recepcionescompra_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7694,6 +7849,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."recepcionescompradetalle"
 ALTER TABLE ONLY "public"."recepcionescompradetalle"
     ADD CONSTRAINT "recepcionescompradetalle_ordendetalleid_fkey" FOREIGN KEY ("ordendetalleid") REFERENCES "public"."ordenescompradetalle"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7703,6 +7859,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."recepcionescompradetalle"
+ALTER TABLE ONLY "public"."recepcionescompradetalle"
     ADD CONSTRAINT "recepcionescompradetalle_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos_erp"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7710,6 +7867,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."recepcionescompradetalle"
 ALTER TABLE ONLY "public"."recepcionescompradetalle"
     ADD CONSTRAINT "recepcionescompradetalle_recepcionid_fkey" FOREIGN KEY ("recepcionid") REFERENCES "public"."recepcionescompra"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7719,73 +7877,111 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."recepcionescompradetalle"
+ALTER TABLE ONLY "public"."recepcionescompradetalle"
     ADD CONSTRAINT "recepcionescompradetalle_unidadid_fkey" FOREIGN KEY ("unidadid") REFERENCES "public"."unidadesmedida"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."role_permissions"
     ADD CONSTRAINT "role_permissions_empresa_id_fkey" FOREIGN KEY ("empresa_id") REFERENCES "public"."empresas"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."roles"
-    ADD CONSTRAINT "roles_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."sucursales"
-    ADD CONSTRAINT "sucursales_empresa_id_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."sugerencias_pedido"
-    ADD CONSTRAINT "sugerencias_pedido_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."sugerencias_pedido"
-    ADD CONSTRAINT "sugerencias_pedido_novedad_fkey" FOREIGN KEY ("novedad_id") REFERENCES "public"."novedades_inventario"("id") ON DELETE SET NULL;
-
-
-
-ALTER TABLE ONLY "public"."sugerencias_pedido"
-    ADD CONSTRAINT "sugerencias_pedido_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos"("id_producto") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."tareas_detalle_traslado"
-    ADD CONSTRAINT "tareas_detalle_traslado_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos"("id_producto") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."tareas_detalle_traslado"
-    ADD CONSTRAINT "tareas_detalle_traslado_tareaid_fkey" FOREIGN KEY ("tareaid") REFERENCES "public"."tareas"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."tareas"
-    ADD CONSTRAINT "tareas_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."tareas"
-    ADD CONSTRAINT "tareas_jornadaid_fkey" FOREIGN KEY ("jornadaid") REFERENCES "public"."jornadas"("id") ON DELETE SET NULL;
-
-
-
-ALTER TABLE ONLY "public"."tareas"
-    ADD CONSTRAINT "tareas_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."tareas"
-    ADD CONSTRAINT "tareas_tipotareaid_fkey" FOREIGN KEY ("tipotareaid") REFERENCES "public"."tipos_tarea"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."roles"
+    ADD CONSTRAINT "roles_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."sucursales"
+    ADD CONSTRAINT "sucursales_empresa_id_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."sugerencias_pedido"
+    ADD CONSTRAINT "sugerencias_pedido_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."sugerencias_pedido"
+    ADD CONSTRAINT "sugerencias_pedido_novedad_fkey" FOREIGN KEY ("novedad_id") REFERENCES "public"."novedades_inventario"("id") ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."sugerencias_pedido"
+    ADD CONSTRAINT "sugerencias_pedido_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos"("id_producto") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."tareas_detalle_traslado"
+    ADD CONSTRAINT "tareas_detalle_traslado_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos"("id_producto") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."tareas_detalle_traslado"
+    ADD CONSTRAINT "tareas_detalle_traslado_tareaid_fkey" FOREIGN KEY ("tareaid") REFERENCES "public"."tareas"("id") ON DELETE CASCADE;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."tareas"
+    ADD CONSTRAINT "tareas_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."tareas"
+    ADD CONSTRAINT "tareas_jornadaid_fkey" FOREIGN KEY ("jornadaid") REFERENCES "public"."jornadas"("id") ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."tareas"
+    ADD CONSTRAINT "tareas_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."tareas"
+    ADD CONSTRAINT "tareas_tipotareaid_fkey" FOREIGN KEY ("tipotareaid") REFERENCES "public"."tipos_tarea"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."tareas_turno"
 ALTER TABLE ONLY "public"."tareas_turno"
     ADD CONSTRAINT "tareas_turno_tipo_tarea_id_fkey" FOREIGN KEY ("tipo_tarea_id") REFERENCES "public"."tipos_tarea_turno"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7793,17 +7989,24 @@ END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."tareas_turno"
     ADD CONSTRAINT "tareas_turno_turno_id_fkey" FOREIGN KEY ("turno_id") REFERENCES "public"."turnos_caja"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."tipos_tarea"
-    ADD CONSTRAINT "tipos_tarea_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."tipos_tarea"
+    ADD CONSTRAINT "tipos_tarea_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."traslados_detalle"
 ALTER TABLE ONLY "public"."traslados_detalle"
     ADD CONSTRAINT "traslados_detalle_productoid_fkey" FOREIGN KEY ("productoid") REFERENCES "public"."productos_erp"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7813,6 +8016,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."traslados_detalle"
+ALTER TABLE ONLY "public"."traslados_detalle"
     ADD CONSTRAINT "traslados_detalle_trasladoid_fkey" FOREIGN KEY ("trasladoid") REFERENCES "public"."traslados_encabezado"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7820,6 +8024,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."traslados_detalle"
 ALTER TABLE ONLY "public"."traslados_detalle"
     ADD CONSTRAINT "traslados_detalle_unidadid_fkey" FOREIGN KEY ("unidadid") REFERENCES "public"."unidadesmedida"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7829,6 +8034,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."traslados_encabezado"
+ALTER TABLE ONLY "public"."traslados_encabezado"
     ADD CONSTRAINT "traslados_encabezado_bodegadestinoid_fkey" FOREIGN KEY ("bodegadestinoid") REFERENCES "public"."bodegas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7836,6 +8042,7 @@ END $$;
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."traslados_encabezado"
 ALTER TABLE ONLY "public"."traslados_encabezado"
     ADD CONSTRAINT "traslados_encabezado_bodegaorigenid_fkey" FOREIGN KEY ("bodegaorigenid") REFERENCES "public"."bodegas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7845,6 +8052,7 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."traslados_encabezado"
+ALTER TABLE ONLY "public"."traslados_encabezado"
     ADD CONSTRAINT "traslados_encabezado_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
@@ -7853,38 +8061,55 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE ONLY "public"."traslados_encabezado"
+ALTER TABLE ONLY "public"."traslados_encabezado"
     ADD CONSTRAINT "traslados_encabezado_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
 END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."turnos"
     ADD CONSTRAINT "turnos_cajaid_fkey" FOREIGN KEY ("cajaid") REFERENCES "public"."cajas"("id") ON DELETE SET NULL;
-
-
-
-ALTER TABLE ONLY "public"."turnos"
-    ADD CONSTRAINT "turnos_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."turnos"
-    ADD CONSTRAINT "turnos_jornadaid_fkey" FOREIGN KEY ("jornadaid") REFERENCES "public"."jornadas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."turnos"
-    ADD CONSTRAINT "turnos_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."turnos"
-    ADD CONSTRAINT "turnos_turnoorigenid_fkey" FOREIGN KEY ("turnoorigenid") REFERENCES "public"."turnos"("id") ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."turnos"
+    ADD CONSTRAINT "turnos_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."turnos"
+    ADD CONSTRAINT "turnos_jornadaid_fkey" FOREIGN KEY ("jornadaid") REFERENCES "public"."jornadas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."turnos"
+    ADD CONSTRAINT "turnos_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."turnos"
+    ADD CONSTRAINT "turnos_turnoorigenid_fkey" FOREIGN KEY ("turnoorigenid") REFERENCES "public"."turnos"("id") ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."unidadesmedida"
 ALTER TABLE ONLY "public"."unidadesmedida"
     ADD CONSTRAINT "unidadesmedida_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
@@ -7892,42 +8117,64 @@ END $$;
 
 
 
+DO $$ BEGIN
 ALTER TABLE ONLY "public"."user_profiles"
     ADD CONSTRAINT "user_profiles_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."user_profiles"
-    ADD CONSTRAINT "user_profiles_encargadoid_fkey" FOREIGN KEY ("encargadoid") REFERENCES "public"."user_profiles"("userid") ON DELETE SET NULL;
-
-
-
-ALTER TABLE ONLY "public"."user_profiles"
-    ADD CONSTRAINT "user_profiles_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."user_roles"
-    ADD CONSTRAINT "user_roles_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."user_roles"
-    ADD CONSTRAINT "user_roles_rolid_fkey" FOREIGN KEY ("rolid") REFERENCES "public"."roles"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."user_sucursales"
-    ADD CONSTRAINT "user_sucursales_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
-
-
-
-ALTER TABLE ONLY "public"."user_sucursales"
-    ADD CONSTRAINT "user_sucursales_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
 
 
 
 DO $$ BEGIN
+ALTER TABLE ONLY "public"."user_profiles"
+    ADD CONSTRAINT "user_profiles_encargadoid_fkey" FOREIGN KEY ("encargadoid") REFERENCES "public"."user_profiles"("userid") ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."user_profiles"
+    ADD CONSTRAINT "user_profiles_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."user_roles"
+    ADD CONSTRAINT "user_roles_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."user_roles"
+    ADD CONSTRAINT "user_roles_rolid_fkey" FOREIGN KEY ("rolid") REFERENCES "public"."roles"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."user_sucursales"
+    ADD CONSTRAINT "user_sucursales_empresaid_fkey" FOREIGN KEY ("empresaid") REFERENCES "public"."empresas"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."user_sucursales"
+    ADD CONSTRAINT "user_sucursales_sucursalid_fkey" FOREIGN KEY ("sucursalid") REFERENCES "public"."sucursales"("id") ON DELETE RESTRICT;
+EXCEPTION WHEN duplicate_object OR others THEN NULL;
+END $$;
+
+
+
+DO $$ BEGIN
+ALTER TABLE ONLY "public"."zonasbodega"
 ALTER TABLE ONLY "public"."zonasbodega"
     ADD CONSTRAINT "zonasbodega_bodegaid_fkey" FOREIGN KEY ("bodegaid") REFERENCES "public"."bodegas"("id");
 EXCEPTION WHEN duplicate_object OR others THEN NULL;
