@@ -63,8 +63,10 @@ create trigger tr_ubicaciones_updated_at
 -- Este stub garantiza que las migraciones intermedias no fallen si se aplican
 -- en un DB limpio en orden cronológico.
 -- -----------------------------------------------------------------------------
+-- Productos stub — columna `id` como PK para compatibilidad con FKs de migraciones intermedias
 create table if not exists public.productos (
-  id_producto uuid primary key default gen_random_uuid (),
+  id_producto uuid unique not null default gen_random_uuid (),
+  id          uuid primary key default gen_random_uuid (),
   empresa_id  uuid,
   sku_codigo  text,
   nombre      text not null default '',
