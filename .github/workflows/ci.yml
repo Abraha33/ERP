@@ -8,7 +8,7 @@ on:
 
 jobs:
   erp-api:
-    name: ERP API — lint, typecheck, tests
+    name: Fast-API — lint, typecheck, tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,15 +18,15 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: |
-            erp-api/requirements.txt
-            erp-api/requirements-dev.txt
+            fast-api/requirements.txt
+            fast-api/requirements-dev.txt
 
-      - name: ERP API — install dependencies
+      - name: Fast-API — install dependencies
         run: |
-          pip install -r erp-api/requirements.txt
-          pip install -r erp-api/requirements-dev.txt
+          pip install -r fast-api/requirements.txt
+          pip install -r fast-api/requirements-dev.txt
 
-      - name: ERP API — compile check
+      - name: Fast-API — compile check
         run: python -m compileall erp-api -q
 
       - name: Scraper — install & compile
