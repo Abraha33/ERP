@@ -28,7 +28,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: SUPABASE_DEPLOY
     env:
-      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,16 +38,27 @@ jobs:
         with:
           version: latest
 
-      - name: Verify DB URL
+      - name: Verify secrets
         run: |
-          if [ -z "${SUPABASE_DB_URL}" ]; then
-            echo "::error::Missing secret SUPABASE_DB_URL in environment SUPABASE_DEPLOY"
+          if [ -z "${SUPABASE_ACCESS_TOKEN}" ]; then
+            echo "::error::Missing secret SUPABASE_ACCESS_TOKEN"
             exit 1
           fi
-          echo "DB URL is set (pooler: $(echo "${SUPABASE_DB_URL}" | grep -o '@[^/]*' | head -1))"
+          if [ -z "${SUPABASE_DB_PASSWORD}" ]; then
+            echo "::error::Missing secret SUPABASE_DB_PASSWORD"
+            exit 1
+          fi
+          # Extract ref ID from full URL if needed
+          RAW_REF="${SUPABASE_PROJECT_REF:-fwegtmgcuuyjryffkmxb}"
+          PROJECT_REF=$(echo "$RAW_REF" | sed 's|https\?://||;s|\.supabase\.co.*||')
+          echo "PROJECT_REF=${PROJECT_REF}" >> "$GITHUB_ENV"
+          echo "Linking to project: ${PROJECT_REF}"
+
+      - name: Link Supabase project
+        run: supabase link --project-ref "${PROJECT_REF}"
 
       - name: Push migrations to Supabase
-        run: supabase db push --db-url "${SUPABASE_DB_URL}" --include-all --yes
+        run: supabase db push --include-all --yes
 
   functions_deploy:
     if: github.event_name == 'push' || inputs.deploy_functions == 'true'
@@ -67,8 +80,6 @@ jobs:
             echo "::error::Missing secret SUPABASE_ACCESS_TOKEN"
             exit 1
           fi
-
-          # Extract ref from full URL if needed (e.g. https://fwegtmgcuuyjryffkmxb.supabase.co)
           RAW_REF="${SUPABASE_PROJECT_REF:-fwegtmgcuuyjryffkmxb}"
           PROJECT_REF=$(echo "$RAW_REF" | sed 's|https\?://||;s|\.supabase\.co.*||')
           echo "PROJECT_REF=${PROJECT_REF}" >> "$GITHUB_ENV"
