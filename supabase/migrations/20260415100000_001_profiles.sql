@@ -67,6 +67,10 @@ alter table public.profiles
 alter table public.profiles
   add column if not exists sync_status text not null default 'SYNCED';
 
+-- Columnas faltantes (por migración previa que usó CREATE TABLE IF NOT EXISTS sin ALTER)
+alter table public.profiles add column if not exists supervisor_id uuid references public.profiles (id);
+alter table public.profiles add column if not exists full_name text;
+
 -- Índices
 create index if not exists idx_profiles_empresa on public.profiles (empresa_id);
 
