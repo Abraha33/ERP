@@ -1,0 +1,4 @@
+-- Migration stub: version 20260411045142 (f1_inventory_rls_base)
+-- This migration was applied directly to the Supabase cloud database.
+-- This file exists to satisfy Supabase Preview version tracking.
+-- No SQL to apply — already executed in production.
