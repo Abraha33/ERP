@@ -88,7 +88,7 @@ Este archivo es la **descomposición en sprints** para el arranque. El **plan ma
 | Tiempo real (ej. inventario / traslados) | Supabase **Realtime** |
 | Integración SAE | **Scripts Python** en `scripts/sae/` (CSV/XLS ↔ Supabase) |
 | UI legacy / scraper opcional | Python 3.12 + Playwright en `tools/scraper/` |
-| Jobs pesados / HTTP persistente | FastAPI en `tools/worker/` — **opcional** |
+| Jobs pesados / HTTP persistente | FastAPI en `backend/app/modules/workers/` — **opcional** |
 | Offline (Fase 5 producto) | Room + WorkManager — ver [ROADMAP.md](../../ROADMAP.md) y [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md) |
 | CI / builds | GitHub Actions + Gradle (Android) |
 

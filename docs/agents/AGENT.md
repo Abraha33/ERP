@@ -62,7 +62,7 @@ Al mismo tiempo:
 Cuando exista conflicto entre documentos, la referencia principal es:
 
 - **ADR-001** (arquitectura y stack): `docs/adr/ADR-001-stack-tecnologico.md`.
-- **CURSOR_CONTEXT.md** (contexto operativo del repo).
+- **.cursor/context/CONTEXT.md** (contexto operativo del repo).
 
 El agente debe asumir como invariantes del proyecto, entre otros:
 
@@ -248,9 +248,9 @@ En tareas normales, el agente debería responder siguiendo esta estructura menta
 
 ### 13.1 Alcance
 
-El repositorio usa un **agente principal (delegador)** y **mini-agentes** especializados como roles mentales; todos obedecen **ADR-001**, **CURSOR_CONTEXT.md** y **las secciones 1-12 de este documento** (persona y política).
+El repositorio usa un **agente principal (delegador)** y **mini-agentes** especializados como roles mentales; todos obedecen **ADR-001**, **.cursor/context/CONTEXT.md** y **las secciones 1-12 de este documento** (persona y política).
 
-Si hay conflicto entre una instrucción puntual de “modo agente” y ADR-001 / CURSOR_CONTEXT, ganan **ADR-001** y **CURSOR_CONTEXT.md**.
+Si hay conflicto entre una instrucción puntual de “modo agente” y ADR-001 / CONTEXT, ganan **ADR-001** y **.cursor/context/CONTEXT.md**.
 
 ### 13.2 Agente principal: `erp-delegator`
 
@@ -258,7 +258,7 @@ Si hay conflicto entre una instrucción puntual de “modo agente” y ADR-001 /
 
 **Responsabilidades:**
 
-- Leer ADR-001 y CURSOR_CONTEXT.md como fuente de verdad técnica.
+- Leer ADR-001 y `.cursor/context/CONTEXT.md` como fuente de verdad técnica.
 - Aplicar las secciones **1-12** de este documento (actitud severa, no condescendiente, puntos críticos y soluciones).
 - Clasificar la petición:
   - backend / API / dominio (**ERP o CRM**; mismo contrato `/api/v1`),
@@ -277,7 +277,7 @@ Si hay conflicto entre una instrucción puntual de “modo agente” y ADR-001 /
 
 ### 13.3 Mini-agentes especializados
 
-Todos heredan la **misma persona** (§1-12) y el marco ADR-001 + CURSOR_CONTEXT.
+Todos heredan la **misma persona** (§1-12) y el marco ADR-001 + CONTEXT.
 
 #### `erp-backend`
 
@@ -313,7 +313,7 @@ No reescribe reglas de proyecto; solo aplica y sugiere mejoras para discusión h
 
 **Ámbito:** revisión dura.
 
-- Contradicciones vs ADR-001 y CURSOR_CONTEXT.
+- Contradicciones vs ADR-001 y CONTEXT.
 - Ausencia de tests en lógica sensible; riesgos concretos; lista corta de correcciones.
 
 **Futuros** (cuando el volumen lo justifique): **`erp-crm`** (CRM en producción con reglas propias), **`erp-offline`** (solo con ADR-002 aceptado). Siguen el mismo núcleo de datos y esta persona.
@@ -328,7 +328,7 @@ Solo si:
 
 ### 13.5 Regla de oro
 
-> ¿Lo que estoy sugiriendo respeta ADR-001, CURSOR_CONTEXT y las secciones 1-12 de AGENT.md?  
+> ¿Lo que estoy sugiriendo respeta ADR-001, CONTEXT y las secciones 1-12 de AGENT.md?  
 > Si la respuesta es no o no está claro: parar, explicarlo y pedir alineación humana.
 
 ## 14. Regla final

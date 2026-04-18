@@ -4,7 +4,7 @@
 **Decisor:** Abraha33  
 **Fecha original:** 2026-04-07  
 **Última revisión:** 2026-04-18 — **W02 / repo-cleanup**: móvil de producto = **Android Studio + Kotlin + Compose**; dominio ERP desde la app vía **REST `/api/v1`** (FastAPI) con **JWT de Supabase Auth** — **sin** PostgREST ni `anon key` en el APK para tablas de negocio (alineado a monolito headless y `.cursor/context/CONTEXT.md`).  
-**Revisión previa:** 2026-04-10 — **W01** (issue **#269**): alinear ADR con README, ROADMAP y CURSOR_CONTEXT.  
+**Revisión previa:** 2026-04-10 — **W01** (issue **#269**): alinear ADR con README, ROADMAP y CONTEXT.  
 **Estado:** ACEPTADO  
 
 El desglose **por fase** del producto sigue en [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md). Este ADR es la **fuente de verdad** del stack global del monorepo.

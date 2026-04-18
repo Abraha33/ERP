@@ -2,7 +2,7 @@
 schema: spec-driven
 
 context: |
-  Tech stack: Supabase (Postgres, Auth, Storage, Edge Functions, Realtime); Android Kotlin+Compose target under apps/android (stub); legacy Expo in apps/mobile; Python 3.12 (FastAPI tools/worker, Playwright tools/scraper); SQL migrations in supabase/migrations/.
+  Tech stack: Supabase (Postgres, Auth, Storage, Edge Functions, Realtime); Android Kotlin+Compose target under apps/android (stub); legacy Expo in apps/mobile; Python 3.12 (FastAPI backend/app/modules/workers, Playwright tools/scraper); SQL migrations in supabase/migrations/.
   Architecture: Modular monolith; RLS on client tables; Edge Functions as BFF; offline-first roadmap (Room + WorkManager).
   Testing: No unified test script; CI runs apps/mobile typecheck (tsc), Python compileall, and Postgres migration apply.
   Style: .cursor/rules/project.mdc and ADR/docs; SQL snake_case; branches feature/<issue>-<description>.

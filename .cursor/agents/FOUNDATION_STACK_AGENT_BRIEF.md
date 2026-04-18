@@ -45,9 +45,9 @@ Para cada fila, el agente debe **proponer opción principal + alternativa + ries
 
 ## 4. Decisión de fundación (referencia)
 
-El stack de fundación está **aceptado** en [ADR-001](../adr/ADR-001-stack-tecnologico.md) (revisión 2026-04-18). Resumen: **FastAPI** (`/api/v1`) + **Supabase** (Postgres/Auth/RLS); **Kotlin + Compose + Room** en Android consumiendo la API; scripts Python SAE; **FastAPI** opcional en `tools/worker/`; **Playwright** opcional en `tools/scraper/`; **GitHub Actions**; offline Fase 5 con **Room** + **WorkManager**.
+El stack de fundación está **aceptado** en [ADR-001](../adr/ADR-001-stack-tecnologico.md) (revisión 2026-04-18). Resumen: **FastAPI** (`/api/v1`) + **Supabase** (Postgres/Auth/RLS); **Kotlin + Compose + Room** en Android consumiendo la API; scripts Python SAE; worker opcional en `backend/app/modules/workers/`; **Playwright** opcional en `tools/scraper/`; **GitHub Actions**; offline Fase 5 con **Room** + **WorkManager**.
 
-Si en el futuro se reabre el debate, usar el **entregable** de la sección 5 y actualizar en bloque: `ADR-001`, `README` §10–11, `STACK_POR_FASE`, `CURSOR_CONTEXT`, `.env.example`.
+Si en el futuro se reabre el debate, usar el **entregable** de la sección 5 y actualizar en bloque: `ADR-001`, `README` §10–11, `STACK_POR_FASE`, `CONTEXT`, `.env.example`.
 
 ---
 
@@ -75,7 +75,7 @@ Alineación con `ERP1/ROADMAP.md` (granular):
 | T0.1.3 | ADR stack | Decisión formal. | Hecho (ADR aceptada) |
 | T0.1.4 | Variables de entorno | `.env.example` + `.env` local. | **En progreso** |
 | T0.1.5–T0.1.6 | Excel SAE | [EXCEL_ANALYSIS.md](../legacy/EXCEL_ANALYSIS.md). | **En progreso** |
-| T0.1.7 | CURSOR_CONTEXT | Alineado con ADR. | Hecho (revisar al cerrar Supabase/Excel) |
+| T0.1.7 | CONTEXT | Alineado con ADR. | Hecho (revisar al cerrar Supabase/Excel) |
 
 ---
 
@@ -93,7 +93,7 @@ Alineación con `ERP1/ROADMAP.md` (granular):
 |-----------|-----|
 | [README.md](../../README.md) | Reglas de trabajo, milestones, tablero, ramas. |
 | [STACK_POR_FASE.md](../reference/STACK_POR_FASE.md) | Stack por fase del producto. |
-| [CURSOR_CONTEXT.md](../../CURSOR_CONTEXT.md) | Defaults para asistentes en Cursor. |
+| [CONTEXT.md](../context/CONTEXT.md) | Defaults para asistentes en Cursor. |
 | [ADR-001](../adr/ADR-001-stack-tecnologico.md) | Donde debe quedar la decisión formal. |
 | [EXCEL_ANALYSIS.md](../legacy/EXCEL_ANALYSIS.md) | Análisis export SAE (puede ir en paralelo). |
 | [Esqueleto.md](../reference/Esqueleto.md) | Alcance funcional alto nivel. |
