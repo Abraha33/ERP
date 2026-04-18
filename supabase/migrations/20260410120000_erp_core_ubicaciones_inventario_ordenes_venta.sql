@@ -246,6 +246,10 @@ create trigger tr_ordenes_venta_det_updated_at
 -- RLS (misma filosofía que draft: current_empresa_id / app_role)
 -- Nota: si las funciones de sesión no existen aún, aplicar primero la migración que las define.
 -- -----------------------------------------------------------------------------
+-- Ensure deleted_at exists on empresas before RLS policy references it
+alter table public.empresas add column if not exists deleted_at timestamptz;
+alter table public.empresas add column if not exists updated_at timestamptz not null default now();
+
 alter table public.empresas enable row level security;
 
 drop policy if exists p_empresas_select_tenant on public.empresas;
