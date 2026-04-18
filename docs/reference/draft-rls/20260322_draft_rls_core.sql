@@ -1,0 +1,8 @@
+-- =============================================================================
+-- BORRADOR ARCHIVADO — no ejecutar como migración
+-- Movido desde supabase/migrations/ por causar error de tabla duplicada en CI
+-- (relation "profiles" already exists — conflicto con 20260101000000_0001_init_profiles_rls.sql)
+-- 
+-- Este archivo es documentación de diseño histórico solamente.
+-- Las migraciones activas están en supabase/migrations/
+-- =============================================================================
