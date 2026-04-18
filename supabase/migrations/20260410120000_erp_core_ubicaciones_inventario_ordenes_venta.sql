@@ -64,8 +64,8 @@ create trigger tr_ubicaciones_updated_at
 -- en un DB limpio en orden cronológico.
 -- -----------------------------------------------------------------------------
 create table if not exists public.productos (
-  id_producto uuid unique not null default gen_random_uuid (),
-  id          uuid primary key default gen_random_uuid (),
+  id_producto uuid primary key default gen_random_uuid (),
+  id          uuid unique not null default gen_random_uuid (),
   empresa_id  uuid,
   sku_codigo  text,
   nombre      text not null default '',
@@ -73,11 +73,13 @@ create table if not exists public.productos (
   updated_at  timestamptz not null default now()
 );
 
--- Clientes stub
+-- Clientes stub — usa id_tercero como PK para coincidir con real_schema_pull
 create table if not exists public.clientes (
-  id         uuid primary key default gen_random_uuid (),
+  id_tercero uuid primary key default gen_random_uuid (),
+  id         uuid unique default gen_random_uuid (),
   empresa_id uuid,
-  nombre     text not null default '',
+  nombre     text,
+  razon_social text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
