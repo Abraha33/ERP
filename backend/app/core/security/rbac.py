@@ -1,7 +1,18 @@
 """Role helpers and tenant claim extractors for FastAPI dependencies.
 
-Business roles: admin > encargado > empleado
-Tenant claims: empresa_id, sucursal_id (extracted from JWT user_metadata)
+Roles de aplicación (orden de privilegio descendente):
+    admin > encargado > auditor > cajero > bodeguero > empleado
+
+Fuente de verdad: tabla public.roles en Supabase.
+IDs fijos: admin=b010…, encargado=b020…, auditor=b050…,
+           cajero=b030…, bodeguero=b040…, empleado=b060…
+
+NOTA: app_role_from_claims() lee el rol desde JWT user_metadata.
+Para que sea consistente con la DB, Supabase debe emitir el claim
+'app_role' en el token via Custom Access Token Hook (auth hook)
+que lea public.app_role() en cada login.
+Sin ese hook, el rol en el JWT puede quedar desactualizado si
+cambia en user_roles.
 """
 
 from collections.abc import Callable
@@ -12,7 +23,19 @@ from fastapi import Depends, HTTPException, status
 
 from app.core.security.jwt import get_current_claims
 
-_ROLE_RANK: dict[str, int] = {"empleado": 0, "encargado": 1, "admin": 2}
+# Ranking completo alineado con public.roles en Supabase
+# Mayor número = mayor privilegio
+_ROLE_RANK: dict[str, int] = {
+    "empleado":  0,
+    "bodeguero": 1,
+    "cajero":    2,
+    "auditor":   3,
+    "encargado": 4,
+    "admin":     5,
+}
+
+# Conjunto de roles válidos (igual que codigos en public.roles)
+_VALID_ROLES = frozenset(_ROLE_RANK.keys())
 
 
 # ---------------------------------------------------------------------------
@@ -20,15 +43,21 @@ _ROLE_RANK: dict[str, int] = {"empleado": 0, "encargado": 1, "admin": 2}
 # ---------------------------------------------------------------------------
 
 def app_role_from_claims(claims: dict[str, Any]) -> str:
+    """Lee app_role desde JWT user_metadata.
+
+    Supabase incluye user_metadata en el access token.
+    El valor debe ser uno de: admin, encargado, auditor, cajero, bodeguero, empleado.
+    Si no viene o es inválido, retorna 'empleado' (rol mínimo) por seguridad.
+    """
     meta = claims.get("user_metadata") or {}
     role = meta.get("app_role")
-    if isinstance(role, str) and role in _ROLE_RANK:
-        return role
+    if isinstance(role, str) and role.lower() in _VALID_ROLES:
+        return role.lower()
     return "empleado"
 
 
 def empresa_id_from_claims(claims: dict[str, Any]) -> UUID:
-    """Extract empresa_id (UUID) from JWT user_metadata. Raises 403 if missing."""
+    """Extrae empresa_id (UUID) desde JWT user_metadata. Lanza 403 si no existe."""
     meta = claims.get("user_metadata") or {}
     raw = meta.get("empresa_id")
     if not raw:
@@ -46,7 +75,7 @@ def empresa_id_from_claims(claims: dict[str, Any]) -> UUID:
 
 
 def sucursal_id_from_claims(claims: dict[str, Any]) -> UUID | None:
-    """Extract sucursal_id (UUID) from JWT user_metadata. Returns None if absent."""
+    """Extrae sucursal_id (UUID) desde JWT user_metadata. Retorna None si no existe."""
     meta = claims.get("user_metadata") or {}
     raw = meta.get("sucursal_id")
     if not raw:
@@ -58,11 +87,19 @@ def sucursal_id_from_claims(claims: dict[str, Any]) -> UUID | None:
 
 
 # ---------------------------------------------------------------------------
-# Reusable FastAPI dependency — injects full tenant context
+# TenantContext — contexto completo de tenant + rol por request
 # ---------------------------------------------------------------------------
 
 class TenantContext:
-    """Parsed tenant + role context injected into route handlers via Depends."""
+    """Contexto de tenant y rol extraído del JWT. Se inyecta via Depends().
+
+    Campos:
+        user_id     — sub del JWT (UUID del usuario en auth.users)
+        empresa_id  — UUID del tenant activo
+        sucursal_id — UUID de la sucursal activa (puede ser None)
+        role        — rol de app: admin|encargado|auditor|cajero|bodeguero|empleado
+        claims      — dict completo de claims del JWT (para uso avanzado)
+    """
 
     __slots__ = ("user_id", "empresa_id", "sucursal_id", "role", "claims")
 
@@ -73,33 +110,42 @@ class TenantContext:
         self.sucursal_id: UUID | None = sucursal_id_from_claims(claims)
         self.role: str = app_role_from_claims(claims)
 
+    def has_role(self, *roles: str) -> bool:
+        """True si el rol del usuario está en el conjunto dado."""
+        return self.role in roles
+
+    def has_min_role(self, min_role: str) -> bool:
+        """True si el rol del usuario es >= al rol mínimo indicado."""
+        return _ROLE_RANK.get(self.role, 0) >= _ROLE_RANK.get(min_role, 0)
+
 
 async def get_tenant_context(
     claims: Annotated[dict[str, Any], Depends(get_current_claims)],
 ) -> TenantContext:
-    """FastAPI dependency — resolves JWT claims into a typed TenantContext.
+    """FastAPI dependency — resuelve claims JWT a TenantContext tipado.
 
-    Usage in a router:
+    Uso en router:
         @router.get("/items")
         async def list_items(ctx: Annotated[TenantContext, Depends(get_tenant_context)]):
-            # ctx.empresa_id, ctx.sucursal_id, ctx.role all available
+            empresa_id = ctx.empresa_id   # UUID listo para filtrar
+            role       = ctx.role         # "admin" | "encargado" | ...
     """
     return TenantContext(claims)
 
 
 # ---------------------------------------------------------------------------
-# Role-based access guards
+# Guards reutilizables
 # ---------------------------------------------------------------------------
 
 def require_app_roles(*allowed: str) -> Callable[..., TenantContext]:
-    """Dependency factory: allow only specific roles.
+    """Factory: solo permite roles específicos.
 
-    Example:
+    Ejemplo:
         Depends(require_app_roles("admin", "encargado"))
     """
-    allowed_set = set(allowed)
+    allowed_set = {r.lower() for r in allowed}
 
-    async def _dependency(
+    async def _dep(
         ctx: Annotated[TenantContext, Depends(get_tenant_context)],
     ) -> TenantContext:
         if ctx.role not in allowed_set:
@@ -109,18 +155,18 @@ def require_app_roles(*allowed: str) -> Callable[..., TenantContext]:
             )
         return ctx
 
-    return _dependency
+    return _dep
 
 
 def require_min_role(min_role: str) -> Callable[..., TenantContext]:
-    """Dependency factory: allow roles at or above a minimum rank.
+    """Factory: permite rol mínimo y superiores.
 
-    Example:
-        Depends(require_min_role("encargado"))  # allows encargado + admin
+    Ejemplo:
+        Depends(require_min_role("encargado"))  # permite encargado + admin
     """
-    min_rank = _ROLE_RANK.get(min_role, 0)
+    min_rank = _ROLE_RANK.get(min_role.lower(), 0)
 
-    async def _dependency(
+    async def _dep(
         ctx: Annotated[TenantContext, Depends(get_tenant_context)],
     ) -> TenantContext:
         if _ROLE_RANK.get(ctx.role, 0) < min_rank:
@@ -130,4 +176,4 @@ def require_min_role(min_role: str) -> Callable[..., TenantContext]:
             )
         return ctx
 
-    return _dependency
+    return _dep
