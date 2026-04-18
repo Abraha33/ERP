@@ -11,7 +11,7 @@ Este archivo define el contexto operativo del repo para desarrollo con Cursor/IA
 - **Frontend prioritario (MVP)**: **Web ERP**.
 - **Móvil**: postergado; solo entra por casos concretos con ADR propio.
 
-Referencia: [ADR-001](./docs/ADR-001-architecture-stack.md).
+Referencia: [ADR-001](./docs/adr/ADR-001-stack-tecnologico.md).
 
 ## Stack (decisiones cerradas)
 
