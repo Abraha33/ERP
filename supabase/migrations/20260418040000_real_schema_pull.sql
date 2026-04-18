@@ -5623,7 +5623,7 @@ CREATE TABLE IF NOT EXISTS "public"."zonasbodega" (
 ALTER TABLE "public"."zonasbodega" OWNER TO "postgres";
 
 
-CREATE OR REPLACE VIEW "public"."ubicaciones" WITH ("security_invoker"='true') AS
+CREATE OR REPLACE VIEW "public"."vw_ubicaciones_bodega" WITH ("security_invoker"='true') AS
  SELECT "b"."id" AS "bodegaid",
     "z"."id" AS "zonaid",
     "e"."id" AS "estanteriaid",
@@ -5638,7 +5638,7 @@ CREATE OR REPLACE VIEW "public"."ubicaciones" WITH ("security_invoker"='true') A
      LEFT JOIN "public"."cubiculosfila" "c" ON (("c"."filaid" = "f"."id")));
 
 
-ALTER VIEW "public"."ubicaciones" OWNER TO "postgres";
+ALTER VIEW "public"."vw_ubicaciones_bodega" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."unidadesmedida" (
@@ -10514,9 +10514,9 @@ GRANT ALL ON TABLE "public"."zonasbodega" TO "service_role";
 
 
 
-GRANT ALL ON TABLE "public"."ubicaciones" TO "anon";
-GRANT ALL ON TABLE "public"."ubicaciones" TO "authenticated";
-GRANT ALL ON TABLE "public"."ubicaciones" TO "service_role";
+GRANT ALL ON TABLE "public"."vw_ubicaciones_bodega" TO "anon";
+GRANT ALL ON TABLE "public"."vw_ubicaciones_bodega" TO "authenticated";
+GRANT ALL ON TABLE "public"."vw_ubicaciones_bodega" TO "service_role";
 
 
 
