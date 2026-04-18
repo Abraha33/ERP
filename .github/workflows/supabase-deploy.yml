@@ -42,14 +42,17 @@ jobs:
             echo "Missing secret SUPABASE_DB_URL"
             exit 1
           fi
-          # Normalize: ensure format is postgresql://postgres:[password]@host
-          # If URL has no user (postgresql://[password]@host), inject postgres:
-          DB_URL="${SUPABASE_DB_URL}"
+            DB_URL="${SUPABASE_DB_URL}"
+          # 1. Remove brackets around password: postgres:[password]@ -> postgres:password@
+          DB_URL=$(echo "$DB_URL" | sed 's|:\[|:|g;s|\]@|@|g')
+          # 2. Remove pooler user suffix: postgres.fwegtmg...: -> postgres:
+          DB_URL=$(echo "$DB_URL" | sed 's|//postgres\.[^:@]*:|//postgres:|')
+          # 3. If no user present (postgresql://password@host), inject postgres:
           if echo "$DB_URL" | grep -qE '^postgresql://[^:@/]+@'; then
-            # Has user but no password separator — prepend postgres:
             DB_URL=$(echo "$DB_URL" | sed 's|postgresql://|postgresql://postgres:|')
           fi
           echo "DB_URL_NORMALIZED=$DB_URL" >> "$GITHUB_ENV"
+          echo "URL format: $(echo $DB_URL | sed 's|:[^:@]*@|:***@|')"
 
       - name: Push migrations to Supabase
         run: supabase db push --db-url "${DB_URL_NORMALIZED}" --include-all --yes
